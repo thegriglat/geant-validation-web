@@ -1,0 +1,12 @@
+<form>
+<button type="button" mat-flat-button (click)="onLoad()">Load</button>
+
+<button type="button" mat-flat-button (click)="magic()">Plot</button>
+</form>
+
+<table id="roottable">
+    <tr *ngFor="let row of plots">
+        <td *ngFor="let plot of row" [attr.colspan]="plot.colspan"><ng-katex *ngIf="plot.type == 'text'" [equation]="plot.text"></ng-katex><img *ngIf="plot.type=='plot'" src="https://via.placeholder.com/640x480"></td>
+    </tr>
+</table>
+  
