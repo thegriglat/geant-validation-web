@@ -4,9 +4,21 @@
 <button type="button" mat-flat-button (click)="magic()">Plot</button>
 </form>
 
-<table id="roottable">
+<table  > <!--*ngIf="magicPressed"-->
     <tr *ngFor="let row of plots">
-        <td *ngFor="let plot of row" [attr.colspan]="plot.colspan"><ng-katex *ngIf="plot.type == 'text'" [equation]="plot.text"></ng-katex><img *ngIf="plot.type=='plot'" src="https://via.placeholder.com/640x480"></td>
+        <td *ngFor="let aplot of row" [attr.colspan]="aplot.colspan">
+            <ng-katex *ngIf="aplot.type == 'text'" [equation]="aplot.text"></ng-katex>
+            <app-plot *ngIf="aplot.type == 'plot'" [config]="aplot"></app-plot>
+        </td>
     </tr>
 </table>
-  
+<!--
+<div *ngIf="loadComplete" id="roottable" style="max-width: 95%">
+    <mat-grid-list *ngFor="let row of plots ; index as i" [cols] = "spans[i]" rowHeight = "4:3">
+        <mat-grid-tile *ngFor="let aplot of row" [colspan]="aplot.colspan">
+            <ng-katex *ngIf="aplot.type == 'text'" [equation]="aplot.text"></ng-katex>
+            <app-plot *ngIf="aplot.type == 'plot'" [config]="aplot"></app-plot>
+        </mat-grid-tile>
+    </mat-grid-list>
+</div>
+-->

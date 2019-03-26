@@ -2,17 +2,21 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { MatButtonModule } from '@angular/material';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatGridListModule } from '@angular/material/grid-list'; 
 import { KatexModule } from 'ng-katex';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { GvptemplateComponent } from './gvptemplate/gvptemplate.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { PlotComponent } from './plot/plot.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    GvptemplateComponent
+    GvptemplateComponent,
+    PlotComponent
   ],
   imports: [
     BrowserModule,
@@ -20,6 +24,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     AppRoutingModule,
     BrowserAnimationsModule,
     MatButtonModule,
+    MatProgressSpinnerModule,
+    MatGridListModule,
     KatexModule
   ],
   providers: [],

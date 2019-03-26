@@ -1,6 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChildren, QueryList } from '@angular/core';
 import { TemplateService } from '../template.service';
 import { Observable } from 'rxjs';
+import { GvpPlot } from '../gvp-plot';
+import { PlotComponent } from '../plot/plot.component';
+
 
 @Component({
   selector: 'app-gvptemplate',
@@ -9,21 +12,31 @@ import { Observable } from 'rxjs';
 })
 export class GvptemplateComponent implements OnInit {
 
-  plots: Array<Array<string>>;
+  plots: Array<Array<GvpPlot>>;
+  spans: Array<number>;
   contents: string;
+  tests: Array<string>;
+  magicPressed: boolean;
+  loadComplete: boolean;
 
   DefaultBlock = {};
 
-  constructor(private templateService: TemplateService) { }
+  @ViewChildren(PlotComponent) plotList: QueryList<PlotComponent>;
+
+  constructor(private templateService: TemplateService) {
+    this.tests = new Array<string>();
+    this.loadComplete = false;
+    this.spans = new Array<number>();
+  }
 
   ngOnInit() {
     this.plots = null;
+    this.magicPressed = false;
   }
 
   downloadFromGitLab(file: string): Observable<Document|null> {
-    console.log('download start');
+    console.log('download template');
     return this.templateService.getTemplate(file);
-    console.log('download end');
   }
 
   readDefaultBlock(node: Element) {
@@ -32,20 +45,22 @@ export class GvptemplateComponent implements OnInit {
     }
   }
 
-  convertXMLPlot2Object(plot: Element) {
-    let obj;
+  convertXMLPlot2Object(plot: Element): GvpPlot {
+    let obj: GvpPlot;
     if (plot.nodeName === 'plot') {
       obj = {
         type: 'plot',
         isModelCanChange: false,
         empty: true
-      };
+      } as GvpPlot;
       for (const i of Array.from(plot.attributes)) {
         obj[i.name] = i.value;
         obj.empty = false;
       }
-      if (!obj.hasOwnProperty('colspan')) {
-        obj.colspan = 1;
+      obj.colspan = obj.colspan || 1;
+
+      for (const key of Object.keys(this.DefaultBlock)) {
+        obj[key] = obj[key] || this.DefaultBlock[key];
       }
     }
     if (plot.nodeName === 'ratio') {
@@ -56,13 +71,13 @@ export class GvptemplateComponent implements OnInit {
         empty: false,
         plot: this.convertXMLPlot2Object(dataplot),
         reference: this.convertXMLPlot2Object(refplot)
-      };
+      } as GvpPlot;
     }
     if (plot.nodeName === 'label') {
       obj = {
         type: 'text',
         empty: true
-      };
+      } as GvpPlot;
       for (const i of Array.from(plot.attributes)) {
         obj[i.name] = i.value;
         obj.empty = false;
@@ -71,8 +86,18 @@ export class GvptemplateComponent implements OnInit {
     return obj;
   }
 
+  private filltests(o: GvpPlot) {
+    if (o.type === 'plot' && o.test) {
+      this.tests.push(o.test);
+    }
+  }
+
   updateMenu(xml: Document | null) {
     console.log('updateMenu start');
+    // Empty the arrays
+    // this.plots.length = 0;
+    this.spans.length = 0;
+
     if (xml === null) {
       console.log('xml is null');
       return;
@@ -86,7 +111,7 @@ export class GvptemplateComponent implements OnInit {
     if (rows.length === 0) {
       return;
     }
-    const plots = [];
+    const plots = new Array<Array<GvpPlot>>();
     let tests: string[] = [];
     for (const row of rows) {
       if (row.nodeName === 'default') {
@@ -95,10 +120,10 @@ export class GvptemplateComponent implements OnInit {
       }
       plots.push([]);
       const plotsLast = plots[plots.length - 1];
-      console.log(plotsLast);
+      // console.log(plotsLast);
       for (const j of Array.from(row.children)) {
 
-        const obj = this.convertXMLPlot2Object(j);
+        const obj: GvpPlot = this.convertXMLPlot2Object(j) as GvpPlot;
         if (obj.type === 'plot' && (!obj.model || obj.model.length === 0)) {
           // th.showPhysListSelection = true;
           obj.isModelCanChange = true;
@@ -108,20 +133,16 @@ export class GvptemplateComponent implements OnInit {
           obj.plot.isModelCanChange = true;
           obj.reference.isModelCanChange = true;
         }
+
         plotsLast.push(obj);
-        const filltests = o => {
-          if (o.type === 'plot' && o.test) {
-            tests.push(o.test);
-          }
-        };
 
         if (obj.type === 'plot') {
-          filltests(obj);
+          this.filltests(obj);
         }
 
         if (obj.type === 'ratio') {
-          filltests(obj.plot);
-          filltests(obj.reference);
+          this.filltests(obj.plot);
+          this.filltests(obj.reference);
         }
       }
     }
@@ -132,8 +153,6 @@ export class GvptemplateComponent implements OnInit {
 
     tests = tests.filter(distinct);
     console.log(plots);
-    this.plots = plots;
-    console.log('updateMenu end');
     // TODO: do this
     /*
     waitForTest().then(() => {
@@ -146,15 +165,21 @@ export class GvptemplateComponent implements OnInit {
       this.plots = plots;
     });
 */
+    for (const row of plots) {
+      this.spans.push(row.map((e) => e.colspan).reduce((a, b) => isNaN(b) ? a - -1 : (a - -b), 0));
+    }
+    this.plots = plots;
+    console.log('updateMenu end');
   }
 
   public onLoad() {
     console.log('onLoad start');
-    this.downloadFromGitLab('AttenuationTest.xml').subscribe(results => this.updateMenu(results));
-    console.log('onLoad end');
+    this.downloadFromGitLab('AttenuationTest.xml').subscribe((results) => {this.updateMenu(results);
+                                                                           console.log('onLoad end');
+                                                                           this.loadComplete = true; });
   }
 
   magic() {
-
+    this.plotList.forEach((aplot) => aplot.draw());
   }
 }
