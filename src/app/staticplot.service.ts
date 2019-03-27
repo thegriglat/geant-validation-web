@@ -32,11 +32,7 @@ export class StaticplotService extends PlotService {
     // obj.markersize = 1;
     return obj;
   }
-/*
-  private getPNG(plot: GvpPlotData): string {
-    return 'http://localhost';
-  }
-*/
+
   public getPlot(config: GvpPlotXML): Observable<any> {
     const httpOptions = {
       headers: new HttpHeaders({

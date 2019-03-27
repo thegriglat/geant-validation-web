@@ -6,7 +6,7 @@
 
 <table  > <!--*ngIf="magicPressed"-->
     <tr *ngFor="let row of plots">
-        <td *ngFor="let aplot of row" [attr.colspan]="aplot.colspan">
+        <td *ngFor="let aplot of row" [attr.colspan]="aplot.colspan" style="text-align: center">
             <ng-katex *ngIf="aplot.type == 'text'" [equation]="aplot.text"></ng-katex>
             <app-plot *ngIf="aplot.type == 'plot'" [config]="aplot"></app-plot>
         </td>

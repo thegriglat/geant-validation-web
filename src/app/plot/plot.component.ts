@@ -13,11 +13,16 @@ export class PlotComponent implements OnInit {
   type: string;
   status: string;
   filename: string;
+  plotWidth: number;
+  plotHeight: number;
 
   @Input()
   public config: GvpPlot;
 
-  constructor(private service: StaticplotService) { }
+  constructor(private service: StaticplotService) {
+    this.plotWidth = 320;
+    this.plotHeight = 200;
+  }
 
   ngOnInit() {
 
@@ -26,5 +31,10 @@ export class PlotComponent implements OnInit {
   draw() {
     this.service.getPlot(this.config).subscribe((res) => {this.filename = environment.APIEndpoint + res.filename;
                                                           this.status = res.status; });
+  }
+
+  resizeImage(newSize) {
+    this.plotHeight = newSize.height;
+    this.plotWidth = newSize.width;
   }
 }

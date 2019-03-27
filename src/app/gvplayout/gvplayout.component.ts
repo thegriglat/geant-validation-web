@@ -1,16 +1,16 @@
 import { Component, OnInit, ViewChildren, QueryList } from '@angular/core';
-import { TemplateService } from '../template.service';
+import { LayoutService } from '../layout.service';
 import { Observable } from 'rxjs';
 import { GvpPlot } from '../gvp-plot';
 import { PlotComponent } from '../plot/plot.component';
 
 
 @Component({
-  selector: 'app-gvptemplate',
-  templateUrl: './gvptemplate.component.html',
-  styleUrls: ['./gvptemplate.component.css']
+  selector: 'app-gvplayout',
+  templateUrl: './gvplayout.component.html',
+  styleUrls: ['./gvplayout.component.css']
 })
-export class GvptemplateComponent implements OnInit {
+export class GvplayoutComponent implements OnInit {
 
   plots: Array<Array<GvpPlot>>;
   spans: Array<number>;
@@ -23,7 +23,7 @@ export class GvptemplateComponent implements OnInit {
 
   @ViewChildren(PlotComponent) plotList: QueryList<PlotComponent>;
 
-  constructor(private templateService: TemplateService) {
+  constructor(private layoutService: LayoutService) {
     this.tests = new Array<string>();
     this.loadComplete = false;
     this.spans = new Array<number>();
@@ -35,8 +35,8 @@ export class GvptemplateComponent implements OnInit {
   }
 
   downloadFromGitLab(file: string): Observable<Document|null> {
-    console.log('download template');
-    return this.templateService.getTemplate(file);
+    console.log(`download layout ${file}`);
+    return this.layoutService.getLayout(file);
   }
 
   readDefaultBlock(node: Element) {
@@ -120,7 +120,7 @@ export class GvptemplateComponent implements OnInit {
       }
       plots.push([]);
       const plotsLast = plots[plots.length - 1];
-      // console.log(plotsLast);
+
       for (const j of Array.from(row.children)) {
 
         const obj: GvpPlot = this.convertXMLPlot2Object(j) as GvpPlot;
@@ -179,7 +179,36 @@ export class GvptemplateComponent implements OnInit {
                                                                            this.loadComplete = true; });
   }
 
+  getImageSize(bootstrapColumn?) {
+    const imageprop = 1500 / 1100;
+
+    if (!bootstrapColumn) {
+      bootstrapColumn = 12;
+    }
+
+    const plots = this.plots;
+    const wpadding = 0.025; // width padding in percents
+    const hpadding = 0.025; // width padding in percents
+    const maxwidth = ((window.innerWidth * bootstrapColumn) / 12) * (1 - wpadding * 2); // bootstrap col-lg-9
+    const maxheight = window.innerHeight * (1 - hpadding * 2);
+    if (plots.length === 0) {
+      return { width: 0, height: 0 };
+    }
+    const nrows = plots.length;
+    const ncols = Math.max(...plots.map(e => e.length));
+    const w = maxwidth / ncols;
+    let h = maxheight / (nrows === 1 ? 2 : nrows);
+
+    if (h < w / imageprop) {
+      h = w / imageprop;
+    }
+    return {
+      width: w,
+      height: h
+    };
+  }
+
   magic() {
-    this.plotList.forEach((aplot) => aplot.draw());
+    this.plotList.forEach((aplot) => {aplot.resizeImage(this.getImageSize()); aplot.draw(); });
   }
 }

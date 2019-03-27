@@ -1,2 +1,2 @@
-<img *ngIf="status == 'OK'" [src]="filename" style="max-width: 95%">
+<img *ngIf="status == 'OK'" [src]="filename" [ngStyle]="{'width': plotWidth+'px', 'height': plotHeight+'px'}">
 <mat-spinner *ngIf="status !== 'OK'" style="max-width: 95%"></mat-spinner>

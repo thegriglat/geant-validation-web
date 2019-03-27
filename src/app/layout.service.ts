@@ -6,7 +6,7 @@ import { HttpClient } from '@angular/common/http';
 @Injectable({
   providedIn: 'root'
 })
-export class TemplateService {
+export class LayoutService {
   constructor(private http: HttpClient) {
   }
 
@@ -21,7 +21,7 @@ export class TemplateService {
     }
   }
 
-  public getTemplate(file: string): Observable<Document|null> {
+  public getLayout(file: string): Observable<Document|null> {
     const obs = this.http.get(`https://gitlab.com/api/v4/projects/9185703/repository/files/${file}/raw?ref=master`, {responseType: 'text'});
     // const obs = this.http.get(`https://gitlab.com/thegriglat/geant-val-layouts/raw/master/AttenuationTest.xml`, {responseType: 'text'});
     //                            ^ this won't work due to CORS policy!
