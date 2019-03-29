@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { concatMap } from 'rxjs/operators';
+import { concatMap, mergeMap, mergeAll, map, reduce } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { GvpPlotData, GvpPlotXML, GvpPlotRequest } from './gvp-plot';
-import { Observable } from 'rxjs';
+import { Observable, forkJoin, concat, merge } from 'rxjs';
 import { GVPAPIService } from './gvpapi.service';
 
 @Injectable({
@@ -14,10 +14,10 @@ export class PlotService extends GVPAPIService {
     super(http);
   }
 
-  // TODO: pass test_id and version_id to getPlot_ function
+  // TODO: ratio!
 
-  private getPlotId(config: GvpPlotXML): Observable<number> {
-    const params: GvpPlotRequest = new GvpPlotRequest(config, 126, 173);
+  private getPlotId(config: GvpPlotXML, testId: number, versionId: number): Observable<number> {
+    const params: GvpPlotRequest = new GvpPlotRequest(config, testId, versionId);
     return this.get<number>('api/getPlotId/', params);
   }
 
@@ -25,7 +25,11 @@ export class PlotService extends GVPAPIService {
     return this.get<GvpPlotData>('api/multiget/', {ids: String(id)});
   }
 
-  protected getPlot_(config: GvpPlotXML): Observable<GvpPlotData> {
-    return this.getPlotId(config).pipe(concatMap((id) => this.getPlotDataById(id)));
+  protected getPlotData(config: GvpPlotXML, testId: number, versionId: number[]): Observable<GvpPlotData[]> {
+    forkJoin(versionId.map((e) => this.getPlotId(config, testId, e))).pipe(
+      // mergeMap((arr) => )
+      // mergeAll(), concatMap((id) => this.getPlotDataById(id)));
+      // concatMap((arr) => arr.map(id => this.getPlotDataById(id))));
+    // return this.getPlotId(config, testId, versionId).pipe(concatMap((id) => this.getPlotDataById(id)));
   }
 }

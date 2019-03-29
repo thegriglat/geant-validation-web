@@ -175,9 +175,9 @@ export class GvpExpData {
     expname: string;
 }
 
-export class GvpUniq {
+export class GvpUniq<T> {
     JSONAttr: string;
-    values: Array<string> | Array<number>;
+    values: Array<T>;
 }
 
 export class GvpMctoolNameVersion {

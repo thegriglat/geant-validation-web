@@ -12,36 +12,20 @@ import { MatSidenav } from '@angular/material';
   templateUrl: './gvplayout.component.html',
   styleUrls: ['./gvplayout.component.css']
 })
+
+
 export class GvplayoutComponent implements OnInit {
 
   constructor(private layoutService: LayoutService, private api: GVPAPIService) {
   }
 
   // Bindings
-  versionDropDowns = [
-    {
-      name: 'Version',
-      JSONAttr: 'mctool.version',
-      table: 'mctool_name_version',
-      onplot: 'mctool_name_version_id',
-      ontable: 'mctool_name_version_id',
-      namefield: 'mctool_name_version_id',
-      values: [],
-      valSel: [],
-      maxSel: 999
-    }
-  ];
+  versions = new Array<{label: string, value: number}>();
+  versionSel = new Array<number>();
+  models = new Array<{label: string, value: string, test: string}>();
+  modelsSel = new Array<string>();
 
-  modelDropDowns = {
-    name: 'Physics List/Model',
-    JSONAttr: 'mctool.version',
-    values: [],
-    valSel: [],
-    tests: [],
-    maxSel: 999
-  };
-
-  selected = '';
+  selectedLayout = '';
   pTemplates = new Array();
 
   // Components
@@ -56,17 +40,19 @@ export class GvplayoutComponent implements OnInit {
   magicPressed = false;
   loadComplete = false;
   opened = true;
-  DefaultBlock = {};
+  DefaultBlock = new Map<string, any>();
   ALLTESTS = new Array<GvpTest>();
   showPhysListSelection = false;
   TESTMAP = new Map<string, GvpTest>();
   testObject: GvpTestRequest;
   selectedItem: GvpTest;
   availableExpDataforTest = new Array<GvpExpData>();
-  getMCToolNameVersionCache = {};
-  getMCToolNameCache = {};
-  versionHumanName = {};
-  releaseDate = {};
+  MCToolNameVersionCache = new Map<number, {version: string, mctool_name_id: number, release_date: string}>();
+  MCToolNameCache = new Map<number, string>();
+  // *del* versionHumanName = {};
+  // *del* releaseDate = {};
+
+  checkedTags = new Set<string>();
 
   ngOnInit() {
     this.layoutService.getAllLayouts().subscribe((data) => {
@@ -83,30 +69,32 @@ export class GvplayoutComponent implements OnInit {
           return 0;
       }});
     });
+
+    // Populate caches
     this.api.get<GvpMctoolNameVersion[]>('api/mctool_name_version', {}).subscribe(response => {
       for (const elem of response) {
-        this.getMCToolNameVersionCache[elem.mctool_name_version_id] = {
+        this.MCToolNameVersionCache.set(elem.mctool_name_version_id, {
           version: elem.version,
           mctool_name_id: elem.mctool_name_id,
           release_date: elem.release_date
-        };
+        });
       }
     });
+
     this.api.get<GvpMctoolName[]>('api/mctool_name', {}).subscribe(response => {
       for (const elem of response) {
-        this.getMCToolNameCache[elem.mctool_name_id] = elem.mctool_name_name;
+        this.MCToolNameCache.set(elem.mctool_name_id, elem.mctool_name_name);
       }
     });
   }
 
   downloadLayout(file: string): Observable<Document|null> {
-    console.log(`download layout ${file}`);
     return this.layoutService.getLayout(file);
   }
 
   readDefaultBlock(node: Element) {
     for (const i of Array.from(node.attributes)) {
-      this.DefaultBlock[i.name] = i.value;
+      this.DefaultBlock.set(i.name, i.value);
     }
   }
 
@@ -153,9 +141,7 @@ export class GvplayoutComponent implements OnInit {
 
   private filltests(o: GvpPlot) {
     if (o.type === 'plot' && o.test) {
-      console.log('filltest', o.test);
       this.tests.push(o.test);
-      console.log('tests3', this.tests);
     }
   }
 
@@ -184,17 +170,9 @@ export class GvplayoutComponent implements OnInit {
     });
   }
 
-  private getMCToolNameVersion(mctoolNameId: number) {
-    return this.getMCToolNameVersionCache[mctoolNameId];
-  }
-
-  private getMCToolName(mctoolNameId: number) {
-    return this.getMCToolNameCache[mctoolNameId];
-  }
-
   private getVersionsByTest(testname: string) {
     this.magicPressed = false;
-    this.selected = '1';
+    // this.selected = '1';
     const testlist = this.ALLTESTS.filter(ele => ele.test_name === testname);
     if (testlist.length === 0) {
       return;
@@ -215,86 +193,89 @@ export class GvplayoutComponent implements OnInit {
     this.selectedItem = test;
     this.updateExpDescription(test.test_id);
 
-    const elem = this.versionDropDowns[0];
     const config = {
         test_id: test.test_id,
-        table: elem.table,
-        onplot: elem.onplot,
-        ontable: elem.ontable,
-        namefield: elem.namefield,
-        JSONAttr: elem.JSONAttr
+        table: 'mctool_name_version',
+        onplot: 'mctool_name_version_id',
+        ontable: 'mctool_name_version_id',
+        namefield: 'mctool_name_version_id',
+        JSONAttr: 'mctool.version'
     };
-    this.api.get<GvpUniq>('api/uniqlookup', config).subscribe((response) => {
+    this.api.get<GvpUniq<number>>('api/uniqlookup', config).subscribe((response) => {
       for (const i of response.values) {
-        if (this.versionDropDowns[0].values.indexOf(i) === -1) {
-          this.versionDropDowns[0].values.push(i);
+        if (this.versions.map(e => e.value).indexOf(i) === -1) {
+          // this.versionDropDowns[0].values.push(i);
+          const result = this.MCToolNameVersionCache.get(i);
+          if (result === undefined) {
+            console.log(`mctool.version ${i} not found!`);
+            continue;
+          }
+          const version = result.version;
+          const mctoolNameId = result.mctool_name_id;
+          // const mctoolNameVersionId = i;
+          // const release_date = result.release_date;
+          const name = this.MCToolNameCache.get(mctoolNameId);
+          // this.versionHumanName[mctoolNameVersionId] = `${name}: ${version}`;
+          // this.releaseDate[mctoolNameVersionId] = release_date;
+          this.versions.push({label: `${name}: ${version}`, value: i});
         }
       }
-      this.versionDropDowns[0].values.sort();
-      for (const i of this.versionDropDowns[0].values) {
-        const result = this.getMCToolNameVersion(i);
-        const version = result.version;
-        const mctoolNameId = result.mctool_name_id;
-        const mctoolNameVersionId = i;
-        const release_date = result.release_date;
-        const name = this.getMCToolName(mctoolNameId);
-        this.versionHumanName[mctoolNameVersionId] = `${name}: ${version}`;
-        this.releaseDate[mctoolNameVersionId] = release_date;
-      }
-      if (this.versionDropDowns[0].values.length === 1) {
-        this.versionDropDowns[0].valSel = this.versionDropDowns[0].values.slice();
+
+      this.versions.sort((a, b) => (a.label.localeCompare(b.label)));
+
+      if (this.versions.length === 1) {
+        this.versionSel = this.versions.map(e => e.value);
       }
     });
-    console.log(this.versionDropDowns[0]);
-}
+  }
 
-getModelsByTest(testname: string) {
-/*
-    const testlist = th.ALLTESTS.filter(elem => elem.test_name === testname);
-    if (testlist.length === 0) return;
+  getModelsByTest(testname: string) {
+    const testlist = this.ALLTESTS.filter(elem => elem.test_name === testname);
+    if (testlist.length === 0) { return; }
     const test = testlist[0];
     const config = {
-      params: {
         test_id: test.test_id,
         JSONAttr: 'mctool.model'
-      }
     };
-    $http.get('/api/uniqlookup', config).success(response => {
-      const responce_values = response.values.slice();
-      responce_values.sort();
-      for (const v of responce_values) {
-        if (th.modelDropDowns.values.indexOf(v) === -1) {
-          th.modelDropDowns.values.push(v);
-          th.modelDropDowns.tests.push(testname);
+    this.api.get<GvpUniq<string>>('/api/uniqlookup', config).subscribe(response => {
+      const responceValues = response.values.slice();
+      responceValues.sort();
+      for (const v of responceValues) {
+        if (this.models.map((e) => e.value).indexOf(v) === -1) {
+          this.models.push({label: v, value: v, test: testname});
         }
       }
-      if (responce_values.length === 1) {
-        th.modelDropDowns.valSel.push(responce_values[0]);
+
+      if (responceValues.length === 1) {
+        this.modelsSel.push(responceValues[0]);
       }
+
       // check default values
-      if (default_block.hasOwnProperty('model')) {
-        for (const i of default_block.model.split('|')) {
+      if (this.DefaultBlock.has('model')) {
+        for (const i of this.DefaultBlock.get('model').split('|')) {
           if (
-            th.modelDropDowns.values.indexOf(i) !== -1 &&
-            th.modelDropDowns.valSel.indexOf(i) === -1
+            this.models.map((e) => e.value).indexOf(i) !== -1 &&
+            this.modelsSel.indexOf(i) === -1
           ) {
-            th.modelDropDowns.valSel.push(i);
+            this.modelsSel.push(i);
           }
         }
       }
     });
-*/
+  }
+
+  private distinct(value, index, arr) {
+    return arr.indexOf(value) === index;
   }
 
   updateMenu(xml: Document | null) {
-    console.log('updateMenu start');
     // Empty the arrays
     this.spans.length = 0;
 
     if (xml === null) {
-      console.log('xml is null');
       return;
     }
+
     const layout: Element = xml.documentElement;
     if (layout.nodeName !== 'layout') {
       return;
@@ -315,7 +296,6 @@ getModelsByTest(testname: string) {
       const plotsLast = plots[plots.length - 1];
 
       for (const j of Array.from(row.children)) {
-
         const obj: GvpPlot = this.convertXMLPlot2Object(j) as GvpPlot;
         if (obj.type === 'plot' && (!obj.model || obj.model.length === 0)) {
           this.showPhysListSelection = true;
@@ -340,19 +320,9 @@ getModelsByTest(testname: string) {
       }
     }
 
-    const distinct = (value, index, arr) => {
-      console.log(`value ${value}, index ${index}, self ${arr}`);
-      return arr.indexOf(value) === index;
-    };
-
-    console.log('tests1', this.tests);
-
-    this.tests = this.tests.filter(distinct);
-    // console.log(plots);
+    this.tests = this.tests.filter(this.distinct);
 
     this.waitForTest().then(() => {
-      console.log('waitForTest then');
-      console.log('tests', this.tests);
       for (const testname of this.tests) {
         this.getVersionsByTest(testname);
         if (this.showPhysListSelection) {
@@ -366,14 +336,65 @@ getModelsByTest(testname: string) {
       this.spans.push(row.map((e) => e.colspan).reduce((a, b) => isNaN(b) ? a - -1 : (a - -b), 0));
     }
     this.plots = plots;
-    console.log('updateMenu end');
   }
 
-  public onLoad() {
-    console.log('onLoad start');
-    this.downloadLayout('AttenuationTest.xml').subscribe((results) => {this.updateMenu(results);
-                                                                       console.log('onLoad end');
-                                                                       this.loadComplete = true; });
+  uniqueTags(list: Array<any>) {
+    return list.map(t => t[2]).reduce((p, c) => p.concat(c), []).filter(this.distinct);
+  }
+
+  checkTag(tag: string) {
+    if (this.checkedTags.has(tag)) {
+      this.checkedTags.delete(tag);
+    } else {
+      this.checkedTags.add(tag);
+    }
+  }
+
+  isTagChecked(tag: string) {
+    return this.checkedTags.has(tag);
+  }
+
+  isLayoutShown(tags: Array<string>): boolean {
+    if (this.checkedTags.size !== 0) {
+      for (const tag of tags) {
+        if (this.checkedTags.has(tag)) {
+          return true;
+        }
+
+        return false;
+      }
+    } else {
+      return true;
+    }
+  }
+
+  onSelectLayout() {
+    console.log(this.selectedLayout);
+    this.downloadLayout(this.selectedLayout).subscribe((results) => {
+      this.models = [];
+      this.modelsSel = [];
+      this.versions = [];
+      this.versionSel = [];
+      this.availableExpDataforTest = [];
+      this.updateMenu(results);
+      this.loadComplete = true;
+    });
+  }
+
+  cantPlot() {
+    if (this.selectedLayout === '' || this.selectedLayout === undefined) {
+      return true;
+    }
+
+    if (this.versionSel.length === 0 && this.versions.length !== 0) {
+      return true;
+    }
+
+    if (this.modelsSel.length === 0) {
+      return true;
+    }
+
+    return false;
   }
 
   getImageSize(bootstrapColumn?: number) {
@@ -406,7 +427,12 @@ getModelsByTest(testname: string) {
   }
 
   magic() {
-    this.plotList.forEach((aplot) => {aplot.resizeImage(this.getImageSize()); aplot.draw(); });
+    this.plotList.forEach((aplot) => {
+      aplot.resizeImage(this.getImageSize());
+      aplot.versionId = this.versionSel;
+      aplot.model = this.modelsSel.join('|');
+      aplot.draw();
+    });
     this.sidenav.close();
   }
 }

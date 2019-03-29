@@ -15,6 +15,9 @@ export class PlotComponent implements OnInit {
   filename: string;
   plotWidth: number;
   plotHeight: number;
+  public testId: number;
+  public versionId: number[];
+  public model: string;
 
   @Input()
   public config: GvpPlot;
@@ -29,8 +32,9 @@ export class PlotComponent implements OnInit {
   }
 
   draw() {
-    this.service.getPlot(this.config).subscribe((res) => {this.filename = environment.APIEndpoint + res.filename;
-                                                          this.status = res.status; });
+    this.service.getPlot(this.config, this.testId, this.versionId).subscribe(
+      (res) => {this.filename = environment.APIEndpoint + res.filename;
+                this.status = res.status; });
   }
 
   resizeImage(newSize) {

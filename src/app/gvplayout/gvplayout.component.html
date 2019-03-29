@@ -9,17 +9,25 @@
         <mat-card>
             <mat-card-header><mat-card-title><mat-icon>bookmark</mat-icon> Layout</mat-card-title></mat-card-header>
             <mat-card-content>
-            <mat-select required [(value)]="selected" (selectionChange)="onLoad()">
-                <mat-option *ngFor="let layout of pTemplates" [value]="layout[0]">{{layout[1]}}</mat-option>
-            </mat-select>
+                <mat-select required [(value)]="selectedLayout" (selectionChange)="onSelectLayout()">
+                    <ng-container *ngFor="let layout of pTemplates">
+                        <mat-option *ngIf="isLayoutShown(layout[2])" [value]="layout[0]">{{layout[1]}}</mat-option>
+                    </ng-container>
+                </mat-select>
+                    <mat-label>Tags</mat-label>
+                    <mat-list *ngFor="let tag of uniqueTags(pTemplates)">
+                        <mat-list-item>
+                            <mat-checkbox [checked]="isTagChecked(tag)" (change)="checkTag(tag)">{{tag}}</mat-checkbox>
+                        </mat-list-item>
+                    </mat-list> 
             </mat-card-content>
         </mat-card>
 
-        <mat-card [hidden]="versionDropDowns.length === 0">
+        <mat-card [hidden]="versions.length === 0">
             <mat-card-header><mat-card-title><mat-icon>bookmark</mat-icon> Version</mat-card-title></mat-card-header>
             <mat-card-content>
-            <mat-select required multiple [(value)]="versionDropDowns[0].valSel">
-                <mat-option *ngFor="let v of versionDropDowns[0].values" [value]="v">{{v}}</mat-option>
+            <mat-select required multiple [(value)]="versionsSel">
+                <mat-option *ngFor="let v of versions" [value]="v.value">{{v.label}}</mat-option>
             </mat-select>
             </mat-card-content>
         </mat-card>
@@ -28,8 +36,8 @@
         <mat-card>
             <mat-card-header><mat-card-title><mat-icon>bookmark</mat-icon> Physics List/Model</mat-card-title></mat-card-header>
             <mat-card-content>
-            <mat-select required>
-                <mat-option value=1 selected>emstandart_opt0</mat-option>
+            <mat-select required multiple [(value)]="modelsSel">
+                <mat-option *ngFor="let m of models" [value]="m.value">{{m.label}}</mat-option>
             </mat-select>
             </mat-card-content>
         </mat-card>
@@ -43,7 +51,7 @@
             </mat-card-content>
         </mat-card>
             
-        <button type="button" mat-stroked-button color="primary" (click)="magic()">Plot</button>
+        <button type="button" mat-stroked-button color="primary" [disabled]="cantPlot()" (click)="magic()">Plot</button>
     </mat-sidenav>
     <mat-sidenav-content>
         <mat-toolbar id="appToolbar" [ngClass]="{'toolbar-fullscreen': (fullscreen$ | async)}" color="primary">

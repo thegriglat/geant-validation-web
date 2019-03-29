@@ -8,6 +8,9 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatListModule } from '@angular/material/list';
 import { MAT_LABEL_GLOBAL_OPTIONS} from '@angular/material/core';
 import { KatexModule } from 'ng-katex';
 
@@ -35,6 +38,9 @@ import { PlotComponent } from './plot/plot.component';
     MatIconModule,
     MatSelectModule,
     MatToolbarModule,
+    MatCheckboxModule,
+    MatChipsModule,
+    MatListModule,
     KatexModule
   ],
   providers: [

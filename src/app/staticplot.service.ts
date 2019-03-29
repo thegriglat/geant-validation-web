@@ -30,8 +30,8 @@ export class StaticplotService extends PlotService {
     return obj;
   }
 
-  public getPlot(config: GvpPlotXML): Observable<any> {
-    return super.getPlot_(config).pipe(
+  public getPlot(config: GvpPlotXML, testId: number, versionId: number[]): Observable<any> {
+    return super.getPlotData(config, testId, versionId).pipe(
       concatMap((data) => { const req = this.prepareRequest(config, data);
                             return this.post('api/getPNG', req); }
       )
