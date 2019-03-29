@@ -112,7 +112,7 @@ export class GvpPlot extends GvpPlotXML {
 }
 
 export class GvpPngRequest {
-    data: GvpPlotData;
+    data: GvpPlotData[];
     xaxis?: string;
     yaxis?: string;
     xmax?: number;

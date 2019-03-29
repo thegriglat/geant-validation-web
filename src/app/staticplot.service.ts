@@ -14,7 +14,7 @@ export class StaticplotService extends PlotService {
     super(http);
   }
 
-  private prepareRequest(config: GvpPlotXML, data: GvpPlotData): GvpPngRequest {
+  private prepareRequest(config: GvpPlotXML, data: GvpPlotData[]): GvpPngRequest {
     const obj = new GvpPngRequest();
     obj.data = data;
     obj.xaxis = config.xaxis;

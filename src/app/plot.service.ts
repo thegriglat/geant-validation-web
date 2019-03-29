@@ -26,10 +26,6 @@ export class PlotService extends GVPAPIService {
   }
 
   protected getPlotData(config: GvpPlotXML, testId: number, versionId: number[]): Observable<GvpPlotData[]> {
-    forkJoin(versionId.map((e) => this.getPlotId(config, testId, e))).pipe(
-      // mergeMap((arr) => )
-      // mergeAll(), concatMap((id) => this.getPlotDataById(id)));
-      // concatMap((arr) => arr.map(id => this.getPlotDataById(id))));
-    // return this.getPlotId(config, testId, versionId).pipe(concatMap((id) => this.getPlotDataById(id)));
+    return forkJoin(versionId.map((e) => this.getPlotId(config, testId, e).pipe(concatMap((id) => this.getPlotDataById(id)))));    
   }
 }
