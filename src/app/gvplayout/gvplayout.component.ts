@@ -1,8 +1,10 @@
-import { Component, OnInit, ViewChildren, QueryList } from '@angular/core';
+import { Component, OnInit, ViewChildren, QueryList, ViewChild } from '@angular/core';
 import { LayoutService } from '../layout.service';
 import { Observable } from 'rxjs';
-import { GvpPlot } from '../gvp-plot';
+import { GvpPlot, GvpTest, GvpTestRequest, GvpExpData, GvpUniq, GvpMctoolNameVersion, GvpMctoolName } from '../gvp-plot';
 import { PlotComponent } from '../plot/plot.component';
+import { GVPAPIService } from '../gvpapi.service';
+import { MatSidenav } from '@angular/material';
 
 
 @Component({
@@ -12,29 +14,92 @@ import { PlotComponent } from '../plot/plot.component';
 })
 export class GvplayoutComponent implements OnInit {
 
-  plots: Array<Array<GvpPlot>>;
-  spans: Array<number>;
-  contents: string;
-  tests: Array<string>;
-  magicPressed: boolean;
-  loadComplete: boolean;
-
-  DefaultBlock = {};
-
-  @ViewChildren(PlotComponent) plotList: QueryList<PlotComponent>;
-
-  constructor(private layoutService: LayoutService) {
-    this.tests = new Array<string>();
-    this.loadComplete = false;
-    this.spans = new Array<number>();
+  constructor(private layoutService: LayoutService, private api: GVPAPIService) {
   }
+
+  // Bindings
+  versionDropDowns = [
+    {
+      name: 'Version',
+      JSONAttr: 'mctool.version',
+      table: 'mctool_name_version',
+      onplot: 'mctool_name_version_id',
+      ontable: 'mctool_name_version_id',
+      namefield: 'mctool_name_version_id',
+      values: [],
+      valSel: [],
+      maxSel: 999
+    }
+  ];
+
+  modelDropDowns = {
+    name: 'Physics List/Model',
+    JSONAttr: 'mctool.version',
+    values: [],
+    valSel: [],
+    tests: [],
+    maxSel: 999
+  };
+
+  selected = '';
+  pTemplates = new Array();
+
+  // Components
+  @ViewChildren(PlotComponent) plotList: QueryList<PlotComponent>;
+  @ViewChild(MatSidenav) sidenav: MatSidenav;
+
+  // Internal variables
+  plots =  new Array<Array<GvpPlot>>();
+  spans = new Array<number>();
+  contents = '';
+  tests = new Array<string>();
+  magicPressed = false;
+  loadComplete = false;
+  opened = true;
+  DefaultBlock = {};
+  ALLTESTS = new Array<GvpTest>();
+  showPhysListSelection = false;
+  TESTMAP = new Map<string, GvpTest>();
+  testObject: GvpTestRequest;
+  selectedItem: GvpTest;
+  availableExpDataforTest = new Array<GvpExpData>();
+  getMCToolNameVersionCache = {};
+  getMCToolNameCache = {};
+  versionHumanName = {};
+  releaseDate = {};
 
   ngOnInit() {
-    this.plots = null;
-    this.magicPressed = false;
+    this.layoutService.getAllLayouts().subscribe((data) => {
+      Object.keys(data).map((e) => this.pTemplates.push([e, data[e].title, data[e].tags]));
+      this.pTemplates.sort((a, b) => {
+        const s1 = a[1].toUpperCase();
+        const s2 = b[1].toUpperCase();
+        if (s1 > s2) {
+          return 1;
+        } else {
+          if (s1 < s2) {
+            return -1;
+          }
+          return 0;
+      }});
+    });
+    this.api.get<GvpMctoolNameVersion[]>('api/mctool_name_version', {}).subscribe(response => {
+      for (const elem of response) {
+        this.getMCToolNameVersionCache[elem.mctool_name_version_id] = {
+          version: elem.version,
+          mctool_name_id: elem.mctool_name_id,
+          release_date: elem.release_date
+        };
+      }
+    });
+    this.api.get<GvpMctoolName[]>('api/mctool_name', {}).subscribe(response => {
+      for (const elem of response) {
+        this.getMCToolNameCache[elem.mctool_name_id] = elem.mctool_name_name;
+      }
+    });
   }
 
-  downloadFromGitLab(file: string): Observable<Document|null> {
+  downloadLayout(file: string): Observable<Document|null> {
     console.log(`download layout ${file}`);
     return this.layoutService.getLayout(file);
   }
@@ -88,14 +153,142 @@ export class GvplayoutComponent implements OnInit {
 
   private filltests(o: GvpPlot) {
     if (o.type === 'plot' && o.test) {
+      console.log('filltest', o.test);
       this.tests.push(o.test);
+      console.log('tests3', this.tests);
     }
+  }
+
+  private waitForTest(): Promise<any> {
+    this.ALLTESTS.length = 0;
+    return new Promise((resolve) => {
+      this.api.get<GvpTest[]>('api/test', {}).subscribe(data => {
+          this.ALLTESTS = data.filter(elem => elem.test_name !== 'experiment');
+          resolve();
+        });
+    });
+  }
+
+  private updateExpDescription(testId: number) {
+    this.api.get<GvpExpData[]>('api/getexperimentsinspirefortest', {test_id: testId}).subscribe((result) => {
+      const rmod = result.map(e => {
+        e.expname = e.expname ? e.expname : 'exp. data';
+        return e;
+      });
+      for (const r of rmod) {
+        if (this.availableExpDataforTest.indexOf(r) === -1 &&
+          this.availableExpDataforTest.map(e => e.inspire_id).indexOf(r.inspire_id) === -1) {
+          this.availableExpDataforTest.push(r);
+        }
+      }
+    });
+  }
+
+  private getMCToolNameVersion(mctoolNameId: number) {
+    return this.getMCToolNameVersionCache[mctoolNameId];
+  }
+
+  private getMCToolName(mctoolNameId: number) {
+    return this.getMCToolNameCache[mctoolNameId];
+  }
+
+  private getVersionsByTest(testname: string) {
+    this.magicPressed = false;
+    this.selected = '1';
+    const testlist = this.ALLTESTS.filter(ele => ele.test_name === testname);
+    if (testlist.length === 0) {
+      return;
+    }
+
+    const test = testlist[0];
+    this.TESTMAP[testname] = test;
+
+    this.testObject = {
+      id: '',
+      versiontag: '',
+      model: '',
+      calorimeter: '',
+      pname: '',
+      oname: ''
+    } as GvpTestRequest;
+
+    this.selectedItem = test;
+    this.updateExpDescription(test.test_id);
+
+    const elem = this.versionDropDowns[0];
+    const config = {
+        test_id: test.test_id,
+        table: elem.table,
+        onplot: elem.onplot,
+        ontable: elem.ontable,
+        namefield: elem.namefield,
+        JSONAttr: elem.JSONAttr
+    };
+    this.api.get<GvpUniq>('api/uniqlookup', config).subscribe((response) => {
+      for (const i of response.values) {
+        if (this.versionDropDowns[0].values.indexOf(i) === -1) {
+          this.versionDropDowns[0].values.push(i);
+        }
+      }
+      this.versionDropDowns[0].values.sort();
+      for (const i of this.versionDropDowns[0].values) {
+        const result = this.getMCToolNameVersion(i);
+        const version = result.version;
+        const mctoolNameId = result.mctool_name_id;
+        const mctoolNameVersionId = i;
+        const release_date = result.release_date;
+        const name = this.getMCToolName(mctoolNameId);
+        this.versionHumanName[mctoolNameVersionId] = `${name}: ${version}`;
+        this.releaseDate[mctoolNameVersionId] = release_date;
+      }
+      if (this.versionDropDowns[0].values.length === 1) {
+        this.versionDropDowns[0].valSel = this.versionDropDowns[0].values.slice();
+      }
+    });
+    console.log(this.versionDropDowns[0]);
+}
+
+getModelsByTest(testname: string) {
+/*
+    const testlist = th.ALLTESTS.filter(elem => elem.test_name === testname);
+    if (testlist.length === 0) return;
+    const test = testlist[0];
+    const config = {
+      params: {
+        test_id: test.test_id,
+        JSONAttr: 'mctool.model'
+      }
+    };
+    $http.get('/api/uniqlookup', config).success(response => {
+      const responce_values = response.values.slice();
+      responce_values.sort();
+      for (const v of responce_values) {
+        if (th.modelDropDowns.values.indexOf(v) === -1) {
+          th.modelDropDowns.values.push(v);
+          th.modelDropDowns.tests.push(testname);
+        }
+      }
+      if (responce_values.length === 1) {
+        th.modelDropDowns.valSel.push(responce_values[0]);
+      }
+      // check default values
+      if (default_block.hasOwnProperty('model')) {
+        for (const i of default_block.model.split('|')) {
+          if (
+            th.modelDropDowns.values.indexOf(i) !== -1 &&
+            th.modelDropDowns.valSel.indexOf(i) === -1
+          ) {
+            th.modelDropDowns.valSel.push(i);
+          }
+        }
+      }
+    });
+*/
   }
 
   updateMenu(xml: Document | null) {
     console.log('updateMenu start');
     // Empty the arrays
-    // this.plots.length = 0;
     this.spans.length = 0;
 
     if (xml === null) {
@@ -112,7 +305,7 @@ export class GvplayoutComponent implements OnInit {
       return;
     }
     const plots = new Array<Array<GvpPlot>>();
-    let tests: string[] = [];
+
     for (const row of rows) {
       if (row.nodeName === 'default') {
         this.readDefaultBlock(row);
@@ -125,11 +318,11 @@ export class GvplayoutComponent implements OnInit {
 
         const obj: GvpPlot = this.convertXMLPlot2Object(j) as GvpPlot;
         if (obj.type === 'plot' && (!obj.model || obj.model.length === 0)) {
-          // th.showPhysListSelection = true;
+          this.showPhysListSelection = true;
           obj.isModelCanChange = true;
         }
         if (obj.type === 'ratio' && (!obj.plot.model || obj.plot.model.length === 0)) {
-          // th.showPhysListSelection = true;
+          this.showPhysListSelection = true;
           obj.plot.isModelCanChange = true;
           obj.reference.isModelCanChange = true;
         }
@@ -147,24 +340,28 @@ export class GvplayoutComponent implements OnInit {
       }
     }
 
-    const distinct = (value, index, self) => {
-      return self.indexOf(value) === index;
+    const distinct = (value, index, arr) => {
+      console.log(`value ${value}, index ${index}, self ${arr}`);
+      return arr.indexOf(value) === index;
     };
 
-    tests = tests.filter(distinct);
-    console.log(plots);
-    // TODO: do this
-    /*
-    waitForTest().then(() => {
-      for (const testname of tests) {
-        getVersionsByTest(testname);
-        if (th.showPhysListSelection) {
-          getModelsByTest(testname);
+    console.log('tests1', this.tests);
+
+    this.tests = this.tests.filter(distinct);
+    // console.log(plots);
+
+    this.waitForTest().then(() => {
+      console.log('waitForTest then');
+      console.log('tests', this.tests);
+      for (const testname of this.tests) {
+        this.getVersionsByTest(testname);
+        if (this.showPhysListSelection) {
+          this.getModelsByTest(testname);
         }
       }
       this.plots = plots;
     });
-*/
+
     for (const row of plots) {
       this.spans.push(row.map((e) => e.colspan).reduce((a, b) => isNaN(b) ? a - -1 : (a - -b), 0));
     }
@@ -174,12 +371,12 @@ export class GvplayoutComponent implements OnInit {
 
   public onLoad() {
     console.log('onLoad start');
-    this.downloadFromGitLab('AttenuationTest.xml').subscribe((results) => {this.updateMenu(results);
-                                                                           console.log('onLoad end');
-                                                                           this.loadComplete = true; });
+    this.downloadLayout('AttenuationTest.xml').subscribe((results) => {this.updateMenu(results);
+                                                                       console.log('onLoad end');
+                                                                       this.loadComplete = true; });
   }
 
-  getImageSize(bootstrapColumn?) {
+  getImageSize(bootstrapColumn?: number) {
     const imageprop = 1500 / 1100;
 
     if (!bootstrapColumn) {
@@ -210,5 +407,6 @@ export class GvplayoutComponent implements OnInit {
 
   magic() {
     this.plotList.forEach((aplot) => {aplot.resizeImage(this.getImageSize()); aplot.draw(); });
+    this.sidenav.close();
   }
 }

@@ -129,3 +129,71 @@ export class GvpStaticPlot extends GvpPlot {
     filename: string;
     data: GvpPlotData;
 }
+
+export class GvpLayout {
+    title: string;
+    tags: Array<string>;
+}
+
+export type GvpLayouts = Map<string, GvpLayout>;
+
+export class GvpTest {
+    description: string;
+    keywords?: Array<string>;
+    project: string;
+    responsible?: Array<string>;
+/* tslint:disable:variable-name */
+    mctool_name_id: number;
+    test_id: number;
+    test_name: string;
+    workinggroup_id?: number;
+/* tslint:enable:variable-name */
+}
+
+export class GvpTestRequest {
+    id: string;
+    versiontag: string;
+    model: string;
+    calorimeter: string;
+    pname: string;
+    oname: string;
+}
+
+export class GvpExpData {
+// tslint:disable-next-line: variable-name
+    inspire_id: number;
+    authors?: string;
+    title: string;
+    journal?: string;
+    ern?: string;
+    pages?: string;
+    volume?: string;
+    year?: string;
+    abstract?: string;
+    keywords?: string;
+    linkurl?: string;
+    expname: string;
+}
+
+export class GvpUniq {
+    JSONAttr: string;
+    values: Array<string> | Array<number>;
+}
+
+export class GvpMctoolNameVersion {
+// tslint:disable-next-line: variable-name
+    mctool_name_version_id: number;
+    version: string;
+// tslint:disable-next-line: variable-name
+    mctool_name_id: number;
+// tslint:disable-next-line: variable-name
+    release_date: string;
+}
+
+export class GvpMctoolName {
+// tslint:disable-next-line: variable-name
+    mctool_name_name: string;
+// tslint:disable-next-line: variable-name
+    mctool_name_id: number;
+
+}

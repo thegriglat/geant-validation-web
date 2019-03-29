@@ -1,24 +1,69 @@
-<form>
-<button type="button" mat-flat-button (click)="onLoad()">Load</button>
+<mat-sidenav-container fullscreen>
+    <mat-sidenav #sidenav mode="push" opened style="width: 25%;">
+        <mat-toolbar color="primary">
+            <span class="toolbar-filler"></span>
+            <button mat-mini-fab color="primary" (click)="sidenav.toggle()" [hidden]="!sidenav.opened">
+              <mat-icon aria-label="close" class="material-icons">close</mat-icon>
+            </button>
+        </mat-toolbar>
+        <mat-card>
+            <mat-card-header><mat-card-title><mat-icon>bookmark</mat-icon> Layout</mat-card-title></mat-card-header>
+            <mat-card-content>
+            <mat-select required [(value)]="selected" (selectionChange)="onLoad()">
+                <mat-option *ngFor="let layout of pTemplates" [value]="layout[0]">{{layout[1]}}</mat-option>
+            </mat-select>
+            </mat-card-content>
+        </mat-card>
 
-<button type="button" mat-flat-button (click)="magic()">Plot</button>
-</form>
+        <mat-card [hidden]="versionDropDowns.length === 0">
+            <mat-card-header><mat-card-title><mat-icon>bookmark</mat-icon> Version</mat-card-title></mat-card-header>
+            <mat-card-content>
+            <mat-select required multiple [(value)]="versionDropDowns[0].valSel">
+                <mat-option *ngFor="let v of versionDropDowns[0].values" [value]="v">{{v}}</mat-option>
+            </mat-select>
+            </mat-card-content>
+        </mat-card>
 
-<table  > <!--*ngIf="magicPressed"-->
-    <tr *ngFor="let row of plots">
-        <td *ngFor="let aplot of row" [attr.colspan]="aplot.colspan" style="text-align: center">
-            <ng-katex *ngIf="aplot.type == 'text'" [equation]="aplot.text"></ng-katex>
-            <app-plot *ngIf="aplot.type == 'plot'" [config]="aplot"></app-plot>
-        </td>
-    </tr>
-</table>
-<!--
-<div *ngIf="loadComplete" id="roottable" style="max-width: 95%">
-    <mat-grid-list *ngFor="let row of plots ; index as i" [cols] = "spans[i]" rowHeight = "4:3">
-        <mat-grid-tile *ngFor="let aplot of row" [colspan]="aplot.colspan">
-            <ng-katex *ngIf="aplot.type == 'text'" [equation]="aplot.text"></ng-katex>
-            <app-plot *ngIf="aplot.type == 'plot'" [config]="aplot"></app-plot>
-        </mat-grid-tile>
-    </mat-grid-list>
-</div>
--->
+
+        <mat-card>
+            <mat-card-header><mat-card-title><mat-icon>bookmark</mat-icon> Physics List/Model</mat-card-title></mat-card-header>
+            <mat-card-content>
+            <mat-select required>
+                <mat-option value=1 selected>emstandart_opt0</mat-option>
+            </mat-select>
+            </mat-card-content>
+        </mat-card>
+
+        <mat-card>
+            <mat-card-header><mat-card-title><mat-icon>bookmark</mat-icon> Reference</mat-card-title></mat-card-header>
+            <mat-card-content>
+            <mat-select required>
+                <mat-option value=1 selected>Exp. data</mat-option>
+            </mat-select>
+            </mat-card-content>
+        </mat-card>
+            
+        <button type="button" mat-stroked-button color="primary" (click)="magic()">Plot</button>
+    </mat-sidenav>
+    <mat-sidenav-content>
+        <mat-toolbar id="appToolbar" [ngClass]="{'toolbar-fullscreen': (fullscreen$ | async)}" color="primary">
+            <button mat-mini-fab color="primary" (click)="sidenav.toggle()" [hidden]="sidenav.opened">
+                <mat-icon aria-label="Menu" class="material-icons">menu</mat-icon>
+            </button>
+            <h1 class="component-title">
+                <a class="title-link">User Layouts</a>
+            </h1>
+            <span class="toolbar-filler"></span>
+            <!--<button id="button-login" md-button [routerLink]="['/signupin']" *ngIf="!(user | async)">Log In</button>-->
+            <!--<button id="button-logout" md-button>Log Out</button>-->
+        </mat-toolbar>
+        <table>
+            <tr *ngFor="let row of plots">
+                <td *ngFor="let aplot of row" [attr.colspan]="aplot.colspan" style="text-align: center">
+                    <ng-katex *ngIf="aplot.type == 'text'" [equation]="aplot.text"></ng-katex>
+                    <app-plot *ngIf="aplot.type == 'plot'" [config]="aplot"></app-plot>
+                </td>
+            </tr>
+        </table>
+    </mat-sidenav-content>
+</mat-sidenav-container>

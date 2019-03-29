@@ -3,7 +3,12 @@ import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { MatButtonModule } from '@angular/material';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatGridListModule } from '@angular/material/grid-list';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSelectModule } from '@angular/material/select';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MAT_LABEL_GLOBAL_OPTIONS} from '@angular/material/core';
 import { KatexModule } from 'ng-katex';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -25,10 +30,16 @@ import { PlotComponent } from './plot/plot.component';
     BrowserAnimationsModule,
     MatButtonModule,
     MatProgressSpinnerModule,
-    MatGridListModule,
+    MatSidenavModule,
+    MatCardModule,
+    MatIconModule,
+    MatSelectModule,
+    MatToolbarModule,
     KatexModule
   ],
-  providers: [],
+  providers: [
+    {provide: MAT_LABEL_GLOBAL_OPTIONS, useValue: {float: 'always', appearance: 'standard'}}
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
