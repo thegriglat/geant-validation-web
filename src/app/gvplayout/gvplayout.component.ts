@@ -20,9 +20,11 @@ export class GvplayoutComponent implements OnInit {
   }
 
   // Bindings
-  versions = new Array<{label: string, value: number}>();
-  versionSel = new Array<number>();
-  models = new Array<{label: string, value: string, test: string}>();
+  versions = new Map<number, string>();
+  versionsSel = new Array<number>();
+  // versionsSel = new Array<{label: string, value: number}>();
+  models = new Map<string, string>();
+  modelsTests = new Map<string, string>();
   modelsSel = new Array<string>();
 
   selectedLayout = '';
@@ -179,7 +181,7 @@ export class GvplayoutComponent implements OnInit {
     }
 
     const test = testlist[0];
-    this.TESTMAP[testname] = test;
+    this.TESTMAP.set(testname, test);
 
     this.testObject = {
       id: '',
@@ -202,8 +204,9 @@ export class GvplayoutComponent implements OnInit {
         JSONAttr: 'mctool.version'
     };
     this.api.get<GvpUniq<number>>('api/uniqlookup', config).subscribe((response) => {
+      const versions = new Map<number, string>();
       for (const i of response.values) {
-        if (this.versions.map(e => e.value).indexOf(i) === -1) {
+        if (!this.versions.has(i)) {
           // this.versionDropDowns[0].values.push(i);
           const result = this.MCToolNameVersionCache.get(i);
           if (result === undefined) {
@@ -217,14 +220,14 @@ export class GvplayoutComponent implements OnInit {
           const name = this.MCToolNameCache.get(mctoolNameId);
           // this.versionHumanName[mctoolNameVersionId] = `${name}: ${version}`;
           // this.releaseDate[mctoolNameVersionId] = release_date;
-          this.versions.push({label: `${name}: ${version}`, value: i});
+          versions.set(i, `${name}: ${version}`);
         }
       }
 
-      this.versions.sort((a, b) => (a.label.localeCompare(b.label)));
+      this.versions = new Map<number, string>(Array.from(versions.entries()).sort((a, b) => (a[1].localeCompare(b[1]))));
 
-      if (this.versions.length === 1) {
-        this.versionSel = this.versions.map(e => e.value);
+      if (this.versions.size === 1) {
+        this.versionsSel = this.versions.entries[0][0];
       }
     });
   }
@@ -241,8 +244,9 @@ export class GvplayoutComponent implements OnInit {
       const responceValues = response.values.slice();
       responceValues.sort();
       for (const v of responceValues) {
-        if (this.models.map((e) => e.value).indexOf(v) === -1) {
-          this.models.push({label: v, value: v, test: testname});
+        if (!this.models.has(v)) {
+          this.models.set(v, v);
+          this.modelsTests.set(v, testname);
         }
       }
 
@@ -254,7 +258,7 @@ export class GvplayoutComponent implements OnInit {
       if (this.DefaultBlock.has('model')) {
         for (const i of this.DefaultBlock.get('model').split('|')) {
           if (
-            this.models.map((e) => e.value).indexOf(i) !== -1 &&
+            this.models.has(i) &&
             this.modelsSel.indexOf(i) === -1
           ) {
             this.modelsSel.push(i);
@@ -369,12 +373,13 @@ export class GvplayoutComponent implements OnInit {
   }
 
   onSelectLayout() {
-    console.log(this.selectedLayout);
+    // console.log(this.selectedLayout);
     this.downloadLayout(this.selectedLayout).subscribe((results) => {
-      this.models = [];
+      this.models = new Map<string, string>();
+      this.modelsTests = new Map<string, string>();
       this.modelsSel = [];
-      this.versions = [];
-      this.versionSel = [];
+      this.versions = new Map<number, string>();
+      this.versionsSel = [];
       this.availableExpDataforTest = [];
       this.updateMenu(results);
       this.loadComplete = true;
@@ -383,14 +388,17 @@ export class GvplayoutComponent implements OnInit {
 
   cantPlot() {
     if (this.selectedLayout === '' || this.selectedLayout === undefined) {
+      // console.log('Can\'t plot: no layout selected');
       return true;
     }
 
-    if (this.versionSel.length === 0 && this.versions.length !== 0) {
+    if (this.versionsSel.length === 0 && this.versions.size !== 0) {
+      // console.log('Can\'t plot: no versions selected');
       return true;
     }
 
     if (this.modelsSel.length === 0) {
+      // console.log('Can\'t plot: no models selected');
       return true;
     }
 
@@ -429,10 +437,22 @@ export class GvplayoutComponent implements OnInit {
   magic() {
     this.plotList.forEach((aplot) => {
       aplot.resizeImage(this.getImageSize());
-      aplot.versionId = this.versionSel;
-      aplot.model = this.modelsSel.join('|');
+      aplot.versionId = this.versionsSel;
+      aplot.config.model = this.modelsSel.join('|');
+      const test = this.TESTMAP.get(aplot.config.test);
+      if (test === undefined) {
+        console.log(`Test ${aplot.config.test} not found!`);
+        return;
+      }
+      aplot.testId = test.test_id;
       aplot.draw();
     });
     this.sidenav.close();
+  }
+
+  removeV(vs: number) {
+    if (this.versionsSel.indexOf(vs) !== -1) {
+      this.versionsSel.splice(this.versionsSel.indexOf(vs), 1);
+    }
   }
 }

@@ -27,8 +27,13 @@
             <mat-card-header><mat-card-title><mat-icon>bookmark</mat-icon> Version</mat-card-title></mat-card-header>
             <mat-card-content>
             <mat-select required multiple [(value)]="versionsSel">
-                <mat-option *ngFor="let v of versions" [value]="v.value">{{v.label}}</mat-option>
+                <mat-option *ngFor="let v of versions | keyvalue" [value]="v.key">{{v.value}}</mat-option>
             </mat-select>
+            <mat-chip-list>
+                <mat-chip *ngFor="let vs of versionsSel" removable="true" (removed)="removeV(vs)">{{versions.get(vs)}}
+                    <mat-icon matChipRemove>cancel</mat-icon>
+                </mat-chip>
+            </mat-chip-list>
             </mat-card-content>
         </mat-card>
 

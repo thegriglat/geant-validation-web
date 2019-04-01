@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { concatMap, mergeMap, mergeAll, map, reduce } from 'rxjs/operators';
+import { concatMap, map } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { GvpPlotData, GvpPlotXML, GvpPlotRequest } from './gvp-plot';
-import { Observable, forkJoin, concat, merge } from 'rxjs';
+import { Observable, forkJoin } from 'rxjs';
 import { GVPAPIService } from './gvpapi.service';
 
 @Injectable({
@@ -26,6 +26,8 @@ export class PlotService extends GVPAPIService {
   }
 
   protected getPlotData(config: GvpPlotXML, testId: number, versionId: number[]): Observable<GvpPlotData[]> {
-    return forkJoin(versionId.map((e) => this.getPlotId(config, testId, e).pipe(concatMap((id) => this.getPlotDataById(id)))));    
+    return forkJoin(
+      versionId.map((e) => this.getPlotId(config, testId, e)
+      .pipe(concatMap((id) => this.getPlotDataById(id)), map((q) => q[0]))));
   }
 }

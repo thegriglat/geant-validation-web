@@ -17,7 +17,7 @@ export class PlotComponent implements OnInit {
   plotHeight: number;
   public testId: number;
   public versionId: number[];
-  public model: string;
+  // public model: string;
 
   @Input()
   public config: GvpPlot;

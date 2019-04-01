@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { PlotService } from './plot.service';
 import { GvpPlotXML, GvpPlotData, GvpPngRequest } from './gvp-plot';
-import { concatMap } from 'rxjs/operators';
+import { concatMap, tap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -16,7 +16,8 @@ export class StaticplotService extends PlotService {
 
   private prepareRequest(config: GvpPlotXML, data: GvpPlotData[]): GvpPngRequest {
     const obj = new GvpPngRequest();
-    obj.data = data;
+    console.log('PrepareRequest: ', data);
+    obj.data = data;  // data[0] as unknown as GvpPlotData[];
     obj.xaxis = config.xaxis;
     obj.yaxis = config.yaxis;
     obj.xmin = config.xmin;
@@ -32,6 +33,7 @@ export class StaticplotService extends PlotService {
 
   public getPlot(config: GvpPlotXML, testId: number, versionId: number[]): Observable<any> {
     return super.getPlotData(config, testId, versionId).pipe(
+      tap((data) => console.log('getPlotData returned', data)),
       concatMap((data) => { const req = this.prepareRequest(config, data);
                             return this.post('api/getPNG', req); }
       )
