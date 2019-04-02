@@ -7,47 +7,79 @@ import { GVPAPIService } from '../gvpapi.service';
 import { MatSidenav } from '@angular/material';
 import { HttpParams } from '@angular/common/http';
 
+/**
+ * Shows plots for a given version(s) and model(s) using a predefined or custom template
+ */
 
 @Component({
   selector: 'app-gvplayout',
   templateUrl: './gvplayout.component.html',
   styleUrls: ['./gvplayout.component.css']
 })
-
-
 export class GvplayoutComponent implements OnInit {
 
   constructor(private layoutService: LayoutService, private api: GVPAPIService) {
   }
 
   // Bindings
+  /** List of available MC tool versions: depends on test(s) included in layout; 
+   *
+   * key: version_id (used in API requests)
+   *
+   * value: human-readable version (Name: version)
+   *
+   */
   versions = new Map<number, string>();
+  /**
+   * List of MC tool versions selected for plotting
+   * (value of Version dropdown)
+   */
   versionsSel = new Array<number>();
-  // versionsSel = new Array<{label: string, value: number}>();
+
+  /** List of available models/physics lists */
   models = new Map<string, string>();
+  /** Maps model to test; unused */
   modelsTests = new Map<string, string>();
+  /** List of selected models
+   * (value of Model dropdown)
+   */
   modelsSel = new Array<string>();
 
+  /** Value of layout dropdown */
   selectedLayout = '';
   pTemplates = new Array();
 
   // Components
+  /** list of all [plots]{@link PlotComponent} in a layout */
   @ViewChildren(PlotComponent) plotList: QueryList<PlotComponent>;
+  /** [menu]{@link MatSidenav} object */
   @ViewChild(MatSidenav) sidenav: MatSidenav;
 
   // Internal variables
+  /** 2D array of [plots]{@link GvpPlot} in selected layout */
   plots =  new Array<Array<GvpPlot>>();
+  /** Array contating row-sums of [span]{@link GvpPlot.span} values in [plots]{@link this.plots} array */
   spans = new Array<number>();
-  contents = '';
+  // contents = '';
+  /** List of all tests in selected layout */
   tests = new Array<string>();
+  /** TODO: use this to hide plots when selection is changed */
   magicPressed = false;
+  /** TODO: unused? */
   loadComplete = false;
+  /** State of the menu */
   opened = true;
+  /** Default options for constructing [GvpPlotXML]{@link GvpPlotXML} */
   DefaultBlock = new Map<string, any>();
+  /** */
   ALLTESTS = new Array<GvpTest>();
+  /** TODO: use */
   showPhysListSelection = false;
+  /** */
   TESTMAP = new Map<string, GvpTest>();
+  /** TODO: unused? */
   testObject: GvpTestRequest;
+  /** TODO: unused? */
   selectedItem: GvpTest;
   availableExpDataforTest = new Array<GvpExpData>();
   MCToolNameVersionCache = new Map<number, {version: string, mctool_name_id: number, release_date: string}>();
