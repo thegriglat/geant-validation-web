@@ -16,8 +16,8 @@ export class StaticplotService extends PlotService {
 
   private prepareRequest(config: GvpPlotXML, data: GvpPlotData[]): GvpPngRequest {
     const obj = new GvpPngRequest();
-    console.log('PrepareRequest: ', data);
-    obj.data = data;  // data[0] as unknown as GvpPlotData[];
+    // console.log('PrepareRequest: ', data, 'energy', config.energy);
+    obj.data = data.filter((p) => p.metadata.beam_energy_str === config.energy);
     obj.xaxis = config.xaxis;
     obj.yaxis = config.yaxis;
     obj.xmin = config.xmin;
@@ -33,8 +33,9 @@ export class StaticplotService extends PlotService {
 
   public getPlot(config: GvpPlotXML, testId: number, versionId: number[]): Observable<any> {
     return super.getPlotData(config, testId, versionId).pipe(
-      tap((data) => console.log('getPlotData returned', data)),
+      // tap((data) => console.log('getPlotData returned', data)),
       concatMap((data) => { const req = this.prepareRequest(config, data);
+                            // console.log('prepareRequest returned', req);
                             return this.post('api/getPNG', req); }
       )
     );

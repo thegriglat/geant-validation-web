@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { concatMap, map } from 'rxjs/operators';
-import { HttpClient } from '@angular/common/http';
+import { concatMap, map, tap, concatAll } from 'rxjs/operators';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { GvpPlotData, GvpPlotXML, GvpPlotRequest } from './gvp-plot';
 import { Observable, forkJoin } from 'rxjs';
 import { GVPAPIService } from './gvpapi.service';
@@ -16,18 +16,28 @@ export class PlotService extends GVPAPIService {
 
   // TODO: ratio!
 
-  private getPlotId(config: GvpPlotXML, testId: number, versionId: number): Observable<number> {
-    const params: GvpPlotRequest = new GvpPlotRequest(config, testId, versionId);
-    return this.get<number>('api/getPlotId/', params);
+  private getPlotId(config: GvpPlotXML, testId: number, versionId: number): Observable<number[]> {
+    const request: GvpPlotRequest = new GvpPlotRequest(config, testId, versionId);
+    let params = new HttpParams();
+    for (const k of Object.keys(request)) {
+      params = params.set(k, request[k]);
+    }
+    return this.get<number[]>('api/getPlotId/', params); // .pipe(
+      // tap((data) => console.log('getPlotId returned', data)));
   }
 
-  private getPlotDataById(id: number): Observable<GvpPlotData> {
-    return this.get<GvpPlotData>('api/multiget/', {ids: String(id)});
+  private getPlotDataById(id: number[][]): Observable<GvpPlotData[]> {
+    const params = '?ids=' + id.reduce((acc, val) => acc.concat(val), []).join('&ids=');
+    return this.get<GvpPlotData[]>('api/multiget/' + params);
   }
 
   protected getPlotData(config: GvpPlotXML, testId: number, versionId: number[]): Observable<GvpPlotData[]> {
     return forkJoin(
-      versionId.map((e) => this.getPlotId(config, testId, e)
-      .pipe(concatMap((id) => this.getPlotDataById(id)), map((q) => q[0]))));
-  }
+      versionId.map((e) => this.getPlotId(config, testId, e)))
+      .pipe(
+        // tap((data) => console.log('before concatMap', data)),
+        concatMap((id) => this.getPlotDataById(id)) // ,
+        // tap((data) => console.log('after concatMap', data))
+      );
+    }
 }

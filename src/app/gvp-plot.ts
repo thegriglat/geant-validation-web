@@ -51,7 +51,8 @@ export class GvpPlotData {
         reaction: string;
         targetName: string;
         beamParticle: string;
-        beamEnergies: Array<number> | string;
+        beamEnergies: Array<number>;
+        beam_energy_str: string;
         secondaryParticle: string;
         parameters: Array<GvpParameter>;
       };
@@ -64,6 +65,7 @@ export class GvpPlotXML {
     test: string;
     observable: string;
     beam: string;
+    energy: string;
     model: string;
     target: string;
     secondary: string;

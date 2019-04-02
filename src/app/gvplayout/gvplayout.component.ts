@@ -5,6 +5,7 @@ import { GvpPlot, GvpTest, GvpTestRequest, GvpExpData, GvpUniq, GvpMctoolNameVer
 import { PlotComponent } from '../plot/plot.component';
 import { GVPAPIService } from '../gvpapi.service';
 import { MatSidenav } from '@angular/material';
+import { HttpParams } from '@angular/common/http';
 
 
 @Component({
@@ -73,7 +74,7 @@ export class GvplayoutComponent implements OnInit {
     });
 
     // Populate caches
-    this.api.get<GvpMctoolNameVersion[]>('api/mctool_name_version', {}).subscribe(response => {
+    this.api.get<GvpMctoolNameVersion[]>('api/mctool_name_version').subscribe(response => {
       for (const elem of response) {
         this.MCToolNameVersionCache.set(elem.mctool_name_version_id, {
           version: elem.version,
@@ -83,7 +84,7 @@ export class GvplayoutComponent implements OnInit {
       }
     });
 
-    this.api.get<GvpMctoolName[]>('api/mctool_name', {}).subscribe(response => {
+    this.api.get<GvpMctoolName[]>('api/mctool_name').subscribe(response => {
       for (const elem of response) {
         this.MCToolNameCache.set(elem.mctool_name_id, elem.mctool_name_name);
       }
@@ -137,6 +138,7 @@ export class GvplayoutComponent implements OnInit {
         obj[i.name] = i.value;
         obj.empty = false;
       }
+      obj.text = '\\mathrm{' + obj.text.replace(/ /g, ' \\space ') + '}';
     }
     return obj;
   }
@@ -150,7 +152,7 @@ export class GvplayoutComponent implements OnInit {
   private waitForTest(): Promise<any> {
     this.ALLTESTS.length = 0;
     return new Promise((resolve) => {
-      this.api.get<GvpTest[]>('api/test', {}).subscribe(data => {
+      this.api.get<GvpTest[]>('api/test').subscribe(data => {
           this.ALLTESTS = data.filter(elem => elem.test_name !== 'experiment');
           resolve();
         });
@@ -158,7 +160,9 @@ export class GvplayoutComponent implements OnInit {
   }
 
   private updateExpDescription(testId: number) {
-    this.api.get<GvpExpData[]>('api/getexperimentsinspirefortest', {test_id: testId}).subscribe((result) => {
+    let httpParams = new HttpParams();
+    httpParams = httpParams.set('test_id', String(testId));
+    this.api.get<GvpExpData[]>('api/getexperimentsinspirefortest', httpParams).subscribe((result) => {
       const rmod = result.map(e => {
         e.expname = e.expname ? e.expname : 'exp. data';
         return e;
@@ -194,15 +198,14 @@ export class GvplayoutComponent implements OnInit {
 
     this.selectedItem = test;
     this.updateExpDescription(test.test_id);
+    let config = new HttpParams();
+    config = config.set('test_id', String(test.test_id));
+    config = config.set('table', 'mctool_name_version');
+    config = config.set('onplot', 'mctool_name_version_id');
+    config = config.set('ontable', 'mctool_name_version_id');
+    config = config.set('namefield', 'mctool_name_version_id');
+    config = config.set('JSONAttr', 'mctool.version');
 
-    const config = {
-        test_id: test.test_id,
-        table: 'mctool_name_version',
-        onplot: 'mctool_name_version_id',
-        ontable: 'mctool_name_version_id',
-        namefield: 'mctool_name_version_id',
-        JSONAttr: 'mctool.version'
-    };
     this.api.get<GvpUniq<number>>('api/uniqlookup', config).subscribe((response) => {
       const versions = new Map<number, string>();
       for (const i of response.values) {
@@ -227,7 +230,7 @@ export class GvplayoutComponent implements OnInit {
       this.versions = new Map<number, string>(Array.from(versions.entries()).sort((a, b) => (a[1].localeCompare(b[1]))));
 
       if (this.versions.size === 1) {
-        this.versionsSel = this.versions.entries[0][0];
+        this.versionsSel = [this.versions.entries[0][0]];
       }
     });
   }
@@ -236,10 +239,9 @@ export class GvplayoutComponent implements OnInit {
     const testlist = this.ALLTESTS.filter(elem => elem.test_name === testname);
     if (testlist.length === 0) { return; }
     const test = testlist[0];
-    const config = {
-        test_id: test.test_id,
-        JSONAttr: 'mctool.model'
-    };
+    let config = new HttpParams();
+    config = config.set('test_id', String(test.test_id));
+    config = config.set('JSONAttr', 'mctool.model');
     this.api.get<GvpUniq<string>>('/api/uniqlookup', config).subscribe(response => {
       const responceValues = response.values.slice();
       responceValues.sort();
@@ -445,6 +447,7 @@ export class GvplayoutComponent implements OnInit {
         return;
       }
       aplot.testId = test.test_id;
+      aplot.status = '';
       aplot.draw();
     });
     this.sidenav.close();

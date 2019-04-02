@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { environment } from './../environments/environment';
 
 @Injectable({
@@ -11,10 +11,14 @@ export class GVPAPIService {
   constructor(protected http: HttpClient) {
   }
 
-  public get<T>(url: string, params: any): Observable<T> {
+  public get<T>(url: string, params?: HttpParams): Observable<T> {
     while (url[0] === '/') { url = url.substr(1); }
     const fullurl = `${environment.APIEndpoint}${url}`;
-    return this.http.get<T>(fullurl, {params: params as any});
+    if (params !== undefined) {
+      return this.http.get<T>(fullurl, {params});
+    } else {
+      return this.http.get<T>(fullurl);
+    }
   }
 
   public post<T>(url: string, body: any): Observable<T> {
