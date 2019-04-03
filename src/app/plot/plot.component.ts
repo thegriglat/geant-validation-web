@@ -3,6 +3,9 @@ import { GvpPlot } from '../gvp-plot';
 import { StaticplotService } from '../staticplot.service';
 import { environment } from './../../environments/environment';
 
+/**
+ * Container for a single plot. WIP.
+ */
 @Component({
   selector: 'app-plot',
   templateUrl: './plot.component.html',
@@ -17,7 +20,6 @@ export class PlotComponent implements OnInit {
   plotHeight: number;
   public testId: number;
   public versionId: number[];
-  // public model: string;
 
   @Input()
   public config: GvpPlot;

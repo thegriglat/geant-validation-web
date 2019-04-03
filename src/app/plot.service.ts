@@ -14,7 +14,7 @@ export class PlotService extends GVPAPIService {
     super(http);
   }
 
-  // TODO: ratio!
+  // TODO: ratio; reference
 
   private getPlotId(config: GvpPlotXML, testId: number, versionId: number): Observable<number[]> {
     const request: GvpPlotRequest = new GvpPlotRequest(config, testId, versionId);

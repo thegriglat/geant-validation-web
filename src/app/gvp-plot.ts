@@ -1,8 +1,12 @@
+// Data types used by GVP API
+
+/** Plot parameter (e.g. angle); used by backend */
 export class GvpParameter {
     names: string;
     values: string;
 }
 
+/** Container for chart (scatterplot) data */
 export class GvpChart {
     nPoints: number;
     title: string;
@@ -20,6 +24,7 @@ export class GvpChart {
     ySysErrorsMinus: Array<number>;
 }
 
+/** Container for histogram data */
 export class GvpHistogram {
     nBins: Array<number>;
     title: string;
@@ -35,6 +40,7 @@ export class GvpHistogram {
     binLabel?: Array<string>;
 }
 
+/** Container for Plot data (as returned by `/api/getPlotData`) */
 export class GvpPlotData {
     id: number;
     article: {
@@ -61,6 +67,7 @@ export class GvpPlotData {
     histogram?: GvpHistogram;
 }
 
+/** Plot information for loading from XML file */
 export class GvpPlotXML {
     test: string;
     observable: string;
@@ -81,6 +88,7 @@ export class GvpPlotXML {
     ymin?: number;
 }
 
+/** Parameters of `/api/getPlotId` method */
 export class GvpPlotRequest {
     /* tslint:disable:variable-name */
     test_id: number;
@@ -103,6 +111,7 @@ export class GvpPlotRequest {
     }
 }
 
+/** Additiona properties of Plot, used for displaying. TODO: Merge into PlotComponent. */
 export class GvpPlot extends GvpPlotXML {
     empty: boolean;
     type: string;
@@ -113,6 +122,7 @@ export class GvpPlot extends GvpPlotXML {
     /* tslint:enable:variable-name */
 }
 
+/** Parameters of `/api/getPNG` method */
 export class GvpPngRequest {
     data: GvpPlotData[];
     xaxis?: string;
@@ -126,19 +136,26 @@ export class GvpPngRequest {
     markersize: number;
 }
 
+/** Not used? */
 export class GvpStaticPlot extends GvpPlot {
     status: string;
     filename: string;
     data: GvpPlotData;
 }
 
+/** Information about a single layout */
 export class GvpLayout {
     title: string;
     tags: Array<string>;
 }
 
+/** Information about available layouts (obtained from https://gitlab.com/thegriglat/geant-val-layouts/blob/master/tags.json) 
+ * key: layout file name
+ * value: GvpLayout object (title and list of tags)
+*/
 export type GvpLayouts = Map<string, GvpLayout>;
 
+/** Test information returned by API */
 export class GvpTest {
     description: string;
     keywords?: Array<string>;
@@ -152,6 +169,7 @@ export class GvpTest {
 /* tslint:enable:variable-name */
 }
 
+/** Parameters for requesting Test information */
 export class GvpTestRequest {
     id: string;
     versiontag: string;
@@ -161,6 +179,7 @@ export class GvpTestRequest {
     oname: string;
 }
 
+/** Information about experimental data as returned by API */
 export class GvpExpData {
 // tslint:disable-next-line: variable-name
     inspire_id: number;
@@ -177,11 +196,13 @@ export class GvpExpData {
     expname: string;
 }
 
+/** Parameters for /api/uniq method */
 export class GvpUniq<T> {
     JSONAttr: string;
     values: Array<T>;
 }
 
+/** Information about a single MC Tool Verison (as returned by API) */
 export class GvpMctoolNameVersion {
 // tslint:disable-next-line: variable-name
     mctool_name_version_id: number;
@@ -192,10 +213,10 @@ export class GvpMctoolNameVersion {
     release_date: string;
 }
 
+/** Information about a single MC Tool (as returned by API) */
 export class GvpMctoolName {
 // tslint:disable-next-line: variable-name
     mctool_name_name: string;
 // tslint:disable-next-line: variable-name
     mctool_name_id: number;
-
 }

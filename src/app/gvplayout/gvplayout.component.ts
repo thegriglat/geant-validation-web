@@ -8,7 +8,7 @@ import { MatSidenav } from '@angular/material';
 import { HttpParams } from '@angular/common/http';
 
 /**
- * Shows plots for a given version(s) and model(s) using a predefined or custom template
+ * Shows [plots]{@link PlotComponent} for a given version(s) and model(s) using a predefined or custom template
  */
 
 @Component({
@@ -22,7 +22,7 @@ export class GvplayoutComponent implements OnInit {
   }
 
   // Bindings
-  /** List of available MC tool versions: depends on test(s) included in layout; 
+  /** List of available MC tool versions: depends on test(s) included in layout;
    *
    * key: version_id (used in API requests)
    *
@@ -73,7 +73,7 @@ export class GvplayoutComponent implements OnInit {
   DefaultBlock = new Map<string, any>();
   /** */
   ALLTESTS = new Array<GvpTest>();
-  /** TODO: use */
+  /** WIP */
   showPhysListSelection = false;
   /** */
   TESTMAP = new Map<string, GvpTest>();
@@ -81,12 +81,22 @@ export class GvplayoutComponent implements OnInit {
   testObject: GvpTestRequest;
   /** TODO: unused? */
   selectedItem: GvpTest;
+  /** WIP: Experimental data */
   availableExpDataforTest = new Array<GvpExpData>();
-  MCToolNameVersionCache = new Map<number, {version: string, mctool_name_id: number, release_date: string}>();
+  /**
+   * Cache of MC tool names, populated on page load
+   * key: database ID (used in API requests)
+   * value: tool name (e.g. 'Geant 4')
+   */
   MCToolNameCache = new Map<number, string>();
+  /** Cache of MC tool versions, popuated on page load
+   * key: database ID (used in API requests)
+   * release_date field not used
+   */
+  MCToolNameVersionCache = new Map<number, {version: string, mctool_name_id: number, release_date: string}>();
   // *del* versionHumanName = {};
   // *del* releaseDate = {};
-
+  /** List of selected tags (used for filtering layouts list) */
   checkedTags = new Set<string>();
 
   ngOnInit() {
@@ -123,16 +133,19 @@ export class GvplayoutComponent implements OnInit {
     });
   }
 
+  /** Wrapper for [layoutService.getLayout]{@link layoutService.getLayout} */
   downloadLayout(file: string): Observable<Document|null> {
     return this.layoutService.getLayout(file);
   }
 
+  /** Load default values from XML */
   readDefaultBlock(node: Element) {
     for (const i of Array.from(node.attributes)) {
       this.DefaultBlock.set(i.name, i.value);
     }
   }
 
+  /** Create [GvpPlot]{@link GvpPlot} object from XML node */
   convertXMLPlot2Object(plot: Element): GvpPlot {
     let obj: GvpPlot;
     if (plot.nodeName === 'plot') {
@@ -175,12 +188,14 @@ export class GvplayoutComponent implements OnInit {
     return obj;
   }
 
+  /** Populate list of tests used in a given layout */
   private filltests(o: GvpPlot) {
     if (o.type === 'plot' && o.test) {
       this.tests.push(o.test);
     }
   }
 
+  /** Populate list of available tests */
   private waitForTest(): Promise<any> {
     this.ALLTESTS.length = 0;
     return new Promise((resolve) => {
@@ -191,6 +206,7 @@ export class GvplayoutComponent implements OnInit {
     });
   }
 
+  /** Set human-readable experimental data names */
   private updateExpDescription(testId: number) {
     let httpParams = new HttpParams();
     httpParams = httpParams.set('test_id', String(testId));
@@ -208,6 +224,7 @@ export class GvplayoutComponent implements OnInit {
     });
   }
 
+  /** WIP: Populate list of MC Tool versions for which data exists for a given test */
   private getVersionsByTest(testname: string) {
     this.magicPressed = false;
     // this.selected = '1';
@@ -267,6 +284,7 @@ export class GvplayoutComponent implements OnInit {
     });
   }
 
+  /** WIP: Populate list of models (phys. lists) used in a given test */
   getModelsByTest(testname: string) {
     const testlist = this.ALLTESTS.filter(elem => elem.test_name === testname);
     if (testlist.length === 0) { return; }
@@ -302,10 +320,12 @@ export class GvplayoutComponent implements OnInit {
     });
   }
 
+  /** Operator for [Array.filter]{@link Array.filter} returning only unique items */
   private distinct(value, index, arr) {
     return arr.indexOf(value) === index;
   }
 
+  /** Parse layout file and populate GUI elements */
   updateMenu(xml: Document | null) {
     // Empty the arrays
     this.spans.length = 0;
@@ -370,16 +390,19 @@ export class GvplayoutComponent implements OnInit {
       this.plots = plots;
     });
 
+    // Calculates per-row sum of colspans in a layout
     for (const row of plots) {
       this.spans.push(row.map((e) => e.colspan).reduce((a, b) => isNaN(b) ? a - -1 : (a - -b), 0));
     }
     this.plots = plots;
   }
 
+  /** Ununsed? */
   uniqueTags(list: Array<any>) {
     return list.map(t => t[2]).reduce((p, c) => p.concat(c), []).filter(this.distinct);
   }
 
+  /** Event handler for tag filter */
   checkTag(tag: string) {
     if (this.checkedTags.has(tag)) {
       this.checkedTags.delete(tag);
@@ -388,10 +411,12 @@ export class GvplayoutComponent implements OnInit {
     }
   }
 
+  /** Model -> View binding for tag filter */
   isTagChecked(tag: string) {
     return this.checkedTags.has(tag);
   }
 
+  /** Model <-> View binding to filter layouts based on tags */
   isLayoutShown(tags: Array<string>): boolean {
     if (this.checkedTags.size !== 0) {
       for (const tag of tags) {
@@ -406,6 +431,7 @@ export class GvplayoutComponent implements OnInit {
     }
   }
 
+  /** Event handler: layout selected */
   onSelectLayout() {
     // console.log(this.selectedLayout);
     this.downloadLayout(this.selectedLayout).subscribe((results) => {
@@ -420,6 +446,7 @@ export class GvplayoutComponent implements OnInit {
     });
   }
 
+  /** Controls if 'Plot' button is disabled */
   cantPlot() {
     if (this.selectedLayout === '' || this.selectedLayout === undefined) {
       // console.log('Can\'t plot: no layout selected');
@@ -439,6 +466,7 @@ export class GvplayoutComponent implements OnInit {
     return false;
   }
 
+  /** Calculates plot sizes; TODO: call this when opening/closing the menu */
   getImageSize(bootstrapColumn?: number) {
     const imageprop = 1500 / 1100;
 
@@ -468,6 +496,7 @@ export class GvplayoutComponent implements OnInit {
     };
   }
 
+  /** Event handler: 'Plot' button clicked */
   magic() {
     this.plotList.forEach((aplot) => {
       aplot.resizeImage(this.getImageSize());
@@ -485,6 +514,7 @@ export class GvplayoutComponent implements OnInit {
     this.sidenav.close();
   }
 
+  /** WIP: called when removing a [chip]{@link MatChip} containing a version is removed */
   removeV(vs: number) {
     if (this.versionsSel.indexOf(vs) !== -1) {
       this.versionsSel.splice(this.versionsSel.indexOf(vs), 1);
