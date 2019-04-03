@@ -1,2 +1,5 @@
-<img *ngIf="status == 'OK'" [src]="filename" [ngStyle]="{'width': plotWidth+'px', 'height': plotHeight+'px'}">
+<ng-container *ngIf="status == 'OK'">
+    <img [src]="filename" [ngStyle]="{'width': plotWidth+'px', 'height': plotHeight+'px'}">
+    <ng-katex *ngIf="config.title !== undefined && config.title !== ''" [equation]="config.title"></ng-katex>
+</ng-container>
 <mat-spinner *ngIf="status !== 'OK'" style="max-width: 95%"></mat-spinner>

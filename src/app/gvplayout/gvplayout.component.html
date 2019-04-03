@@ -1,5 +1,5 @@
 <mat-sidenav-container fullscreen>
-    <mat-sidenav #sidenav mode="push" opened style="width: 25%;">
+    <mat-sidenav #sidenav mode="push" opened (opened)="onMenuOpen()" (closed)="onMenuClose" style="width: 25%;">
         <mat-toolbar color="primary">
             <span class="toolbar-filler"></span>
             <button mat-mini-fab color="primary" (click)="sidenav.toggle()" [hidden]="!sidenav.opened">
@@ -15,15 +15,16 @@
                     </ng-container>
                 </mat-select>
                     <mat-label>Tags</mat-label>
-                    <mat-list *ngFor="let tag of uniqueTags(pTemplates)">
-                        <mat-list-item>
+                    <mat-list style="padding-bottom: 8px;">
+                        <mat-list-item style="height: auto;" *ngFor="let tag of uniqueTags(pTemplates)">
                             <mat-checkbox [checked]="isTagChecked(tag)" (change)="checkTag(tag)">{{tag}}</mat-checkbox>
                         </mat-list-item>
                     </mat-list> 
+                    <mat-checkbox [checked]="useMarkers">Use markers</mat-checkbox>
             </mat-card-content>
         </mat-card>
 
-        <mat-card [hidden]="versions.length === 0">
+        <mat-card [hidden]="menuUpdated">
             <mat-card-header><mat-card-title><mat-icon>bookmark</mat-icon> Version</mat-card-title></mat-card-header>
             <mat-card-content>
                 <mat-select required multiple [(value)]="versionsSel">
@@ -40,11 +41,11 @@
         </mat-card>
 
 
-        <mat-card>
+        <mat-card [hidden]="menuUpdated && showPhysListSelection">
             <mat-card-header><mat-card-title><mat-icon>bookmark</mat-icon> Physics List/Model</mat-card-title></mat-card-header>
             <mat-card-content>
                 <mat-select required multiple [(value)]="modelsSel">
-                    <mat-option *ngFor="let m of models | keyvalue" [value]="m.key">{{m.value}}</mat-option>
+                    <mat-option *ngFor="let m of models" [value]="m">{{m}}</mat-option>
                 </mat-select>
             </mat-card-content>
         </mat-card>
@@ -72,7 +73,7 @@
             <!--<button id="button-login" md-button [routerLink]="['/signupin']" *ngIf="!(user | async)">Log In</button>-->
             <!--<button id="button-logout" md-button>Log Out</button>-->
         </mat-toolbar>
-        <table>
+        <table [hidden]="!magicPressed">
             <tr *ngFor="let row of plots">
                 <td *ngFor="let aplot of row" [attr.colspan]="aplot.colspan" style="text-align: center">
                     <ng-katex *ngIf="aplot.type == 'text'" [equation]="aplot.text"></ng-katex>

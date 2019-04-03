@@ -18,6 +18,7 @@ export class PlotComponent implements OnInit {
   filename: string;
   plotWidth: number;
   plotHeight: number;
+  useMarkers: boolean;
   public testId: number;
   public versionId: number[];
 
@@ -34,7 +35,7 @@ export class PlotComponent implements OnInit {
   }
 
   draw() {
-    this.service.getPlot(this.config, this.testId, this.versionId).subscribe(
+    this.service.getPlot(this.config, this.testId, this.versionId, this.useMarkers).subscribe(
       (res) => {this.filename = environment.APIEndpoint + res.filename;
                 this.status = res.status; });
   }

@@ -86,6 +86,9 @@ export class GvpPlotXML {
     xmin?: number;
     ymax?: number;
     ymin?: number;
+    parname?: string;
+    parvalue?: string;
+    markerSize?: number;
 }
 
 /** Parameters of `/api/getPlotId` method */
@@ -111,7 +114,7 @@ export class GvpPlotRequest {
     }
 }
 
-/** Additiona properties of Plot, used for displaying. TODO: Merge into PlotComponent. */
+/** Plot with additional properties used for displaying it */
 export class GvpPlot extends GvpPlotXML {
     empty: boolean;
     type: string;
@@ -143,17 +146,12 @@ export class GvpStaticPlot extends GvpPlot {
     data: GvpPlotData;
 }
 
-/** Information about a single layout */
-export class GvpLayout {
-    title: string;
-    tags: Array<string>;
-}
-
-/** Information about available layouts (obtained from https://gitlab.com/thegriglat/geant-val-layouts/blob/master/tags.json) 
+/** Information about available layouts 
+ * (obtained from https://gitlab.com/thegriglat/geant-val-layouts/blob/master/tags.json)
  * key: layout file name
  * value: GvpLayout object (title and list of tags)
-*/
-export type GvpLayouts = Map<string, GvpLayout>;
+ */
+export type GvpLayouts = Map<string, {title: string, tags: Array<string>}>;
 
 /** Test information returned by API */
 export class GvpTest {

@@ -14,7 +14,7 @@ export class StaticplotService extends PlotService {
     super(http);
   }
 
-  private prepareRequest(config: GvpPlotXML, data: GvpPlotData[]): GvpPngRequest {
+  private prepareRequest(config: GvpPlotXML, data: GvpPlotData[], useMarkers: boolean): GvpPngRequest {
     const obj = new GvpPngRequest();
     // console.log('PrepareRequest: ', data, 'energy', config.energy);
     obj.data = data.filter((p) => p.metadata.beam_energy_str === config.energy);
@@ -27,14 +27,18 @@ export class StaticplotService extends PlotService {
     // TODO
     // obj.refid = '';
     // obj.onlyratio = undefined;
-    // obj.markersize = 1;
+    if (useMarkers) {
+      obj.markersize = config.markerSize || 1;
+    } else {
+      obj.markersize = 0;
+    }
     return obj;
   }
 
-  public getPlot(config: GvpPlotXML, testId: number, versionId: number[]): Observable<any> {
+  public getPlot(config: GvpPlotXML, testId: number, versionId: number[], useMarkers: boolean): Observable<any> {
     return super.getPlotData(config, testId, versionId).pipe(
       // tap((data) => console.log('getPlotData returned', data)),
-      concatMap((data) => { const req = this.prepareRequest(config, data);
+      concatMap((data) => { const req = this.prepareRequest(config, data, useMarkers);
                             // console.log('prepareRequest returned', req);
                             return this.post('api/getPNG', req); }
       )
