@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChildren, QueryList, ViewChild } from '@angular/core';
 import { LayoutService } from '../layout.service';
-import { Observable } from 'rxjs';
+// import { Observable } from 'rxjs';
 import { GvpPlot, GvpTest, GvpTestRequest, GvpExpData, GvpUniq, GvpMctoolNameVersion, GvpMctoolName } from '../gvp-plot';
 import { PlotComponent } from '../plot/plot.component';
 import { GVPAPIService } from '../gvpapi.service';
@@ -51,6 +51,10 @@ export class GvplayoutComponent implements OnInit {
   showPhysListSelection = false;
   /** Binding: show Version and Model dropdowns */
   menuUpdated = false;
+  /** Binding: selected tags (used for filtering layouts list) */
+  checkedTags = new Array<string>();
+  /** Binding: disabled state of "Plot" button */
+  cantPlot: boolean;
 
   // Components
   /** list of all [plots]{@link PlotComponent} in a layout */
@@ -93,8 +97,6 @@ export class GvplayoutComponent implements OnInit {
   MCToolNameVersionCache = new Map<number, {version: string, mctool_name_id: number, release_date: string}>();
   // *del* versionHumanName = {};
   // *del* releaseDate = {};
-  /** List of selected tags (used for filtering layouts list) */
-  checkedTags = new Set<string>();
 
   ngOnInit() {
     this.layoutService.getAllLayouts().subscribe((data) => {
@@ -390,24 +392,25 @@ export class GvplayoutComponent implements OnInit {
   }
 
   /** Event handler for tag filter */
-  checkTag(tag: string) {
-    if (this.checkedTags.has(tag)) {
-      this.checkedTags.delete(tag);
-    } else {
-      this.checkedTags.add(tag);
-    }
-  }
+  // checkTag(tag: string) {
+  //   if (this.checkedTags.has(tag)) {
+  //     this.checkedTags.delete(tag);
+  //   } else {
+  //     this.checkedTags.add(tag);
+  //   }
+  // }
 
   /** Model -> View binding for tag filter */
-  isTagChecked(tag: string) {
-    return this.checkedTags.has(tag);
-  }
+  // isTagChecked(tag: string) {
+  //   return this.checkedTags.has(tag);
+  // }
 
   /** Model <-> View binding to filter layouts based on tags */
   isLayoutShown(tags: Array<string>): boolean {
-    if (this.checkedTags.size !== 0) {
+    if (this.checkedTags.length !== 0) {
+      // console.log(this.checkedTags);
       for (const tag of tags) {
-        if (this.checkedTags.has(tag)) {
+        if (this.checkedTags.indexOf(tag) !== -1) {
           return true;
         }
 
@@ -428,11 +431,14 @@ export class GvplayoutComponent implements OnInit {
       this.versionsSel = [];
       this.availableExpDataforTest = [];
       this.updateMenu(results);
+      this.updateCantPlot();
     });
   }
 
-  /** Controls if 'Plot' button is disabled */
-  cantPlot() {
+  /** Controls if 'Plot' button is disabled
+   *  Is a separate function to avoid ExpressionChangedAfterItHasBeenCheckedError
+   */
+  updateCantPlot() {
     if (this.selectedLayout === '' || this.selectedLayout === undefined) {
       // console.log('Can\'t plot: no layout selected');
       return true;
@@ -443,7 +449,6 @@ export class GvplayoutComponent implements OnInit {
       return true;
     }
 
-    // TODO
     let modelCanChange = false;
     this.plotList.forEach((p) => { modelCanChange = modelCanChange || p.config.isModelCanChange; } );
     if (this.modelsSel.length === 0 && modelCanChange) {

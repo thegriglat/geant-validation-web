@@ -15,11 +15,9 @@
                     </ng-container>
                 </mat-select>
                     <mat-label>Tags</mat-label>
-                    <mat-list style="padding-bottom: 8px;">
-                        <mat-list-item style="height: auto;" *ngFor="let tag of uniqueTags(pTemplates)">
-                            <mat-checkbox [checked]="isTagChecked(tag)" (change)="checkTag(tag)">{{tag}}</mat-checkbox>
-                        </mat-list-item>
-                    </mat-list> 
+                    <mat-selection-list #tags [(ngModel)]="checkedTags">
+                        <mat-list-option style="height: auto;" *ngFor="let tag of uniqueTags(pTemplates)" checkboxPosition="before" [value]="tag">{{tag}}</mat-list-option>
+                    </mat-selection-list>
                     <mat-checkbox [checked]="useMarkers">Use markers</mat-checkbox>
             </mat-card-content>
         </mat-card>
@@ -27,7 +25,7 @@
         <mat-card [hidden]="menuUpdated">
             <mat-card-header><mat-card-title><mat-icon>bookmark</mat-icon> Version</mat-card-title></mat-card-header>
             <mat-card-content>
-                <mat-select required multiple [(value)]="versionsSel">
+                <mat-select required multiple [(value)]="versionsSel" (selectionChange)="updateCantPlot">
                     <mat-option *ngFor="let v of versions | keyvalue" [value]="v.key">{{v.value}}</mat-option>
                 </mat-select>
                 <!--
@@ -44,22 +42,27 @@
         <mat-card [hidden]="menuUpdated && showPhysListSelection">
             <mat-card-header><mat-card-title><mat-icon>bookmark</mat-icon> Physics List/Model</mat-card-title></mat-card-header>
             <mat-card-content>
-                <mat-select required multiple [(value)]="modelsSel">
+                <mat-select required multiple [(value)]="modelsSel" (selectionChange)="updateCantPlot">
                     <mat-option *ngFor="let m of models" [value]="m">{{m}}</mat-option>
                 </mat-select>
             </mat-card-content>
         </mat-card>
 
-        <mat-card>
-            <mat-card-header><mat-card-title><mat-icon>bookmark</mat-icon> Reference</mat-card-title></mat-card-header>
+        <mat-card [hidden]="availableExpDataforTest.length === 0">
+            <mat-card-header><mat-card-title><mat-icon>bookmark</mat-icon> Reference data</mat-card-title></mat-card-header>
             <mat-card-content>
+            <!--
             <mat-select required>
                 <mat-option value=1 selected>Exp. data</mat-option>
-            </mat-select>
+            </mat-select>            
+            -->
+                <mat-selection-list #exp [(ngModel)]="checkedExp">
+                    <mat-list-option style="height: auto;" *ngFor="let exp of availableExpDataforTest" checkboxPosition="before" [value]="exp.expname">{{exp.expname}}</mat-list-option>
+                </mat-selection-list>
             </mat-card-content>
         </mat-card>
             
-        <button type="button" mat-stroked-button color="primary" [disabled]="cantPlot()" (click)="magic()">Plot</button>
+        <button type="button" mat-stroked-button color="primary" [disabled]="cantPlot" (click)="magic()">Plot</button>
     </mat-sidenav>
     <mat-sidenav-content>
         <mat-toolbar id="appToolbar" [ngClass]="{'toolbar-fullscreen': (fullscreen$ | async)}" color="primary">
