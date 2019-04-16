@@ -11,7 +11,7 @@ export class GVPAPIService {
   constructor(protected http: HttpClient) {
   }
 
-  public get<T>(url: string, params?: HttpParams): Observable<T> {
+  public get<T>(url: string, params?: any): Observable<T> {
     while (url[0] === '/') { url = url.substr(1); }
     const fullurl = `${environment.APIEndpoint}${url}`;
     if (params !== undefined) {

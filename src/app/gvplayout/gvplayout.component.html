@@ -57,7 +57,7 @@
             </mat-select>            
             -->
                 <mat-selection-list #exp [(ngModel)]="checkedExp">
-                    <mat-list-option style="height: auto;" *ngFor="let exp of availableExpDataforTest" checkboxPosition="before" [value]="exp.expname">{{exp.expname}}</mat-list-option>
+                    <mat-list-option style="height: auto;" *ngFor="let exp of availableExpDataforTest" checkboxPosition="before" [value]="exp.inspire_id">{{exp.expname}}</mat-list-option>
                 </mat-selection-list>
             </mat-card-content>
         </mat-card>

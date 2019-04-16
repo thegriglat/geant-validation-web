@@ -53,6 +53,8 @@ export class GvplayoutComponent implements OnInit {
   menuUpdated = false;
   /** Binding: selected tags (used for filtering layouts list) */
   checkedTags = new Array<string>();
+  /** Binding: selected experimental data (inspireId-s) */
+  checkedExp = new Array<number>();
   /** Binding: disabled state of "Plot" button */
   cantPlot: boolean;
 
@@ -161,12 +163,10 @@ export class GvplayoutComponent implements OnInit {
     if (plot.nodeName === 'ratio') {
       const dataplot = plot.children[0];
       const refplot = plot.children[1];
-      obj = {
-        type: 'ratio',
-        empty: false,
-        plot: this.convertXMLPlot2Object(dataplot),
-        reference: this.convertXMLPlot2Object(refplot)
-      } as GvpPlot;
+      obj = this.convertXMLPlot2Object(dataplot);
+      obj.reference = this.convertXMLPlot2Object(refplot);
+      obj.type = 'ratio';
+      obj.empty = false;
     }
     if (plot.nodeName === 'label') {
       obj = {
@@ -281,7 +281,7 @@ export class GvplayoutComponent implements OnInit {
       const responceValues = response.values.slice();
       responceValues.sort();
       for (const v of responceValues) {
-        if (this.models.indexOf(v) !== -1) {
+        if (this.models.indexOf(v) === -1) {
           this.models.push(v);
           this.modelsTests.push(testname);
         }
@@ -344,9 +344,9 @@ export class GvplayoutComponent implements OnInit {
           this.showPhysListSelection = true;
           obj.isModelCanChange = true;
         }
-        if (obj.type === 'ratio' && (!obj.plot.model || obj.plot.model.length === 0)) {
+        if (obj.type === 'ratio' && (!obj.model || obj.model.length === 0)) {
           this.showPhysListSelection = true;
-          obj.plot.isModelCanChange = true;
+          obj.isModelCanChange = true;
           obj.reference.isModelCanChange = true;
         }
 
@@ -357,8 +357,8 @@ export class GvplayoutComponent implements OnInit {
         }
 
         if (obj.type === 'ratio') {
-          if (obj.plot.type === 'plot' && obj.plot.test) {
-            this.tests.push(obj.plot.test);
+          if (obj.test) {
+            this.tests.push(obj.test);
           }
           if (obj.reference.type === 'plot' && obj.reference.test) {
             this.tests.push(obj.reference.test);
@@ -493,17 +493,26 @@ export class GvplayoutComponent implements OnInit {
   magic() {
     this.magicPressed = true;
     this.plotList.forEach((aplot) => {
-      aplot.resizeImage(this.getImageSize());
-      aplot.versionId = this.versionsSel;
-      aplot.config.model = this.modelsSel.join('|');
-      aplot.useMarkers = this.useMarkers;
-      const test = this.TESTMAP.get(aplot.config.test);
-      if (test === undefined) {
-        console.log(`Test ${aplot.config.test} not found!`);
-        return;
+      if (aplot.config.test === 'experiment') {
+        aplot.testId = 102;
+        aplot.versionId = [-1];
+        // aplot.config.model = 'experiment';
+      } else {
+        const test = this.TESTMAP.get(aplot.config.test);
+        if (test === undefined) {
+          console.log(`Test ${aplot.config.test} not found!`);
+          return;
+        }
+        aplot.testId = test.test_id;
+        aplot.versionId = this.versionsSel;
+        // aplot.config.model = this.modelsSel.join('|');
       }
-      aplot.testId = test.test_id;
+
+      aplot.useMarkers = this.useMarkers;
       aplot.status = '';
+      aplot.expData = this.checkedExp;
+      aplot.model = this.modelsSel.join('|');
+      aplot.resizeImage(this.getImageSize());
       aplot.draw();
     });
     this.sidenav.close();

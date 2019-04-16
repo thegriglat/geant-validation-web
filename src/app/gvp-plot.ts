@@ -76,7 +76,7 @@ export class GvpPlotXML {
   model: string;
   target: string;
   secondary: string;
-  plot?: GvpPlot;
+  /*plot?: GvpPlot;*/
   reference?: GvpPlot;
   text?: string;
   title?: string;
@@ -89,21 +89,24 @@ export class GvpPlotXML {
   parname?: string;
   parvalue?: string;
   markerSize?: number;
+  onlyration?: boolean;
 }
 
 /** Parameters of `/api/getPlotId` method */
-export class GvpPlotRequest {
+export class GvpPlotIdRequest {
   /* tslint:disable:variable-name */
   test_id: number;
   version_id: number;
+  // beam_energy?: string;
   /* tslint:enable:variable-name */
   observable: string;
   beamparticle: string;
   model: string;
   target: string;
   secondary: string;
+  parameters: string;
 
-  constructor(plot: GvpPlotXML, testId: number, versionId: number) {
+  constructor(plot: GvpPlotXML, testId: number, versionId: number, parameters?: {}) {
     this.test_id = testId;
     this.version_id = versionId;
     this.observable = plot.observable;
@@ -111,6 +114,7 @@ export class GvpPlotRequest {
     this.model = plot.model;
     this.target = plot.target;
     this.secondary = plot.secondary;
+    this.parameters = JSON.stringify(parameters);
   }
 }
 
@@ -218,3 +222,6 @@ export class GvpMctoolName {
   // tslint:disable-next-line: variable-name
   mctool_name_id: number;
 }
+
+export const EXPERIMENT_VERSION_ID = -1;
+export const EXPERIMENT_TEST_ID = 102;

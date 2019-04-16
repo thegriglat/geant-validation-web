@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { concatMap, map, tap, concatAll } from 'rxjs/operators';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { GvpPlotData, GvpPlotXML, GvpPlotRequest } from './gvp-plot';
+import { GvpPlotData, GvpPlotXML, GvpPlotIdRequest } from './gvp-plot';
 import { Observable, forkJoin } from 'rxjs';
 import { GVPAPIService } from './gvpapi.service';
 
@@ -13,11 +13,11 @@ export class PlotService extends GVPAPIService {
   constructor(protected http: HttpClient) {
     super(http);
   }
-
+/*
   // TODO: ratio; reference
 
   private getPlotId(config: GvpPlotXML, testId: number, versionId: number): Observable<number[]> {
-    const request: GvpPlotRequest = new GvpPlotRequest(config, testId, versionId);
+    const request: GvpPlotIdRequest = new GvpPlotIdRequest(config, testId, versionId);
     let params = new HttpParams();
     for (const k of Object.keys(request)) {
       params = params.set(k, request[k]);
@@ -40,4 +40,5 @@ export class PlotService extends GVPAPIService {
         // tap((data) => console.log('after concatMap', data))
       );
     }
+  */
 }
