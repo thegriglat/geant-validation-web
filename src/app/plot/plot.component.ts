@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { GvpPlot, GvpPlotData, EXPERIMENT_TEST_ID, EXPERIMENT_VERSION_ID } from '../gvp-plot';
-import { StaticplotService } from '../staticplot.service';
+import { GvpPlot, GvpPlotData, EXPERIMENT_TEST_ID, EXPERIMENT_VERSION_ID } from '../classes/gvp-plot';
+import { StaticplotService } from '../services/staticplot.service';
 import { environment } from './../../environments/environment';
 import { Observable, forkJoin, of } from 'rxjs';
 import { concatMap } from 'rxjs/operators';

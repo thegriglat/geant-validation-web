@@ -1,9 +1,9 @@
 import { Component, OnInit, ViewChildren, QueryList, ViewChild } from '@angular/core';
-import { LayoutService } from '../layout.service';
+import { LayoutService } from '../services/layout.service';
 // import { Observable } from 'rxjs';
-import { GvpPlot, GvpTest, GvpTestRequest, GvpExpData, GvpUniq, GvpMctoolNameVersion, GvpMctoolName } from '../gvp-plot';
+import { GvpPlot, GvpTest, GvpTestRequest, GvpExpData, GvpUniq, GvpMctoolNameVersion, GvpMctoolName } from '../classes/gvp-plot';
 import { PlotComponent } from '../plot/plot.component';
-import { GVPAPIService } from '../gvpapi.service';
+import { GVPAPIService } from '../services/gvpapi.service';
 import { MatSidenav } from '@angular/material';
 import { HttpParams } from '@angular/common/http';
 

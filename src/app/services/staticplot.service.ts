@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { GvpPlotXML, GvpPlotData, GvpPngRequest, GvpPlotIdRequest } from './gvp-plot';
+import { GvpPlotXML, GvpPlotData, GvpPngRequest, GvpPlotIdRequest } from '../classes/gvp-plot';
 import { concatMap, tap } from 'rxjs/operators';
 import { Observable, forkJoin } from 'rxjs';
 import { GVPAPIService } from './gvpapi.service';
