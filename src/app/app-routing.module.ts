@@ -5,7 +5,7 @@ import {GvplayoutComponent} from './gvplayout/gvplayout.component';
 
 const routes: Routes = [
 	{ path: '', component: HomeComponent},
-	{ path: 'layout', component: GvplayoutComponent}
+	{ path: 'layouts', component: GvplayoutComponent}
 	];
 
 @NgModule({
