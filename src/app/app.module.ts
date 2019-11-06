@@ -21,13 +21,21 @@ import { GvplayoutComponent } from './gvplayout/gvplayout.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { PlotComponent } from './plot/plot.component';
 import { HomeComponent } from './home/home.component';
+import { StatComparisonComponent } from './stat-comparison/stat-comparison.component';
+import { RecordViewerComponent } from './record-viewer/record-viewer.component';
+import { ExpViewerComponent } from './exp-viewer/exp-viewer.component';
+import { LookupViewComponent } from './lookup-view/lookup-view.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     GvplayoutComponent,
     PlotComponent,
-    HomeComponent
+    HomeComponent,
+    StatComparisonComponent,
+    RecordViewerComponent,
+    ExpViewerComponent,
+    LookupViewComponent
   ],
   imports: [
     BrowserModule,
