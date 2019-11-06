@@ -1,0 +1,27 @@
+.menu-btn {
+	/*margin: 25px;*/
+	padding: 20px 10px;
+	font-size: 18px;
+	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+	color: #555;
+	font-weight: normal;
+
+}
+.menu-btn:hover {
+	background-color: #f5f5f5;
+}
+
+.maintitle {
+	font-size: 36px;
+	font-weight: normal;
+	padding-bottom: 10px;
+}
+
+.logo {
+	height: 50px;
+}
+
+.homeplot {
+	height: 33%;
+	/*width: 33%;*/
+}
