@@ -20,12 +20,14 @@ import { AppComponent } from './app.component';
 import { GvplayoutComponent } from './gvplayout/gvplayout.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { PlotComponent } from './plot/plot.component';
+import { HomeComponent } from './home/home.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     GvplayoutComponent,
-    PlotComponent
+    PlotComponent,
+    HomeComponent
   ],
   imports: [
     BrowserModule,
