@@ -65,7 +65,7 @@
         <button type="button" mat-stroked-button color="primary" [disabled]="cantPlot" (click)="magic()">Plot</button>
     </mat-sidenav>
     <mat-sidenav-content>
-        <mat-toolbar id="appToolbar" [ngClass]="{'toolbar-fullscreen': (fullscreen$ | async)}" color="primary">
+        <mat-toolbar id="appToolbar" color="primary">
             <button mat-mini-fab color="primary" (click)="sidenav.toggle()" [hidden]="sidenav.opened">
                 <mat-icon aria-label="Menu" class="material-icons">menu</mat-icon>
             </button>
