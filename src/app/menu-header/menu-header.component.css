@@ -2,6 +2,7 @@ div.header {
 	background: linear-gradient(to bottom,#fff 0,#f8f8f8 100%);
 	vertical-align: center !important;
 	padding: 13px;
+	border-bottom: 1px solid #e7e7e7;
 };
 
 .headermenuitem {
@@ -11,4 +12,9 @@ div.header {
 
 .headermenuitem:hover {
 	background-color: white;
+}
+
+.sitename {
+	color: #777;
+	font-weight: normal;
 }
