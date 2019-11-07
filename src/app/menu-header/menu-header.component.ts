@@ -7,6 +7,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class MenuHeaderComponent implements OnInit {
 
+  public isMenuClicked = false;
   constructor() { }
 
   ngOnInit() {
