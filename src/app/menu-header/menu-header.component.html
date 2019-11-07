@@ -7,25 +7,19 @@
 			<!-- <h3>Geant Validation Portal</h3> -->
 		</a>
 	</div>
-	<div class="wide middle aligned column headermenuitem"  (click)="isMenuClicked = !isMenuClicked">
-		<!-- main menu -->
-		<a href="javascript:void(0);">
-			MENU
-		</a>
-	</div>
-	<div class="two wide middle aligned column headermenuitem" *ngIf="isMenuClicked" routerLink="/layouts">
+	<div class="two wide middle aligned column headermenuitem" routerLink="/layouts">
 		<a routerLink="/layouts">USER LAYOUTS</a>
 	</div>
-	<div class="two wide middle aligned column headermenuitem" *ngIf="isMenuClicked" routerLink="/stat">
+	<div class="two wide middle aligned column headermenuitem" routerLink="/stat">
 		<a routerLink="/stat">STAT COMPARISON</a>
 	</div>
-	<div class="two wide middle aligned column headermenuitem" *ngIf="isMenuClicked" routerLink="/records">
+	<div class="two wide middle aligned column headermenuitem" routerLink="/records">
 		<a routerLink="/records">RECORD VIEWER</a>
 	</div>
-	<div class="two wide middle aligned column headermenuitem" *ngIf="isMenuClicked" routerLink="/exp">
+	<div class="two wide middle aligned column headermenuitem" routerLink="/exp">
 		<a routerLink="/exp">REFERENCE DATA</a>
 	</div>
-	<div class="two wide middle aligned column headermenuitem" *ngIf="isMenuClicked" routerLink="/lookup">
+	<div class="two wide middle aligned column headermenuitem" routerLink="/lookup">
 		<a routerLink="/lookup">LOOKUP TABLES</a>
 	</div>
 </div>
