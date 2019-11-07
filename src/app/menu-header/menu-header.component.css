@@ -1,0 +1,14 @@
+div.header {
+	background: linear-gradient(to bottom,#fff 0,#f8f8f8 100%);
+	vertical-align: center !important;
+	padding: 13px;
+};
+
+.headermenuitem {
+	font-size: 16px;
+	cursor: context-menu;
+}
+
+.headermenuitem:hover {
+	background-color: white;
+}

@@ -25,6 +25,7 @@ import { StatComparisonComponent } from './stat-comparison/stat-comparison.compo
 import { RecordViewerComponent } from './record-viewer/record-viewer.component';
 import { ExpViewerComponent } from './exp-viewer/exp-viewer.component';
 import { LookupViewComponent } from './lookup-view/lookup-view.component';
+import { MenuHeaderComponent } from './menu-header/menu-header.component';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import { LookupViewComponent } from './lookup-view/lookup-view.component';
     StatComparisonComponent,
     RecordViewerComponent,
     ExpViewerComponent,
-    LookupViewComponent
+    LookupViewComponent,
+    MenuHeaderComponent
   ],
   imports: [
     BrowserModule,

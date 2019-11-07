@@ -1,0 +1,32 @@
+<div class="header">
+
+<div class="ui grid">
+	<div class="four wide column">
+		<a routerLink="/">
+			<h2>Geant Validation Portal</h2>
+		</a>
+	</div>
+	<div class="two wide middle aligned column headermenuitem"  (click)="isMenuClicked = !isMenuClicked">
+		<!-- main menu -->
+		<a href="javascript:void(0);">
+			MENU
+		</a>
+	</div>
+	<div class="two wide middle aligned column headermenuitem" *ngIf="isMenuClicked" routerLink="/layouts">
+		<a routerLink="/layouts">USER LAYOUTS</a>
+	</div>
+	<div class="two wide middle aligned column headermenuitem" *ngIf="isMenuClicked" routerLink="/stat">
+		<a routerLink="/stat">STAT COMPARISON</a>
+	</div>
+	<div class="two wide middle aligned column headermenuitem" *ngIf="isMenuClicked" routerLink="/records">
+		<a routerLink="/records">RECORD VIEWER</a>
+	</div>
+	<div class="two wide middle aligned column headermenuitem" *ngIf="isMenuClicked" routerLink="/exp">
+		<a routerLink="/exp">REFERENCE DATA</a>
+	</div>
+	<div class="two wide middle aligned column headermenuitem" *ngIf="isMenuClicked" routerLink="/lookup">
+		<a routerLink="/lookup">LOOKUP TABLES</a>
+	</div>
+</div>
+</div>
+
