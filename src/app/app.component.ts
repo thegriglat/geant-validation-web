@@ -15,4 +15,8 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
   }
+
+  isMenuHeaderVisible(): boolean {
+    return (window.location.pathname === '/') ? false: true;
+  }
 }
