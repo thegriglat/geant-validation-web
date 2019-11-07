@@ -3,6 +3,7 @@ div.header {
 	vertical-align: center !important;
 	padding: 13px;
 	border-bottom: 1px solid #e7e7e7;
+	height: 56px;
 };
 
 .headermenuitem {
@@ -17,4 +18,8 @@ div.header {
 .sitename {
 	color: #777;
 	font-weight: normal;
+}
+
+.logo {
+	height:30px;
 }
