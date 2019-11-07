@@ -8,7 +8,7 @@ import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
 })
 
 export class AppComponent implements OnInit {
-  title = 'GVP layout viewer';
+  title = 'Geant Val';
 
   constructor() {
   }
