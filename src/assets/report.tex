@@ -1,0 +1,54 @@
+\documentclass[a4paper]{article}
+
+  %% Language and font encodings
+  \usepackage[english]{babel}
+  \usepackage[utf8x]{inputenc}
+  \usepackage[T1]{fontenc}
+
+  %% Sets page size and margins
+  \usepackage[a4paper,top=3cm,bottom=2cm,left=2cm,right=2cm,marginparwidth=1.75cm]{geometry}
+
+  %% Useful packages
+  \usepackage{graphicx}
+  \usepackage{tikz}
+  \usepackage{hyperref}
+  \usepackage{xcolor}
+
+  \hypersetup{
+    colorlinks=true,
+    linkcolor=blue!50!red,
+    urlcolor=green!70!black
+  }
+
+  \title{Statistical validation report for {\bf %TEST%}, {\bf %BEAM%} beam}
+  \author{{\bf %V1%} vs {\bf %V2%}}
+
+  \newcommand{\mycbox}[1]{\tikz{\path[draw=#1,fill=#1] (0,0) rectangle (0.2cm,0.2cm);}}
+  \definecolor{good}{rgb}{0.36,0.72,0.36}
+  \definecolor{warning}{rgb}{0.94,0.67,0.30}
+  \definecolor{bad}{rgb}{0.85,0.32,0.31}
+
+  \begin{document}
+\maketitle
+
+Rows are classified as \textcolor{good}{good} if $p-value > %PHIGH%$
+
+Rows are classified as \textcolor{warning}{warning} if $ %PLOW% \leq p-value \leq %PHIGH%$
+
+Rows are classified as \textcolor{bad}{bad} if $p-value < %PLOW%$
+
+\begin{figure}[h]
+	\centering
+	\begin{tabular}{|cc|c|c|c|c|c|c|c|c|}
+		\hline
+		  & Observable & Sec. p. & Model & Target & Beam E. & Param-s & $\chi^2/n.d.f.$ & $\chi^2$ Prob \\\hline
+		%STATTABLE%
+		\hline
+	\end{tabular}
+	\caption{Summary table.}
+\end{figure}
+
+\pagebreak
+
+%IMAGES%
+\end{document}

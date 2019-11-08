@@ -150,7 +150,7 @@ if (USESSL) {
 }
 
 app.use(
-  express.static(`${PLOTTERPATH}/static`, {
+  express.static(`${PLOTTERPATH}/dist/gvp-template`, {
     index: 'index.html'
   })
 );
@@ -1337,13 +1337,13 @@ const updateObj = (src, dest) => {
   return src;
 };
 
-const PDFReportTemplate = fs.readFileSync('static/report.tex', 'utf8');
+const PDFReportTemplate = fs.readFileSync('dist/gvp-template/assets/report.tex', 'utf8');
 
 app.post('/api/getPDF', (req, res) => {
   const params = req.body;
   const ids = params.data.map(e => [e.r0, e.r1]);
-  const filename_report = `static/cache/${md5(JSON.stringify(params))}.pdf`;
-  res.json({ url: `/${filename_report.replace('static/', '')}` });
+  const filename_report = `dist/gvp-template/assets/cache/${md5(JSON.stringify(params))}.pdf`;
+  res.json({ url: `/${filename_report.replace('dist/gvp-template/', '')}` });
   const filelistp = [];
   for (const pair of ids) {
     const p = apimultiget(pair).then(jsons => {
@@ -1394,9 +1394,9 @@ app.post('/api/getPDF', (req, res) => {
         console.log(error);
         return;
       }
-      texfilename = texfilename.replace('static/cache/', '');
-      const dviname = filename_report.replace('.pdf', '.dvi').replace('static/cache/', '');
-      const cmd = `cd static/cache && latex ${texfilename} && latex ${texfilename} && dvipdf ${dviname}`;
+      texfilename = texfilename.replace('dist/gvp-template/assets/cache/', '');
+      const dviname = filename_report.replace('.pdf', '.dvi').replace('dist/gvp-template/assets/cache/', '');
+      const cmd = `cd dist/gvp-template/assets/cache && latex ${texfilename} && latex ${texfilename} && dvipdf ${dviname}`;
       console.log(cmd);
       exec(cmd, (error, stdout, stderr) => {
         if (error) {
@@ -1408,7 +1408,7 @@ app.post('/api/getPDF', (req, res) => {
         } beam, ${params.limits[0]}/${
           params.limits[1]
         } p-value limits) pdf report from https://geant-val.cern.ch/${filename_report.replace(
-          'static/',
+          'assets/cache',
           ''
         )}\n\nBest regards,\n  Geant-val team`;
         exec(
@@ -1487,11 +1487,11 @@ async function getPNG(body) {
     delete d.name;
   }
   const hash = md5(JSON.stringify(config));
-  const fname = `static/cache/${hash}`;
+  const fname = `dist/gvp-template/assets/cache/${hash}`;
   if (fs.existsSync(`${fname}.png`)) {
-    console.log(`file ${fname.replace('static/', '')} found in cache`);
+    console.log(`file ${fname.replace('dist/gvp-template/', '')} found in cache`);
     return new Promise(resolve =>
-      resolve(updateObj({ status: 'OK', filename: `${fname.replace('static/', '')}.png` }, body))
+      resolve(updateObj({ status: 'OK', filename: `${fname.replace('dist/gvp-template/', '')}.png` }, body))
     );
   }
   const refid_option = refid !== -1 ? ` -r ${refid}` : '';
@@ -1523,7 +1523,7 @@ async function getPNG(body) {
       N_REQUESTS--;
       // command output is in stdout
       console.log('Call plotter');
-      const filename = `${fname.replace('static/', '')}.png`;
+      const filename = `${fname.replace('dist/gvp-template/', '')}.png`;
       for (const f of j_options) {
         fs.unlink(f, () => {
           console.log(`File ${f} removed.`);
@@ -2383,5 +2383,5 @@ app.use('/api', router);
 
 // unknown routes -> Serve angular app to handle them
 app.get('*', (req, res) => {
-  res.sendFile(path.join(`${__dirname}/static/index.html`)); // eslint-disable-line no-undef
+  res.sendFile(path.join(`${__dirname}/dist/gvp-template/index.html`)); // eslint-disable-line no-undef
 });
