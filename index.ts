@@ -268,7 +268,7 @@ function getFilledArray(len, value) {
  * @param {string} sql SQL with parameter substitution
  * @returns Promise
  */
-function execSQL(params, sql) {
+function execSQL(params: any[], sql: string) {
   //let response = {};
   //Start connection
   return new Promise((resolve, reject) => {
@@ -313,7 +313,7 @@ function PGJoin(arr) {
  * @param {number} id record id
  * @returns JSON
  */
-function apigetJSON(id) {
+function apigetJSON(id: number) {
   const promise = new Promise((resolve, reject) => {
     const sqlPrint =
       'SELECT inspire.*, target.*, mctool_model.*, mctool_name.*, mctool_name_version.*, observable.*, ' +
@@ -330,11 +330,6 @@ function apigetJSON(id) {
       'INNER JOIN plot_type ON plot.plot_type_id=plot_type.plot_type_id ' +
       'INNER JOIN reaction ON plot.reaction_id=reaction.reaction_id ' +
       'WHERE plot.plot_id=$1';
-    if (!parseInt(id)) {
-      logger.error(`id '${id}' is not integer`);
-      reject();
-      return;
-    }
     execSQL([id], sqlPrint).then((resultlist: any[]) => {
       if (resultlist.length === 0) {
         logger.warn(`No data for id ${id} found`);
@@ -446,7 +441,7 @@ function apigetJSON(id) {
  * @params {list} ids list of record ids.
  * @returns Promise
  */
-function apimultiget(ids) {
+function apimultiget(ids: number[]) {
   const promises = [];
   for (let i = 0; i < ids.length; i++) {
     promises.push(apigetJSON(ids[i]));
