@@ -1,6 +1,5 @@
-<ng-container *ngIf="status == 'OK'">
+<div class="ui segment" *ngIf="status == 'OK'">
     <img [src]="filename" [ngStyle]="{'width': plotWidth+'px', 'height': plotHeight+'px'}">
     <ng-katex *ngIf="config.title !== undefined && config.title !== ''" [equation]="config.title"></ng-katex>
-</ng-container>
-<mat-spinner *ngIf="status !== 'OK' && status !== 'ERR'" style="max-width: 95%"></mat-spinner>
-<mat-icon *ngIf="status === 'error'">block</mat-icon>
+</div>
+<i class="fa fa-spinner fa-spin" *ngIf="status !== 'OK' && status !== 'ERR'"></i>
