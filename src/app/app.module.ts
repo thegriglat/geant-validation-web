@@ -14,6 +14,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatListModule } from '@angular/material/list';
 import { MAT_LABEL_GLOBAL_OPTIONS} from '@angular/material/core';
 import { KatexModule } from 'ng-katex';
+import {SuiModule} from 'ng2-semantic-ui';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -40,6 +41,7 @@ import { MenuHeaderComponent } from './menu-header/menu-header.component';
     MenuHeaderComponent
   ],
   imports: [
+    SuiModule,
     BrowserModule,
     FormsModule,
     HttpClientModule,

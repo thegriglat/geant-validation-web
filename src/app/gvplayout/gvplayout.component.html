@@ -1,88 +1,20 @@
-<mat-sidenav-container fullscreen>
-    <mat-sidenav #sidenav mode="push" opened (opened)="onMenuOpen()" (closed)="onMenuClose" style="width: 25%;">
-        <mat-toolbar color="primary">
-            <span class="toolbar-filler"></span>
-            <button mat-mini-fab color="primary" (click)="sidenav.toggle()" [hidden]="!sidenav.opened">
-              <mat-icon aria-label="close" class="material-icons">close</mat-icon>
-            </button>
-        </mat-toolbar>
-        <mat-card>
-            <mat-card-header><mat-card-title><mat-icon>bookmark</mat-icon> Layout</mat-card-title></mat-card-header>
-            <mat-card-content>
-                <mat-select required [(value)]="selectedLayout" (selectionChange)="onSelectLayout()">
-                    <ng-container *ngFor="let layout of pTemplates">
-                        <mat-option *ngIf="isLayoutShown(layout[2])" [value]="layout[0]">{{layout[1]}}</mat-option>
-                    </ng-container>
-                </mat-select>
-                    <mat-label>Tags</mat-label>
-                    <mat-selection-list #tags [(ngModel)]="checkedTags">
-                        <mat-list-option style="height: auto;" *ngFor="let tag of uniqueTags(pTemplates)" checkboxPosition="before" [value]="tag">{{tag}}</mat-list-option>
-                    </mat-selection-list>
-                    <mat-checkbox [checked]="useMarkers">Use markers</mat-checkbox>
-            </mat-card-content>
-        </mat-card>
-
-        <mat-card [hidden]="menuUpdated">
-            <mat-card-header><mat-card-title><mat-icon>bookmark</mat-icon> Version</mat-card-title></mat-card-header>
-            <mat-card-content>
-                <mat-select required multiple [(value)]="versionsSel" (selectionChange)="updateCantPlot">
-                    <mat-option *ngFor="let v of versions | keyvalue" [value]="v.key">{{v.value}}</mat-option>
-                </mat-select>
-                <!--
-                <mat-chip-list>
-                    <mat-chip *ngFor="let vs of versionsSel" removable="true" (removed)="removeV(vs)">{{versions.get(vs)}}
-                        <mat-icon matChipRemove>cancel</mat-icon>
-                    </mat-chip>
-                </mat-chip-list>
-                -->
-            </mat-card-content>
-        </mat-card>
-
-
-        <mat-card [hidden]="menuUpdated && showPhysListSelection">
-            <mat-card-header><mat-card-title><mat-icon>bookmark</mat-icon> Physics List/Model</mat-card-title></mat-card-header>
-            <mat-card-content>
-                <mat-select required multiple [(value)]="modelsSel" (selectionChange)="updateCantPlot">
-                    <mat-option *ngFor="let m of models" [value]="m">{{m}}</mat-option>
-                </mat-select>
-            </mat-card-content>
-        </mat-card>
-
-        <mat-card [hidden]="availableExpDataforTest.length === 0">
-            <mat-card-header><mat-card-title><mat-icon>bookmark</mat-icon> Reference data</mat-card-title></mat-card-header>
-            <mat-card-content>
-            <!--
-            <mat-select required>
-                <mat-option value=1 selected>Exp. data</mat-option>
-            </mat-select>            
-            -->
-                <mat-selection-list #exp [(ngModel)]="checkedExp">
-                    <mat-list-option style="height: auto;" *ngFor="let exp of availableExpDataforTest" checkboxPosition="before" [value]="exp.inspire_id">{{exp.expname}}</mat-list-option>
-                </mat-selection-list>
-            </mat-card-content>
-        </mat-card>
-            
-        <button type="button" mat-stroked-button color="primary" [disabled]="cantPlot" (click)="magic()">Plot</button>
-    </mat-sidenav>
-    <mat-sidenav-content>
-        <mat-toolbar id="appToolbar" color="primary">
-            <button mat-mini-fab color="primary" (click)="sidenav.toggle()" [hidden]="sidenav.opened">
-                <mat-icon aria-label="Menu" class="material-icons">menu</mat-icon>
-            </button>
-            <h1 class="component-title">
-                <a class="title-link">User Layouts</a>
-            </h1>
-            <span class="toolbar-filler"></span>
-            <!--<button id="button-login" md-button [routerLink]="['/signupin']" *ngIf="!(user | async)">Log In</button>-->
-            <!--<button id="button-logout" md-button>Log Out</button>-->
-        </mat-toolbar>
-        <table [hidden]="!magicPressed">
-            <tr *ngFor="let row of plots">
-                <td *ngFor="let aplot of row" [attr.colspan]="aplot.colspan" style="text-align: center">
-                    <ng-katex *ngIf="aplot.type == 'text'" [equation]="aplot.text"></ng-katex>
-                    <app-plot *ngIf="aplot.type == 'plot'" [config]="aplot"></app-plot>
-                </td>
-            </tr>
-        </table>
-    </mat-sidenav-content>
-</mat-sidenav-container>
+<h1 class="pageheader">User layouts</h1>
+<div class="ui grid">
+    <div class="two wide column">
+        <div class="segment">
+            <h3>Template</h3>
+            <sui-select class="selection"
+                [(ngModel)]="currentLayout"
+                [options]="pTemplates"
+                [isSearchable]="true"
+                [isDisabled]="false"
+                #select>
+                <ng-container  *ngFor="let layout of select.filteredOptions">
+                    <sui-select-option  *ngIf="isLayoutShown(layout[1].tags)"
+                        [value]="layout[1].title">
+                    </sui-select-option>
+                </ng-container>
+            </sui-select>
+        </div>
+    </div>
+</div>

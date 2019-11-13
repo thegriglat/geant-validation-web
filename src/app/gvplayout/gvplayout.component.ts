@@ -1,7 +1,6 @@
 import { Component, OnInit, ViewChildren, QueryList, ViewChild } from '@angular/core';
 import { LayoutService } from '../services/layout.service';
-// import { Observable } from 'rxjs';
-import { GvpPlot, GvpTest, GvpTestRequest, GvpExpData, GvpUniq, GvpMctoolNameVersion, GvpMctoolName } from '../classes/gvp-plot';
+import { GvpPlot, GvpTest, GvpTestRequest, GvpExpData, GvpUniq, GvpMctoolNameVersion, GvpMctoolName , GvpLayout} from '../classes/gvp-plot';
 import { PlotComponent } from '../plot/plot.component';
 import { GVPAPIService } from '../services/gvpapi.service';
 import { MatSidenav } from '@angular/material';
@@ -44,7 +43,8 @@ export class GvplayoutComponent implements OnInit {
   /** Value of layout dropdown */
   selectedLayout = '';
   /** Binding: contents of Layout dropdown; also used for creating tag filter */
-  pTemplates = new Array();
+  pTemplates: [string, GvpLayout][] = [];
+  currentLayout: GvpLayout;
   /** Binding: "Use Markers" checkbox */
   useMarkers = true;
   /** Binding: show Model dropdown */
@@ -52,7 +52,7 @@ export class GvplayoutComponent implements OnInit {
   /** Binding: show Version and Model dropdowns */
   menuUpdated = false;
   /** Binding: selected tags (used for filtering layouts list) */
-  checkedTags = new Array<string>();
+  checkedTags: string[] = [];
   /** Binding: selected experimental data (inspireId-s) */
   checkedExp = new Array<number>();
   /** Binding: disabled state of "Plot" button */
@@ -102,20 +102,22 @@ export class GvplayoutComponent implements OnInit {
 
   ngOnInit() {
     this.layoutService.getAllLayouts().subscribe((data) => {
-      Object.keys(data).map((e) => this.pTemplates.push([e, data[e].title, data[e].tags]));
+      this.pTemplates = [];
+      Object.keys(data).map((e) => this.pTemplates.push([e, data[e]]));
       this.pTemplates.sort((a, b) => {
-        const s1 = a[1].toUpperCase();
-        const s2 = b[1].toUpperCase();
+        const s1 = a[1].title.toUpperCase();
+        const s2 = b[1].title.toUpperCase();
         if (s1 > s2) {
           return 1;
-        } else {
-          if (s1 < s2) {
-            return -1;
-          }
-          return 0;
-      }});
+        }
+        if (s1 < s2) {
+          return -1;
+        }
+        return 0;
+      });
+      console.log(`checkedTags = ${this.pTemplates}`);
     });
-
+    return;
     // Populate caches
     this.api.get<GvpMctoolNameVersion[]>('api/mctool_name_version').subscribe(response => {
       for (const elem of response) {
@@ -406,20 +408,18 @@ export class GvplayoutComponent implements OnInit {
   // }
 
   /** Model <-> View binding to filter layouts based on tags */
-  isLayoutShown(tags: Array<string>): boolean {
+  isLayoutShown(tags: string[]): boolean {
     if (this.checkedTags.length !== 0) {
       // console.log(this.checkedTags);
       for (const tag of tags) {
         if (this.checkedTags.indexOf(tag) !== -1) {
           return true;
         }
-
         return false;
       }
-    } else {
-      return true;
     }
-  }
+    return true;
+}
 
   /** Event handler: layout selected */
   onSelectLayout() {

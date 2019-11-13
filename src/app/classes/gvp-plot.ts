@@ -155,7 +155,8 @@ export class GvpStaticPlot extends GvpPlot {
  * key: layout file name
  * value: GvpLayout object (title and list of tags)
  */
-export type GvpLayouts = Map<string, { title: string; tags: Array<string> }>;
+export type GvpLayout =  { title: string; tags: Array<string> };
+export type GvpLayouts = Map<string, GvpLayout>;
 
 /** Test information returned by API */
 export class GvpTest {
