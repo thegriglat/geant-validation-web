@@ -1,0 +1,13 @@
+<h3>Version</h3>
+<sui-multi-select class="selection"
+[(ngModel)]="currentVersion"
+[options]="versions"
+[isSearchable]="true"
+[isDisabled]="disabled"
+[optionFormatter]="formatter"
+(selectedOptionsChange)="emit($event)"
+#multiSelect>
+  <sui-select-option *ngFor="let obj of multiSelect.filteredOptions"
+      [value]="obj">
+  </sui-select-option>
+</sui-multi-select>

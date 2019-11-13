@@ -100,6 +100,9 @@ export class GvplayoutComponent implements OnInit {
   // *del* versionHumanName = {};
   // *del* releaseDate = {};
 
+  selectedVersions: GvpMctoolNameVersion[] = [];
+
+  
   ngOnInit() {
     this.layoutService.getAllLayouts().subscribe((data) => {
       this.pTemplates = [];
@@ -116,23 +119,22 @@ export class GvplayoutComponent implements OnInit {
         return 0;
       });
     });
-    return;
     // Populate caches
-    this.api.get<GvpMctoolNameVersion[]>('api/mctool_name_version').subscribe(response => {
-      for (const elem of response) {
-        this.MCToolNameVersionCache.set(elem.mctool_name_version_id, {
-          version: elem.version,
-          mctool_name_id: elem.mctool_name_id,
-          release_date: elem.release_date
-        });
-      }
-    });
+    // this.api.get<GvpMctoolNameVersion[]>('api/mctool_name_version').subscribe(response => {
+    //   for (const elem of response) {
+    //     this.MCToolNameVersionCache.set(elem.mctool_name_version_id, {
+    //       version: elem.version,
+    //       mctool_name_id: elem.mctool_name_id,
+    //       release_date: elem.release_date
+    //     });
+    //   }
+    // });
 
-    this.api.get<GvpMctoolName[]>('api/mctool_name').subscribe(response => {
-      for (const elem of response) {
-        this.MCToolNameCache.set(elem.mctool_name_id, elem.mctool_name_name);
-      }
-    });
+    // this.api.get<GvpMctoolName[]>('api/mctool_name').subscribe(response => {
+    //   for (const elem of response) {
+    //     this.MCToolNameCache.set(elem.mctool_name_id, elem.mctool_name_name);
+    //   }
+    // });
   }
 
   /** Load default values from XML node */

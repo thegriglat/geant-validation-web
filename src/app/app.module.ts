@@ -27,6 +27,7 @@ import { RecordViewerComponent } from './record-viewer/record-viewer.component';
 import { ExpViewerComponent } from './exp-viewer/exp-viewer.component';
 import { LookupViewComponent } from './lookup-view/lookup-view.component';
 import { MenuHeaderComponent } from './menu-header/menu-header.component';
+import { VersionSelectorComponent } from './version-selector/version-selector.component';
 
 @NgModule({
   declarations: [
@@ -38,7 +39,8 @@ import { MenuHeaderComponent } from './menu-header/menu-header.component';
     RecordViewerComponent,
     ExpViewerComponent,
     LookupViewComponent,
-    MenuHeaderComponent
+    MenuHeaderComponent,
+    VersionSelectorComponent
   ],
   imports: [
     SuiModule,
