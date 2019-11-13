@@ -1,7 +1,7 @@
 <h1 class="pageheader">User layouts</h1>
 <div class="ui grid">
-    <div class="two wide column">
-        <div class="segment">
+    <div class="six wide column">
+        <div class="ui segment">
             <h3>Template</h3>
             <sui-select class="selection"
                 [(ngModel)]="currentLayout"
@@ -15,12 +15,12 @@
                     </sui-select-option>
                 </ng-container>
             </sui-select>
-        </div>
-        <div class="segment">
             <h4>Layout groups</h4>
-            <ng-container *ngFor="let tag of uniqueTags(pTemplates)">
+            <div *ngFor="let tag of uniqueTags(pTemplates)">
                 <sui-checkbox (click)="updateTags(tag)">{{tag}}</sui-checkbox>
-            </ng-container>
+            </div>
+            <div class="ui  divider"></div>
+            <sui-checkbox class="toggle" [(ngModel)]="useMarkers">Use markers</sui-checkbox>
         </div>
     </div>
 </div>
