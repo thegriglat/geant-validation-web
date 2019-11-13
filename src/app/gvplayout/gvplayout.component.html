@@ -22,7 +22,7 @@
             <div class="ui  divider"></div>
             <sui-checkbox class="toggle" [(ngModel)]="useMarkers">Use markers</sui-checkbox>
         </div>
-        <div class="ui segment" *ngIf="currentLayout">
+        <div class="ui segment container" *ngIf="currentLayout">
             <app-version-selector (version)="selectedVersions = $event;">
             </app-version-selector>
         </div>
