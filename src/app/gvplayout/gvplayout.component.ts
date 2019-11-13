@@ -115,7 +115,6 @@ export class GvplayoutComponent implements OnInit {
         }
         return 0;
       });
-      console.log(`checkedTags = ${this.pTemplates}`);
     });
     return;
     // Populate caches
@@ -389,10 +388,17 @@ export class GvplayoutComponent implements OnInit {
   }
 
   /** Binding: Creates a list of unique tags for tag filter */
-  uniqueTags(list: Array<any>) {
-    return list.map(t => t[2]).reduce((p, c) => p.concat(c), []).filter(this.distinct);
+  uniqueTags(list: [string, GvpLayout][]): string[] {
+    return list.map(t => t[1].tags).reduce((p, c) => p.concat(c), []).filter(this.distinct);
   }
 
+  updateTags(tag:string){
+    if (this.checkedTags.indexOf(tag) === -1){
+      this.checkedTags.push(tag);
+    } else {
+      this.checkedTags.splice(this.checkedTags.indexOf(tag), 1);
+    }
+  }
   /** Event handler for tag filter */
   // checkTag(tag: string) {
   //   if (this.checkedTags.has(tag)) {

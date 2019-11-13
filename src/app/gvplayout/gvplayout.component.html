@@ -16,5 +16,11 @@
                 </ng-container>
             </sui-select>
         </div>
+        <div class="segment">
+            <h4>Layout groups</h4>
+            <ng-container *ngFor="let tag of uniqueTags(pTemplates)">
+                <sui-checkbox (click)="updateTags(tag)">{{tag}}</sui-checkbox>
+            </ng-container>
+        </div>
     </div>
 </div>
