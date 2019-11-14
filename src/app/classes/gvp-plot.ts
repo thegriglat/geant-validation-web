@@ -57,10 +57,10 @@ export class GvpPlotData {
     reaction: string;
     targetName: string;
     beamParticle: string;
-    beamEnergies: Array<number>;
+    beamEnergies: number[];
     beam_energy_str: string;
     secondaryParticle: string;
-    parameters: Array<GvpParameter>;
+    parameters: GvpParameter[];
   };
   plotType: string;
   chart?: GvpChart;
