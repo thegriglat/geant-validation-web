@@ -53,7 +53,7 @@ export class GvplayoutComponent implements OnInit {
   /** Binding: selected tags (used for filtering layouts list) */
   checkedTags: string[] = [];
   /** Binding: selected experimental data (inspireId-s) */
-  checkedExp = new Array<number>();
+  checkedExp: GvpExpData[] = [];
   /** Binding: disabled state of "Plot" button */
   cantPlot: boolean;
 
@@ -405,6 +405,15 @@ export class GvplayoutComponent implements OnInit {
     return list.map(t => t[1].tags).reduce((p, c) => p.concat(c), []).filter(this.distinct);
   }
 
+updateExp(e: GvpExpData){
+  if (this.checkedExp.indexOf(e) === -1){
+    this.checkedExp.push(e);
+  } else {
+    this.checkedExp.splice(this.checkedExp.indexOf(e), 1);
+  }
+  console.log(this.checkedExp)
+}
+
   updateTags(tag:string){
     if (this.checkedTags.indexOf(tag) === -1){
       this.checkedTags.push(tag);
@@ -450,12 +459,14 @@ layoutFormatter(item: [string, GvpLayout], query?:string): string {
   /** Event handler: layout selected */
   onSelectLayout(layout: [string, GvpLayout]) {
     this.layoutService.getLayout(layout[0]).subscribe((results) => {
+      this.tests = [];
       this.models = [];
       this.modelsTests = [];
       this.modelsSel = [];
       this.versions = new Map<number, string>();
       this.versionsSel = [];
       this.availableExpDataforTest = [];
+      this.checkedExp = [];
       this.updateMenu(results);
       this.updateCantPlot();
     });
@@ -536,7 +547,7 @@ layoutFormatter(item: [string, GvpLayout], query?:string): string {
 
       aplot.useMarkers = this.useMarkers;
       aplot.status = '';
-      aplot.expData = this.checkedExp;
+      aplot.expData = this.checkedExp.map(e => e.inspire_id);
       aplot.model = this.modelsSel.join('|');
       aplot.resizeImage(this.getImageSize());
       aplot.draw();

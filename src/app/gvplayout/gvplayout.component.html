@@ -51,4 +51,10 @@
         </sui-select-option>
     </sui-multi-select>
     </div>
+    <div class="ui segment container" *ngIf="currentLayout">
+        <h3>Reference data</h3>
+        <div *ngFor="let e of availableExpDataforTest">
+            <sui-checkbox (click)="updateExp(e)">{{e.expname}}</sui-checkbox>
+        </div>
+    </div>
 </div>
