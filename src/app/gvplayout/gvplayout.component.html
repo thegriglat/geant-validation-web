@@ -35,6 +35,7 @@
             [isSearchable]="true"
             [isDisabled]="false"
             [optionFormatter]="versionFormatter"
+            [optionsFilter]="versionSelectFilter"
             #multiSelect>
                 <sui-select-option *ngFor="let obj of multiSelect.filteredOptions"
                     [value]="obj">

@@ -279,6 +279,10 @@ export class GvplayoutComponent implements OnInit {
     });
   }
 
+  versionSelectFilter(items: GvpMctoolNameVersion[], query: string): GvpMctoolNameVersion[] {
+    return items.filter(e => e.version.indexOf(query) !== -1);
+  }
+
   /** Populate list of models (phys. lists) used in a given test */
 
   getModelsByTest(testname: string) {
