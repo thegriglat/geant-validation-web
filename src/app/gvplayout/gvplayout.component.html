@@ -26,6 +26,9 @@
         </div>
         <div class="ui segment container" *ngIf="currentLayout">
             <h3>Version</h3>
+            <div class="ui active inverted dimmer" *ngIf="!menuLoaded">
+                <div class="ui loader"></div>
+            </div>
             <sui-multi-select class="selection container"
             [(ngModel)]="versionsSel"
             [options]="menuVersions"
@@ -40,6 +43,9 @@
     </div>
     <div class="ui segment container" *ngIf="currentLayout">
         <h3>Physics List/Model</h3>
+        <div class="ui active inverted dimmer" *ngIf="!menuLoaded">
+            <div class="ui loader"></div>
+        </div>
         <sui-multi-select class="selection container"
         [(ngModel)]="modelsSel"
         [options]="models"
@@ -53,8 +59,9 @@
     </div>
     <div class="ui segment container" *ngIf="currentLayout">
         <h3>Reference data</h3>
-        <div *ngFor="let e of availableExpDataforTest">
-            <sui-checkbox (click)="updateExp(e)">{{e.expname}}</sui-checkbox>
+        <div class="ui active inverted dimmer" *ngIf="!menuLoaded">
+            <div class="ui loader"></div>
         </div>
+        <sui-checkbox *ngFor="let e of availableExpDataforTest" (click)="updateExp(e)">{{e.expname}}</sui-checkbox>
     </div>
 </div>

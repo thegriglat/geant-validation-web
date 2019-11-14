@@ -101,7 +101,7 @@ export class GvplayoutComponent implements OnInit {
 
   selectedVersions: GvpMctoolNameVersion[] = [];
   menuVersions: GvpMctoolNameVersion[] = [];
-
+  menuLoaded = false;
   
   ngOnInit() {
     this.layoutService.getAllLayouts().subscribe((data) => {
@@ -458,6 +458,7 @@ layoutFormatter(item: [string, GvpLayout], query?:string): string {
 }
   /** Event handler: layout selected */
   onSelectLayout(layout: [string, GvpLayout]) {
+    this.menuLoaded = false;
     this.layoutService.getLayout(layout[0]).subscribe((results) => {
       this.tests = [];
       this.models = [];
@@ -469,6 +470,7 @@ layoutFormatter(item: [string, GvpLayout], query?:string): string {
       this.checkedExp = [];
       this.updateMenu(results);
       this.updateCantPlot();
+      this.menuLoaded = true;
     });
   }
 
