@@ -25,32 +25,30 @@
             <sui-checkbox class="toggle" [(ngModel)]="useMarkers">Use markers</sui-checkbox>
         </div>
         <div class="ui segment container" *ngIf="currentLayout">
-            <div class="ui segment container" *ngIf="currentLayout">
-                <h3>Version</h3>
-                <sui-multi-select class="selection container"
-                [(ngModel)]="versionsSel"
-                [options]="menuVersions"
-                [isSearchable]="true"
-                [isDisabled]="disabled"
-                [optionFormatter]="versionFormatter"
-                #multiSelect>
-                  <sui-select-option *ngFor="let obj of multiSelect.filteredOptions"
-                      [value]="obj">
-                </sui-select-option>
-            </sui-multi-select>
-        </div>
-        <div class="ui segment container" *ngIf="currentLayout">
-            <h3>Physics List/Model</h3>
+            <h3>Version</h3>
             <sui-multi-select class="selection container"
-            [(ngModel)]="modelSel"
-            [options]="models"
+            [(ngModel)]="versionsSel"
+            [options]="menuVersions"
             [isSearchable]="true"
-            [isDisabled]="disabled"
+            [isDisabled]="false"
+            [optionFormatter]="versionFormatter"
             #multiSelect>
-              <sui-select-option *ngFor="let obj of multiSelect.filteredOptions"
-                  [value]="obj">
+                <sui-select-option *ngFor="let obj of multiSelect.filteredOptions"
+                    [value]="obj">
             </sui-select-option>
         </sui-multi-select>
-        </div>
+    </div>
+    <div class="ui segment container" *ngIf="currentLayout">
+        <h3>Physics List/Model</h3>
+        <sui-multi-select class="selection container"
+        [(ngModel)]="modelsSel"
+        [options]="models"
+        [isSearchable]="true"
+        [isDisabled]="false"
+        #multiSelect>
+            <sui-select-option *ngFor="let obj of multiSelect.filteredOptions"
+                [value]="obj">
+        </sui-select-option>
+    </sui-multi-select>
     </div>
 </div>
