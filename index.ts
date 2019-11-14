@@ -1,3 +1,5 @@
+import { GvpPlotData, GvpParameter, GvpHistogram, GvpChart } from "./src/app/classes/gvp-plot";
+
 /* globals require, process */
 
 const express = require('express');
@@ -295,7 +297,7 @@ function execSQL(params: any[], sql: string): Promise<any[]> {
  * @param {list} arr array of items (string || number)
  * @returns string
  */
-function PGJoin(arr) {
+function PGJoin(arr: any[]): string {
   let s = '{';
   for (let i = 0; i < arr.length; i++) {
     if (typeof arr[i] === 'string') {
@@ -314,8 +316,8 @@ function PGJoin(arr) {
  * @param {number} id record id
  * @returns JSON
  */
-function apigetJSON(id: number) {
-  const promise = new Promise((resolve, reject) => {
+function apigetJSON(id: number): Promise<GvpPlotData> {
+  const promise: Promise<GvpPlotData> = new Promise((resolve, reject) => {
     const sqlPrint =
       'SELECT inspire.*, target.*, mctool_model.*, mctool_name.*, mctool_name_version.*, observable.*, ' +
       'particle_beam.particle_name as particle_beam, particle_sec.particle_name as particle_sec, plot.*, plot_type.*, reaction.*, test.* ' +
@@ -338,33 +340,40 @@ function apigetJSON(id: number) {
         return;
       }
       let result:any = resultlist[0];
-      const r:any = {};
-      r.id = result.plot_id;
-      r.article = {};
-      r.article.inspireId = result.inspire_id;
-      r.mctool = {};
-      r.mctool.name = result.mctool_name_name;
-      r.mctool.version = result.version;
-      r.mctool.model = result.mctool_model_name;
-      r.testName = result.test_name;
-      r.metadata = {};
-      r.metadata.observableName = result.observable_name;
-      r.metadata.reaction = result.reaction_name;
-      r.metadata.targetName = result.target_name;
-      r.metadata.beamParticle = result.particle_beam;
-      r.metadata.beamEnergies = result.beam_energy;
-      r.metadata.beam_energy_str = result.beam_energy_str;
-      r.metadata.secondaryParticle = result.particle_sec;
-      r.metadata.parameters = [];
+      let params: GvpParameter[] = [];
       for (let i = 0; i < result.parnames.length; i++) {
-        r.metadata.parameters.push({ names: result.parnames[i], values: result.parvalues[i] });
-      }
-      r.plotType = result.plot_type_name;
-      let h;
+        params.push({ names: result.parnames[i], values: result.parvalues[i] });
+      };
+      let r: GvpPlotData;
+      r = {
+        id: result.plot_id,
+        article: {
+          inspireId: result.inspire_id
+        },
+        mctool: {
+          name: result.mctool_name_name,
+          version: result.version,
+          model: result.mctool_model_name
+        },
+        testName: result.test_name,
+        metadata: {
+          observableName: result.observable_name,
+          reaction: result.reaction_name,
+          targetName: result.target_name,
+          beamParticle: result.particle_beam,
+          beamEnergies: result.beam_energy,
+          beam_energy_str: result.beam_energy_str,
+          secondaryParticle: result.particle_sec,
+          // fill parameters
+          parameters: params
+        },
+        plotType: result.plot_type_name,
+
+      };
       if (result.plot_npoints === null) {
         // histogram
-        r.histogram = {};
-        h = r.histogram;
+        r.chart = null;
+        let h: GvpHistogram = r.histogram;
         h.nBins = result.plot_nbins.length !== 0 ? result.plot_nbins : [result.plot_val.length];
         h.binEdgeLow = result.plot_bin_min || [];
         h.binEdgeHigh = result.plot_bin_max || [];
@@ -388,8 +397,8 @@ function apigetJSON(id: number) {
         h.binLabel = result.plot_bin_label || [];
       } else {
         // chart
-        r.chart = {};
-        h = r.chart;
+        r.histogram = null;
+        let h: GvpChart = r.chart;
         h.nPoints = result.plot_npoints;
         h.xValues = result.plot_val.slice(0, result.plot_val.length / 2);
         h.yValues = result.plot_val.slice(result.plot_val.length / 2, result.plot_val.length);
@@ -427,6 +436,7 @@ function apigetJSON(id: number) {
           result.plot_err_sys_minus.length
         );
       }
+      let h = (r.chart) ? r.chart : r.histogram;
       h.title = result.plot_title;
       h.xAxisName = result.plot_axis_title[0];
       h.yAxisName = result.plot_axis_title[1];
