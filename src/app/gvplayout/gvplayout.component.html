@@ -67,4 +67,8 @@
             <sui-checkbox (click)="updateExp(e)">{{e.expname}}</sui-checkbox>
         </div>
     </div>
+    <button class="ui primary button container" *ngIf="currentLayout"
+    [ngClass]="{disabled: updateCantPlot()}">
+        Submit
+    </button>
 </div>

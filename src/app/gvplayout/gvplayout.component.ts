@@ -482,20 +482,13 @@ layoutFormatter(item: [string, GvpLayout], query?:string): string {
    *  Is a separate function to avoid ExpressionChangedAfterItHasBeenCheckedError
    */
   updateCantPlot() {
-    if (this.selectedLayout === '' || this.selectedLayout === undefined) {
+    if (!this.currentLayout) {
       // console.log('Can\'t plot: no layout selected');
       return true;
     }
 
-    if (this.versionsSel.length === 0 && this.versions.size !== 0) {
+    if (this.versionsSel.length * this.modelsSel.length === 0) {
       // console.log('Can\'t plot: no versions selected');
-      return true;
-    }
-
-    let modelCanChange = false;
-    this.plotList.forEach((p) => { modelCanChange = modelCanChange || p.config.isModelCanChange; } );
-    if (this.modelsSel.length === 0 && modelCanChange) {
-      // console.log('Can\'t plot: no models selected');
       return true;
     }
 
