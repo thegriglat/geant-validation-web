@@ -19,12 +19,6 @@ export class GvplayoutComponent implements OnInit {
   constructor(private layoutService: LayoutService, private api: GVPAPIService) {
   }
 
-  // Bindings
-  /** List of available MC tool versions: depends on test(s) included in layout;
-   * key: version_id (used in API requests)
-   * value: human-readable version (Name: version)
-   */
-  versions = new Map<number, string>();
   /**
    * List of MC tool versions selected for plotting
    * (value of Version dropdown)
@@ -33,23 +27,15 @@ export class GvplayoutComponent implements OnInit {
 
   /** List of available models/physics lists */
   models = new Array<string>();
-  /** List of tests with non-unique models; unused */
-  modelsTests = new Array<string>();
   /** List of selected models */
   modelsSel = new Array<string>();
   /** Binding: 2D array representing the layout */
-  plots = new Array<Array<GvpPlot>>();
-  /** Value of layout dropdown */
-  selectedLayout = '';
+  plots =  new Array<Array<GvpPlot>>();
   /** Binding: contents of Layout dropdown; also used for creating tag filter */
   pTemplates: [string, GvpLayout][] = [];
   currentLayout: GvpLayout;
   /** Binding: "Use Markers" checkbox */
   useMarkers = true;
-  /** Binding: show Model dropdown */
-  showPhysListSelection = false;
-  /** Binding: show Version and Model dropdowns */
-  menuUpdated = false;
   /** Binding: selected tags (used for filtering layouts list) */
   checkedTags: string[] = [];
   /** Binding: selected experimental data (inspireId-s) */
@@ -57,32 +43,17 @@ export class GvplayoutComponent implements OnInit {
   /** Binding: disabled state of "Plot" button */
   cantPlot: boolean;
 
-  // Components
-  /** list of all [plots]{@link PlotComponent} in a layout */
-  @ViewChildren(PlotComponent) plotList: QueryList<PlotComponent>;
-  /** Menu */
-  // @ViewChild(MatSidenav) sidenav: MatSidenav;
-
   // Internal variables
-  /** Array contating row-sums of [span]{@link GvpPlot.span} values in [plots]{@link this.plots} array */
-  spans = new Array<number>();
-  // contents = '';
   /** List of all tests in selected layout */
   tests = new Array<string>();
   /** Binding: can display layout */
   magicPressed = false;
-  /** State of the menu */
-  opened = true;
   /** Default options for constructing [GvpPlotXML]{@link GvpPlotXML} */
   DefaultBlock = new Map<string, any>();
   /** List of available tests */
   ALLTESTS = new Array<GvpTest>();
   /** Maps test name to test information; TODO: remove ALLTESTS in favour of this? */
   TESTMAP = new Map<string, GvpTest>();
-  /** TODO: unused? */
-  testObject: GvpTestRequest;
-  /** TODO: unused? */
-  selectedItem: GvpTest;
   /** WIP: Experimental data */
   availableExpDataforTest = new Array<GvpExpData>();
   /**
@@ -233,7 +204,6 @@ export class GvplayoutComponent implements OnInit {
     const test = testlist[0];
     this.TESTMAP.set(testname, test);
 
-    this.selectedItem = test;
     this.updateExpDescription(test.test_id);
     // let config = new HttpParams();
     // config = config.set('test_id', String(test.test_id));
@@ -247,7 +217,7 @@ export class GvplayoutComponent implements OnInit {
       this.menuVersions = [];
       const versions = new Map<number, string>();
       for (const i of response) {
-        if (!this.versions.has(i)) {
+        if (this.menuVersions.map(e => e.mctool_name_version_id).indexOf(i) === -1) {
           // this.versionDropDowns[0].values.push(i);
           const result = this.MCToolNameVersionCache.get(i);
           if (result === undefined) {
@@ -273,8 +243,6 @@ export class GvplayoutComponent implements OnInit {
         }
       }
 
-      this.versions = new Map<number, string>(Array.from(versions.entries()).sort((a, b) => (a[1].localeCompare(b[1]))));
-
       if (this.menuVersions.length === 1) {
         this.versionsSel = this.menuVersions.slice();
       }
@@ -298,7 +266,6 @@ export class GvplayoutComponent implements OnInit {
       for (const v of responceValues) {
         if (this.models.indexOf(v) === -1) {
           this.models.push(v);
-          this.modelsTests.push(testname);
         }
       }
 
@@ -329,9 +296,6 @@ export class GvplayoutComponent implements OnInit {
   /** Parse layout file and populate GUI elements */
   updateMenu(xml: Document | null) {
 
-    // Empty the arrays
-    this.spans.length = 0;
-
     if (xml === null) {
       return;
     }
@@ -358,11 +322,9 @@ export class GvplayoutComponent implements OnInit {
       for (const j of Array.from(row.children)) {
         const obj: GvpPlot = this.convertXMLPlot2Object(j) as GvpPlot;
         if (obj.type === 'plot' && (!obj.model || obj.model.length === 0)) {
-          this.showPhysListSelection = true;
           obj.isModelCanChange = true;
         }
         if (obj.type === 'ratio' && (!obj.model || obj.model.length === 0)) {
-          this.showPhysListSelection = true;
           obj.isModelCanChange = true;
           obj.reference.isModelCanChange = true;
         }
@@ -389,17 +351,10 @@ export class GvplayoutComponent implements OnInit {
     this.waitForTest().then(() => {
       for (const testname of this.tests) {
         this.getVersionsByTest(testname);
-        if (this.showPhysListSelection) {
-          this.getModelsByTest(testname);
-        }
+        this.getModelsByTest(testname);
       }
       this.plots = plots;
     });
-
-    // Calculates per-row sum of colspans in a layout
-    for (const row of plots) {
-      this.spans.push(row.map((e) => e.colspan).reduce((a, b) => isNaN(b) ? a - -1 : (a - -b), 0));
-    }
     this.plots = plots;
   }
 
@@ -465,9 +420,7 @@ export class GvplayoutComponent implements OnInit {
     this.layoutService.getLayout(layout[0]).subscribe((results) => {
       this.tests = [];
       this.models = [];
-      this.modelsTests = [];
       this.modelsSel = [];
-      this.versions = new Map<number, string>();
       this.versionsSel = [];
       this.availableExpDataforTest = [];
       this.checkedExp = [];
@@ -511,7 +464,7 @@ export class GvplayoutComponent implements OnInit {
       return { width: 0, height: 0 };
     }
     const nrows = plots.length;
-    const ncols = Math.max(...plots.map(e => e.length));
+    const ncols = 2; // WIP: fix Math.max(...plots.map(e => e.length));
     const w = maxwidth / ncols;
     let h = maxheight / (nrows === 1 ? 2 : nrows);
 
@@ -526,6 +479,7 @@ export class GvplayoutComponent implements OnInit {
 
   /** Event handler: 'Plot' button clicked */
   magic() {
+    /*
     this.magicPressed = true;
     this.plotList.forEach((aplot) => {
       if (aplot.config.test === 'experiment') {
@@ -550,33 +504,6 @@ export class GvplayoutComponent implements OnInit {
       aplot.resizeImage(this.getImageSize());
       aplot.draw();
     });
-  }
-
-  /** WIP: called when removing a MatChip containing a version is removed */
-  // WIP: remove code
-  removeV(vs: number) {
-    if (this.versionsSel.map(e => e.mctool_name_version_id).indexOf(vs) !== -1) {
-      this.versionsSel.splice(this.versionsSel.map(e => e.mctool_name_version_id).indexOf(vs), 1);
-    }
-  }
-
-  /** Event handler: menu is shown */
-  onMenuOpen() {
-    if (!this.magicPressed) {
-      return;
-    }
-    this.plotList.forEach((aplot) => {
-      aplot.resizeImage(this.getImageSize(9));
-    });
-  }
-
-  /** Event handler: menu is hidden */
-  onMenuClose() {
-    if (!this.magicPressed) {
-      return;
-    }
-    this.plotList.forEach((aplot) => {
-      aplot.resizeImage(this.getImageSize(12));
-    });
+    */
   }
 }
