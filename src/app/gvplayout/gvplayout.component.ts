@@ -30,7 +30,7 @@ export class GvplayoutComponent implements OnInit {
    * List of MC tool versions selected for plotting
    * (value of Version dropdown)
    */
-  versionsSel = new Array<number>();
+  versionsSel: GvpMctoolNameVersion[] = [];
 
   /** List of available models/physics lists */
   models = new Array<string>();
@@ -101,6 +101,7 @@ export class GvplayoutComponent implements OnInit {
   // *del* releaseDate = {};
 
   selectedVersions: GvpMctoolNameVersion[] = [];
+  menuVersions: GvpMctoolNameVersion[] = [];
 
   
   ngOnInit() {
@@ -120,21 +121,21 @@ export class GvplayoutComponent implements OnInit {
       });
     });
     // Populate caches
-    // this.api.get<GvpMctoolNameVersion[]>('api/mctool_name_version').subscribe(response => {
-    //   for (const elem of response) {
-    //     this.MCToolNameVersionCache.set(elem.mctool_name_version_id, {
-    //       version: elem.version,
-    //       mctool_name_id: elem.mctool_name_id,
-    //       release_date: elem.release_date
-    //     });
-    //   }
-    // });
+    this.api.get<GvpMctoolNameVersion[]>('api/mctool_name_version').subscribe(response => {
+      for (const elem of response) {
+        this.MCToolNameVersionCache.set(elem.mctool_name_version_id, {
+          version: elem.version,
+          mctool_name_id: elem.mctool_name_id,
+          release_date: elem.release_date
+        });
+      }
+    });
 
-    // this.api.get<GvpMctoolName[]>('api/mctool_name').subscribe(response => {
-    //   for (const elem of response) {
-    //     this.MCToolNameCache.set(elem.mctool_name_id, elem.mctool_name_name);
-    //   }
-    // });
+    this.api.get<GvpMctoolName[]>('api/mctool_name').subscribe(response => {
+      for (const elem of response) {
+        this.MCToolNameCache.set(elem.mctool_name_id, elem.mctool_name_name);
+      }
+    });
   }
 
   /** Load default values from XML node */
@@ -244,6 +245,7 @@ export class GvplayoutComponent implements OnInit {
     config = config.set('JSONAttr', 'mctool.version');
 
     this.api.get<GvpUniq<number>>('api/uniqlookup', config).subscribe((response) => {
+      this.menuVersions = [];
       const versions = new Map<number, string>();
       for (const i of response.values) {
         if (!this.versions.has(i)) {
@@ -261,19 +263,26 @@ export class GvplayoutComponent implements OnInit {
           // this.versionHumanName[mctoolNameVersionId] = `${name}: ${version}`;
           // this.releaseDate[mctoolNameVersionId] = release_date;
           versions.set(i, `${name}: ${version}`);
+          this.menuVersions.push(
+            {mctool_name_version_id: i,
+              version: result.version,
+              mctool_name_id: result.mctool_name_id,
+              release_date: result.release_date}
+            );
         }
       }
 
       this.versions = new Map<number, string>(Array.from(versions.entries()).sort((a, b) => (a[1].localeCompare(b[1]))));
 
-      if (this.versions.size === 1) {
-        this.versionsSel = [this.versions.entries[0][0]];
+      if (this.menuVersions.length === 1) {
+        this.versionsSel = this.menuVersions.slice();
       }
     });
   }
 
   /** Populate list of models (phys. lists) used in a given test */
   getModelsByTest(testname: string) {
+    this.models = this.models.slice();
     const testlist = this.ALLTESTS.filter(elem => elem.test_name === testname);
     if (testlist.length === 0) { return; }
     const test = testlist[0];
@@ -305,16 +314,18 @@ export class GvplayoutComponent implements OnInit {
           }
         }
       }
+      console.log(this.models);
     });
   }
 
   /** Operator for Array.filter returning only unique items */
-  private distinct(value, index, arr) {
+  private distinct(value, index: number, arr: any[]) {
     return arr.indexOf(value) === index;
   }
 
   /** Parse layout file and populate GUI elements */
   updateMenu(xml: Document | null) {
+
     // Empty the arrays
     this.spans.length = 0;
 
@@ -429,9 +440,16 @@ export class GvplayoutComponent implements OnInit {
     return true;
 }
 
+versionFormatter(item: GvpMctoolNameVersion, query?: string): string {
+  return item.version;
+}
+
+layoutFormatter(item: [string, GvpLayout], query?:string): string {
+  return item[1].title;
+}
   /** Event handler: layout selected */
-  onSelectLayout() {
-    this.layoutService.getLayout(this.selectedLayout).subscribe((results) => {
+  onSelectLayout(layout: [string, GvpLayout]) {
+    this.layoutService.getLayout(layout[0]).subscribe((results) => {
       this.models = new Array<string>();
       this.modelsTests = new Array<string>();
       this.modelsSel = [];
@@ -512,7 +530,7 @@ export class GvplayoutComponent implements OnInit {
           return;
         }
         aplot.testId = test.test_id;
-        aplot.versionId = this.versionsSel;
+        aplot.versionId = this.versionsSel.map(e => e.mctool_name_version_id);
         // aplot.config.model = this.modelsSel.join('|');
       }
 
@@ -527,9 +545,10 @@ export class GvplayoutComponent implements OnInit {
   }
 
   /** WIP: called when removing a MatChip containing a version is removed */
+  // WIP: remove code
   removeV(vs: number) {
-    if (this.versionsSel.indexOf(vs) !== -1) {
-      this.versionsSel.splice(this.versionsSel.indexOf(vs), 1);
+    if (this.versionsSel.map(e => e.mctool_name_version_id).indexOf(vs) !== -1) {
+      this.versionsSel.splice(this.versionsSel.map(e => e.mctool_name_version_id).indexOf(vs), 1);
     }
   }
 
