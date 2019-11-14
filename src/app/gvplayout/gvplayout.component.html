@@ -40,35 +40,39 @@
                 <sui-select-option *ngFor="let obj of multiSelect.filteredOptions"
                     [value]="obj">
             </sui-select-option>
+            </sui-multi-select>
+        </div>
+        <div class="ui segment container" *ngIf="currentLayout">
+            <h3>Physics List/Model</h3>
+            <div class="ui active inverted dimmer" *ngIf="!menuLoaded">
+                <div class="ui loader"></div>
+            </div>
+            <sui-multi-select class="selection container"
+            [(ngModel)]="modelsSel"
+            [options]="models"
+            [isSearchable]="true"
+            [isDisabled]="false"
+            #multiSelect>
+                <sui-select-option *ngFor="let obj of multiSelect.filteredOptions"
+                    [value]="obj">
+            </sui-select-option>
         </sui-multi-select>
-    </div>
-    <div class="ui segment container" *ngIf="currentLayout">
-        <h3>Physics List/Model</h3>
-        <div class="ui active inverted dimmer" *ngIf="!menuLoaded">
-            <div class="ui loader"></div>
         </div>
-        <sui-multi-select class="selection container"
-        [(ngModel)]="modelsSel"
-        [options]="models"
-        [isSearchable]="true"
-        [isDisabled]="false"
-        #multiSelect>
-            <sui-select-option *ngFor="let obj of multiSelect.filteredOptions"
-                [value]="obj">
-        </sui-select-option>
-    </sui-multi-select>
-    </div>
-    <div class="ui segment container" *ngIf="currentLayout">
-        <h3>Reference data</h3>
-        <div class="ui active inverted dimmer" *ngIf="!menuLoaded">
-            <div class="ui loader"></div>
+        <div class="ui segment container" *ngIf="currentLayout">
+            <h3>Reference data</h3>
+            <div class="ui active inverted dimmer" *ngIf="!menuLoaded">
+                <div class="ui loader"></div>
+            </div>
+            <div  *ngFor="let e of availableExpDataforTest">
+                <sui-checkbox (click)="updateExp(e)">{{e.expname}}</sui-checkbox>
+            </div>
         </div>
-        <div  *ngFor="let e of availableExpDataforTest">
-            <sui-checkbox (click)="updateExp(e)">{{e.expname}}</sui-checkbox>
-        </div>
+        <button class="ui primary button container" *ngIf="currentLayout"
+        [ngClass]="{disabled: updateCantPlot()}" (click)="magic()">
+            Submit
+        </button>
     </div>
-    <button class="ui primary button container" *ngIf="currentLayout"
-    [ngClass]="{disabled: updateCantPlot()}">
-        Submit
-    </button>
+    <div class="twelve wide column">
+        as
+    </div>
 </div>
