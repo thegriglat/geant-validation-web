@@ -452,8 +452,8 @@ function apigetJSON(id: number): Promise<GvpPlotData> {
  * @params {list} ids list of record ids.
  * @returns Promise
  */
-function apimultiget(ids: number[]) {
-  const promises = [];
+function apimultiget(ids: number[]): Promise<GvpPlotData[]> {
+  const promises: Promise<GvpPlotData>[] = [];
   for (let i = 0; i < ids.length; i++) {
     promises.push(apigetJSON(ids[i]));
   }
