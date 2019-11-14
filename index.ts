@@ -268,22 +268,23 @@ function getFilledArray(len, value) {
  * @param {string} sql SQL with parameter substitution
  * @returns Promise
  */
-function execSQL(params: any[], sql: string) {
+function execSQL(params: any[], sql: string): Promise<any[]> {
   //let response = {};
   //Start connection
   return new Promise((resolve, reject) => {
     pool.connect((err, client, done) => {
       if (err) {
-        return console.error('error fetching client from pool', err);
+        console.error('error fetching client from pool', err);
+        reject(Error('error fetching client from poo'));
       }
-      return client.query(sql, params, (err, result) => {
+      return client.query(sql, params, (err, result): void  => {
         logger.debug(`SQL: ${sql}\nPARAMS: ${params}`);
         done();
         if (err) {
+          console.error('error running query', err);
           reject(Error('error running query'));
-          return console.error('error running query', err);
         }
-        return resolve(result.rows);
+        resolve(result.rows);
       });
     });
   });
