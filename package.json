@@ -6,7 +6,7 @@
     "ng": "node_modules/.bin/ng",
     "compile": "tsc --lib es2017 index.ts",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build --prod",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
