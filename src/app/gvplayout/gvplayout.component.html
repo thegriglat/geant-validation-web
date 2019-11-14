@@ -62,6 +62,8 @@
         <div class="ui active inverted dimmer" *ngIf="!menuLoaded">
             <div class="ui loader"></div>
         </div>
-        <sui-checkbox *ngFor="let e of availableExpDataforTest" (click)="updateExp(e)">{{e.expname}}</sui-checkbox>
+        <div  *ngFor="let e of availableExpDataforTest">
+            <sui-checkbox (click)="updateExp(e)">{{e.expname}}</sui-checkbox>
+        </div>
     </div>
 </div>
