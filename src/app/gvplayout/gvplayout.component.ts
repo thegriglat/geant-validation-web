@@ -281,8 +281,8 @@ export class GvplayoutComponent implements OnInit {
   }
 
   /** Populate list of models (phys. lists) used in a given test */
+
   getModelsByTest(testname: string) {
-    this.models = this.models.slice();
     const testlist = this.ALLTESTS.filter(elem => elem.test_name === testname);
     if (testlist.length === 0) { return; }
     const test = testlist[0];
@@ -290,6 +290,7 @@ export class GvplayoutComponent implements OnInit {
     config = config.set('test_id', String(test.test_id));
     config = config.set('JSONAttr', 'mctool.model');
     this.api.get<GvpUniq<string>>('/api/uniqlookup', config).subscribe(response => {
+      this.models  = this.models.slice();
       const responceValues = response.values.slice();
       responceValues.sort();
       for (const v of responceValues) {
@@ -450,8 +451,8 @@ layoutFormatter(item: [string, GvpLayout], query?:string): string {
   /** Event handler: layout selected */
   onSelectLayout(layout: [string, GvpLayout]) {
     this.layoutService.getLayout(layout[0]).subscribe((results) => {
-      this.models = new Array<string>();
-      this.modelsTests = new Array<string>();
+      this.models = [];
+      this.modelsTests = [];
       this.modelsSel = [];
       this.versions = new Map<number, string>();
       this.versionsSel = [];
