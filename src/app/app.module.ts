@@ -2,17 +2,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-import { MatButtonModule } from '@angular/material';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
-import { MatSelectModule } from '@angular/material/select';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatListModule } from '@angular/material/list';
-import { MAT_LABEL_GLOBAL_OPTIONS} from '@angular/material/core';
 import { KatexModule } from 'ng-katex';
 import {SuiModule} from 'ng2-semantic-ui';
 
@@ -47,20 +36,9 @@ import { MenuHeaderComponent } from './menu-header/menu-header.component';
     HttpClientModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    MatButtonModule,
-    MatProgressSpinnerModule,
-    MatSidenavModule,
-    MatCardModule,
-    MatIconModule,
-    MatSelectModule,
-    MatToolbarModule,
-    MatCheckboxModule,
-    MatChipsModule,
-    MatListModule,
     KatexModule
   ],
   providers: [
-    {provide: MAT_LABEL_GLOBAL_OPTIONS, useValue: {float: 'always', appearance: 'standard'}}
   ],
   bootstrap: [AppComponent]
 })

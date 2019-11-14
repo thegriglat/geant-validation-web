@@ -3,7 +3,6 @@ import { LayoutService } from '../services/layout.service';
 import { GvpPlot, GvpTest, GvpTestRequest, GvpExpData, GvpUniq, GvpMctoolNameVersion, GvpMctoolName , GvpLayout} from '../classes/gvp-plot';
 import { PlotComponent } from '../plot/plot.component';
 import { GVPAPIService } from '../services/gvpapi.service';
-import { MatSidenav } from '@angular/material';
 import { HttpParams } from '@angular/common/http';
 
 /**
@@ -62,7 +61,7 @@ export class GvplayoutComponent implements OnInit {
   /** list of all [plots]{@link PlotComponent} in a layout */
   @ViewChildren(PlotComponent) plotList: QueryList<PlotComponent>;
   /** Menu */
-  @ViewChild(MatSidenav) sidenav: MatSidenav;
+  // @ViewChild(MatSidenav) sidenav: MatSidenav;
 
   // Internal variables
   /** Array contating row-sums of [span]{@link GvpPlot.span} values in [plots]{@link this.plots} array */
@@ -542,7 +541,6 @@ layoutFormatter(item: [string, GvpLayout], query?:string): string {
       aplot.resizeImage(this.getImageSize());
       aplot.draw();
     });
-    this.sidenav.close();
   }
 
   /** WIP: called when removing a MatChip containing a version is removed */
