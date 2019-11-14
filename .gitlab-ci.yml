@@ -1,0 +1,9 @@
+image: gitlab-registry.cern.ch/geantvalidation/gvp:ci_worker
+before_script:
+  - node -v
+  - npm -v
+  - npm install
+test:
+  script: 
+  - npm run compile
+  - npm run build
