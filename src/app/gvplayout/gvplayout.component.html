@@ -73,6 +73,10 @@
         </button>
     </div>
     <div class="twelve wide column">
-        as
+        <ng-container *ngFor="let row of plots">
+            <ng-container *ngFor="let plot of row">
+                    <app-plot [config]="getPlotConfig(plot)"></app-plot>
+            </ng-container>
+        </ng-container>
     </div>
 </div>

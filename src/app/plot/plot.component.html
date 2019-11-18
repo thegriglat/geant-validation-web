@@ -1,5 +1,4 @@
-<div class="ui segment" *ngIf="status == 'OK'">
-    <img [src]="filename" [ngStyle]="{'width': plotWidth+'px', 'height': plotHeight+'px'}">
-    <ng-katex *ngIf="config.title !== undefined && config.title !== ''" [equation]="config.title"></ng-katex>
+<div class="ui segment" *ngIf="!inProgress">
+    <img class="ui medium rounded image" [src]="url">
+    <!-- <ng-katex *ngIf="config.title !== undefined && config.title !== ''" [equation]="config.title"></ng-katex> -->
 </div>
-<i class="fa fa-spinner fa-spin" *ngIf="status !== 'OK' && status !== 'ERR'"></i>

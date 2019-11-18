@@ -1,7 +1,6 @@
-import { Component, OnInit, ViewChildren, QueryList, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { LayoutService } from '../services/layout.service';
-import { GvpPlot, GvpTest, GvpTestRequest, GvpExpData, GvpUniq, GvpMctoolNameVersion, GvpMctoolName, GvpLayout } from '../classes/gvp-plot';
-import { PlotComponent } from '../plot/plot.component';
+import { GvpPlot, GvpTest, GvpExpData, GvpMctoolNameVersion, GvpLayout, GvpPlotConfig } from '../classes/gvp-plot';
 import { GVPAPIService } from '../services/gvpapi.service';
 import { HttpParams } from '@angular/common/http';
 
@@ -30,7 +29,7 @@ export class GvplayoutComponent implements OnInit {
   /** List of selected models */
   modelsSel = new Array<string>();
   /** Binding: 2D array representing the layout */
-  plots =  new Array<Array<GvpPlot>>();
+  plots: GvpPlot[][] = [];
   /** Binding: contents of Layout dropdown; also used for creating tag filter */
   pTemplates: [string, GvpLayout][] = [];
   currentLayout: GvpLayout;
@@ -505,5 +504,9 @@ export class GvplayoutComponent implements OnInit {
       aplot.draw();
     });
     */
+  }
+
+  getPlotConfig(plot: GvpPlot): GvpPlotConfig {
+    return null;
   }
 }

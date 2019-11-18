@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { GvpPlotXML, GvpJSON, GvpPngRequest, GvpPlotIdRequest } from '../classes/gvp-plot';
-import { concatMap, tap } from 'rxjs/operators';
+import { concatMap } from 'rxjs/operators';
 import { Observable, forkJoin } from 'rxjs';
 import { GVPAPIService } from './gvpapi.service';
 
@@ -73,4 +73,5 @@ export class StaticplotService extends GVPAPIService {
       )
     );
   }
+
 }

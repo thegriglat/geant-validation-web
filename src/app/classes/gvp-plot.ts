@@ -224,5 +224,15 @@ export class GvpMctoolName {
   mctool_name_id: number;
 }
 
+export class GvpPlotConfig {
+  config: GvpPngRequest;
+  reference?: GvpJSON;
+}
+
+export class GvpPngResponse {
+  status: boolean;
+  filename?: string;
+}
+
 export const EXPERIMENT_VERSION_ID = -1;
 export const EXPERIMENT_TEST_ID = 102;
