@@ -1,14 +1,12 @@
 import { GvpPlotData, GvpParameter, GvpHistogram, GvpChart } from "./src/app/classes/gvp-plot";
 
 /* globals require, process */
-
-const express = require('express');
+import * as express from 'express';
 const helmet = require('helmet');
 const forceSSL = require('express-force-ssl');
 const session = require('express-session');
 const fs = require('fs');
-const MAX_REQUESTS = require('os').cpus().length;
-const http = require('http');
+import * as http from 'http';
 const https = require('https');
 const bodyParser = require('body-parser');
 const pg = require('pg');
@@ -21,6 +19,7 @@ const logger = require('intel');
 const path = require('path');
 const mktemp = require('mktemp');
 
+const MAX_REQUESTS: number = require('os').cpus().length;
 let N_REQUESTS = 0;
 
 console.log(`Found ${MAX_REQUESTS} cores.`);
@@ -237,18 +236,18 @@ app.get('/logout', (req, res) => {
  * Pass web page content to callback function
  * Needed for Inspire metadata parsing
  */
-function getPageContents(callback, host, url) {
+function getPageContents(callback: {(str: string): void}, host: string, url: string): void {
   const hostport = host.split(':');
   const options = {
     host: hostport[0],
     path: url,
-    port: hostport.length === 1 ? 80 : hostport[1]
+    port: hostport.length === 1 ? 80 : parseInt(hostport[1])
   };
 
   const call = response => {
     let str = '';
     // another chunk of data has been recieved, so append it to `str`
-    response.on('data', chunk => {
+    response.on('data', (chunk:string) => {
       str += chunk;
     });
     // the whole response has been recieved, so we just print it out here
@@ -260,8 +259,8 @@ function getPageContents(callback, host, url) {
 }
 
 /** Return array filled with 'value' with length 'len' */
-function getFilledArray(len, value) {
-  return Array(...Array(len)).map(Number.prototype.valueOf, value);
+function getFilledArray(len: number, value: any) {
+  return new Array(len).fill(value);
 }
 
 /**
