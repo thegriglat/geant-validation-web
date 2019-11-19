@@ -41,7 +41,7 @@ export class GvpHistogram {
 }
 
 /** Container for Plot data (as returned by `/api/getPlotData`) */
-export class GvpPlotData {
+export class GvpJSON {
   id: number;
   article: {
     inspireId: number;
@@ -131,7 +131,7 @@ export class GvpPlot extends GvpPlotXML {
 
 /** Parameters of `/api/getPNG` method */
 export class GvpPngRequest {
-  data: GvpPlotData[];
+  data: GvpJSON[];
   xaxis?: string;
   yaxis?: string;
   xmax?: number;
@@ -147,7 +147,7 @@ export class GvpPngRequest {
 export class GvpStaticPlot extends GvpPlot {
   status: string;
   filename: string;
-  data: GvpPlotData;
+  data: GvpJSON;
 }
 
 /** Information about available layouts

@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { GvpPlot, GvpPlotData, EXPERIMENT_TEST_ID, EXPERIMENT_VERSION_ID } from '../classes/gvp-plot';
+import { GvpPlot, GvpJSON, EXPERIMENT_TEST_ID, EXPERIMENT_VERSION_ID } from '../classes/gvp-plot';
 import { StaticplotService } from '../services/staticplot.service';
 import { environment } from './../../environments/environment';
 import { Observable, forkJoin, of } from 'rxjs';
@@ -44,7 +44,7 @@ export class PlotComponent implements OnInit {
   }
 
   draw() {
-    const allObservables = new Array<Observable<GvpPlotData[]>>();
+    const allObservables = new Array<Observable<GvpJSON[]>>();
     if (this.config.test === 'experiment') {
       this.versionId = [-1];
     }

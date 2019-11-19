@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { GvpPlotXML, GvpPlotData, GvpPngRequest, GvpPlotIdRequest } from '../classes/gvp-plot';
+import { GvpPlotXML, GvpJSON, GvpPngRequest, GvpPlotIdRequest } from '../classes/gvp-plot';
 import { concatMap, tap } from 'rxjs/operators';
 import { Observable, forkJoin } from 'rxjs';
 import { GVPAPIService } from './gvpapi.service';
@@ -14,7 +14,7 @@ export class StaticplotService extends GVPAPIService {
     super(http);
   }
 
-  private prepareRequest(config: GvpPlotXML, data: GvpPlotData[], useMarkers: boolean): GvpPngRequest {
+  private prepareRequest(config: GvpPlotXML, data: GvpJSON[], useMarkers: boolean): GvpPngRequest {
     const obj = new GvpPngRequest();
     // console.log('PrepareRequest: ', data, 'energy', config.energy);
     obj.data = data;  // .filter((p) => p.metadata.beam_energy_str === config.energy);
@@ -41,12 +41,12 @@ export class StaticplotService extends GVPAPIService {
       // tap((data) => console.log('getPlotId returned', data)));
   }
 
-  private getPlotDataById(id: number[][]): Observable<GvpPlotData[]> {
+  private getPlotDataById(id: number[][]): Observable<GvpJSON[]> {
     const params = '?ids=' + id.reduce((acc, val) => acc.concat(val), []).join('&ids=');
-    return this.get<GvpPlotData[]>('api/multiget/' + params);
+    return this.get<GvpJSON[]>('api/multiget/' + params);
   }
 
-  public getPlotData(config: GvpPlotXML, testId: number, versionIds: number[]): Observable<GvpPlotData[]> {
+  public getPlotData(config: GvpPlotXML, testId: number, versionIds: number[]): Observable<GvpJSON[]> {
     return forkJoin(
       versionIds.map((versionId) => this.getPlotId(config, testId, versionId)))
       .pipe(
@@ -56,7 +56,7 @@ export class StaticplotService extends GVPAPIService {
       );
     }
 
-  public getPlot(config: GvpPlotXML, data: GvpPlotData[], useMarkers: boolean): Observable<any> {
+  public getPlot(config: GvpPlotXML, data: GvpJSON[], useMarkers: boolean): Observable<any> {
     const req = this.prepareRequest(config, data, useMarkers);
     // console.log('prepareRequest returned', req);
     return this.post('api/getPNG', req);

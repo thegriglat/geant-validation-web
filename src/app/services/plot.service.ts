@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { concatMap, map, tap, concatAll } from 'rxjs/operators';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { GvpPlotData, GvpPlotXML, GvpPlotIdRequest } from '../classes/gvp-plot';
+import { GvpJSON, GvpPlotXML, GvpPlotIdRequest } from '../classes/gvp-plot';
 import { Observable, forkJoin } from 'rxjs';
 import { GVPAPIService } from './gvpapi.service';
 
@@ -26,12 +26,12 @@ export class PlotService extends GVPAPIService {
       // tap((data) => console.log('getPlotId returned', data)));
   }
 
-  private getPlotDataById(id: number[][]): Observable<GvpPlotData[]> {
+  private getPlotDataById(id: number[][]): Observable<GvpJSON[]> {
     const params = '?ids=' + id.reduce((acc, val) => acc.concat(val), []).join('&ids=');
-    return this.get<GvpPlotData[]>('api/multiget/' + params);
+    return this.get<GvpJSON[]>('api/multiget/' + params);
   }
 
-  protected getPlotData(config: GvpPlotXML, testId: number, versionId: number[]): Observable<GvpPlotData[]> {
+  protected getPlotData(config: GvpPlotXML, testId: number, versionId: number[]): Observable<GvpJSON[]> {
     return forkJoin(
       versionId.map((e) => this.getPlotId(config, testId, e)))
       .pipe(

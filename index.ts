@@ -1,4 +1,4 @@
-import { GvpPlotData, GvpParameter, GvpHistogram, GvpChart } from "./src/app/classes/gvp-plot";
+import { GvpJSON, GvpParameter, GvpHistogram, GvpChart } from "./src/app/classes/gvp-plot";
 
 /* globals require, process */
 import * as express from 'express';
@@ -315,8 +315,8 @@ function PGJoin(arr: any[]): string {
  * @param {number} id record id
  * @returns JSON
  */
-function apigetJSON(id: number): Promise<GvpPlotData> {
-  const promise: Promise<GvpPlotData> = new Promise((resolve, reject) => {
+function apigetJSON(id: number): Promise<GvpJSON> {
+  const promise: Promise<GvpJSON> = new Promise((resolve, reject) => {
     const sqlPrint =
       'SELECT inspire.*, target.*, mctool_model.*, mctool_name.*, mctool_name_version.*, observable.*, ' +
       'particle_beam.particle_name as particle_beam, particle_sec.particle_name as particle_sec, plot.*, plot_type.*, reaction.*, test.* ' +
@@ -343,7 +343,7 @@ function apigetJSON(id: number): Promise<GvpPlotData> {
       for (let i = 0; i < result.parnames.length; i++) {
         params.push({ names: result.parnames[i], values: result.parvalues[i] });
       };
-      let r: GvpPlotData;
+      let r: GvpJSON;
       r = {
         id: result.plot_id,
         article: {
@@ -451,8 +451,8 @@ function apigetJSON(id: number): Promise<GvpPlotData> {
  * @params {list} ids list of record ids.
  * @returns Promise
  */
-function apimultiget(ids: number[]): Promise<GvpPlotData[]> {
-  const promises: Promise<GvpPlotData>[] = [];
+function apimultiget(ids: number[]): Promise<GvpJSON[]> {
+  const promises: Promise<GvpJSON>[] = [];
   for (let i = 0; i < ids.length; i++) {
     promises.push(apigetJSON(ids[i]));
   }
