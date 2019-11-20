@@ -264,7 +264,7 @@ function getFilledArray(len: number, value: any) {
 }
 
 interface SQLRow {
-  [key: string]: string | number;
+  [key: string]: any;
 }
 
 /**
@@ -501,14 +501,14 @@ app.post('/uploadException', isLoggedIn, (req, res) => {
       'select mctool_name_version_id from mctool_name_version ' +
       'inner join mctool_name on mctool_name.mctool_name_id = mctool_name_version.mctool_name_id ' +
       'where lower(mctool_name.mctool_name_name) = lower($1) and lower(mctool_name_version.version) = lower($2)';
-    execSQL([mctool_name, mctool_version], sql).then((result: any[]) => {
+    execSQL([mctool_name, mctool_version], sql).then((result) => {
       // return minimum values of plot_id
       if (result.length === 0) {
         res.status(400).json({ status: 'Error', description: 'No such name/version found' });
         reject();
         return;
       }
-      mctool_name_version_id = result[0].mctool_name_version_id;
+      mctool_name_version_id = Number(result[0].mctool_name_version_id);
       resolve();
     });
   })
@@ -516,13 +516,13 @@ app.post('/uploadException', isLoggedIn, (req, res) => {
       () =>
         new Promise((resolve, reject) => {
           execSQL([testName], 'select test_id from test where lower(test_name) = lower($1)').then(
-            (result: any[]) => {
+            (result) => {
               if (result.length === 0) {
                 res.status(400).json({ status: 'Error', description: 'No valid test found' });
                 reject();
                 return;
               }
-              test_id = result[0].test_id;
+              test_id = Number(result[0].test_id);
               resolve();
             }
           );
@@ -534,13 +534,13 @@ app.post('/uploadException', isLoggedIn, (req, res) => {
           execSQL(
             [mctool_model],
             'select mctool_model_id from mctool_model where lower(mctool_model_name) = lower($1)'
-          ).then((result: any[]) => {
+          ).then((result) => {
             if (result.length === 0) {
               res.status(400).json({ status: 'Error', description: 'No valid MCTool name found' });
               reject();
               return;
             }
-            mctool_model_id = result[0].mctool_model_id;
+            mctool_model_id = Number(result[0].mctool_model_id);
             resolve();
           });
         })
@@ -551,13 +551,13 @@ app.post('/uploadException', isLoggedIn, (req, res) => {
           execSQL(
             [beamparticle],
             'select pdgid from particle where lower(particle_name) = lower($1) or lower($1) in (SELECT lower(x) FROM unnest(synonyms::text[]) x);'
-          ).then((result: any[]) => {
+          ).then((result) => {
             if (result.length === 0) {
               res.status(400).json({ status: 'Error', description: 'No valid particle found' });
               reject();
               return;
             }
-            beam_particle_pdgid = result[0].pdgid;
+            beam_particle_pdgid = Number(result[0].pdgid);
             resolve();
           });
         })
@@ -568,13 +568,13 @@ app.post('/uploadException', isLoggedIn, (req, res) => {
           execSQL(
             [target],
             'select target_id from target where lower(target_name) = lower($1)'
-          ).then((result: any[]) => {
+          ).then((result) => {
             if (result.length === 0) {
               res.status(400).json({ status: 'Error', description: 'No valid target found' });
               reject();
               return;
             }
-            target_id = result[0].target_id;
+            target_id = Number(result[0].target_id);
             resolve();
           });
         })
@@ -635,7 +635,7 @@ app.post('/upload', isLoggedIn, (req, res) => {
   let test_id = -1;
   // then().then()... can be simplified
   new Promise((resolve, reject) => {
-    execSQL([inspireid], 'select inspire_id from inspire where inspire_id = $1;').then((result: any[]) => {
+    execSQL([inspireid], 'select inspire_id from inspire where inspire_id = $1;').then((result) => {
       if (result.length === 0) {
         getPageContents(
           r1 => {
@@ -690,7 +690,7 @@ app.post('/upload', isLoggedIn, (req, res) => {
           execSQL(
             [mctool.name, mctool.model],
             'select t1.mctool_model_id, t2.mctool_name_id from mctool_model as t1 inner join mctool_name as t2 on t1.mctool_name_id = t2.mctool_name_id where lower(t2.mctool_name_name) = lower($1) and lower(t1.mctool_model_name) = lower($2);'
-          ).then((result: any[]) => {
+          ).then((result) => {
             if (result.length === 0) {
               res.status(400).json({
                 status: 'Error',
@@ -700,7 +700,7 @@ app.post('/upload', isLoggedIn, (req, res) => {
               return;
             }
             // mctool_name_id = result[0].mctool_name_id;
-            mctool_model_id = result[0].mctool_model_id;
+            mctool_model_id = Number(result[0].mctool_model_id);
             resolve();
           });
         })
@@ -711,7 +711,7 @@ app.post('/upload', isLoggedIn, (req, res) => {
           execSQL(
             [mctool.name, mctool.version],
             'select t1.mctool_name_version_id from mctool_name_version as t1 inner join mctool_name as t2 on t1.mctool_name_id = t2.mctool_name_id where lower(t2.mctool_name_name) = lower($1) and t1.version = $2;'
-          ).then((result: any[]) => {
+          ).then((result) => {
             if (result.length === 0) {
               res.status(400).json({
                 status: 'Error',
@@ -720,7 +720,7 @@ app.post('/upload', isLoggedIn, (req, res) => {
               reject();
               return;
             }
-            mctool_name_version_id = result[0].mctool_name_version_id;
+            mctool_name_version_id = Number(result[0].mctool_name_version_id);
             resolve();
           });
         })
@@ -732,13 +732,13 @@ app.post('/upload', isLoggedIn, (req, res) => {
           execSQL(
             [json.testName],
             'select test_id from test where lower(test_name) = lower($1);'
-          ).then((result: any[]) => {
+          ).then((result) => {
             if (result.length === 0) {
               res.status(400).json({ status: 'Error', description: 'No valid test_id found.' });
               reject();
               return;
             }
-            test_id = result[0].test_id;
+            test_id = Number(result[0].test_id);
             resolve();
           });
         })
@@ -750,7 +750,7 @@ app.post('/upload', isLoggedIn, (req, res) => {
           execSQL(
             [beamParticleName],
             'select pdgid from particle where lower(particle_name) = lower($1) or lower($1) in (SELECT lower(x) FROM unnest(synonyms::text[]) x);'
-          ).then((result: any[]) => {
+          ).then((result) => {
             if (result.length === 0) {
               res
                 .status(400)
@@ -758,7 +758,7 @@ app.post('/upload', isLoggedIn, (req, res) => {
               reject();
               return;
             }
-            beamParticle_pdgid = result[0].pdgid;
+            beamParticle_pdgid = Number(result[0].pdgid);
             resolve();
           });
         })
@@ -770,13 +770,13 @@ app.post('/upload', isLoggedIn, (req, res) => {
           execSQL(
             [json.metadata.targetName],
             'select target_id from target where lower(target_name) = lower($1);'
-          ).then((result: any[]) => {
+          ).then((result) => {
             if (result.length === 0) {
               res.status(400).json({ status: 'Error', description: 'No valid target_id found.' });
               reject();
               return;
             }
-            target_id = result[0].target_id;
+            target_id = Number(result[0].target_id);
             resolve();
           });
         })
@@ -788,7 +788,7 @@ app.post('/upload', isLoggedIn, (req, res) => {
           execSQL(
             [json.metadata.observableName],
             'select observable_id from observable where lower(observable_name) = lower($1);'
-          ).then((result: any[]) => {
+          ).then((result) => {
             if (result.length === 0) {
               res
                 .status(400)
@@ -796,7 +796,7 @@ app.post('/upload', isLoggedIn, (req, res) => {
               reject();
               return;
             }
-            observable_id = result[0].observable_id;
+            observable_id = Number(result[0].observable_id);
             resolve();
           });
         })
@@ -808,7 +808,7 @@ app.post('/upload', isLoggedIn, (req, res) => {
             execSQL(
               [json.metadata.secondaryParticle],
               'select pdgid from particle where lower(particle_name) = lower($1) or lower($1) in (SELECT lower(x) FROM unnest(synonyms::text[]) x);'
-            ).then((result: any[]) => {
+            ).then((result) => {
               if (result.length === 0) {
                 res.status(400).json({
                   status: 'Error',
@@ -817,7 +817,7 @@ app.post('/upload', isLoggedIn, (req, res) => {
                 reject();
                 return;
               }
-              secondary_pdgid = result[0].pdgid;
+              secondary_pdgid = Number(result[0].pdgid);
               resolve();
             });
           } else resolve();
@@ -829,9 +829,9 @@ app.post('/upload', isLoggedIn, (req, res) => {
           execSQL(
             [json.metadata.reaction],
             'select reaction_id from reaction where lower(reaction_name) = lower($1);'
-          ).then((result: any[]) => {
+          ).then((result) => {
             if (result.length !== 0) {
-              reaction_id = result[0].reaction_id;
+              reaction_id = Number(result[0].reaction_id);
             }
             resolve();
           });
@@ -856,7 +856,7 @@ app.post('/upload', isLoggedIn, (req, res) => {
           execSQL(
             [json.plotType],
             'select plot_type_id from plot_type where lower(plot_type_name) = lower($1);'
-          ).then((result: any[]) => {
+          ).then((result) => {
             if (result.length === 0) {
               res
                 .status(400)
@@ -864,7 +864,7 @@ app.post('/upload', isLoggedIn, (req, res) => {
               reject();
               return;
             }
-            plot_type_id = result[0].plot_type_id;
+            plot_type_id = Number(result[0].plot_type_id);
             resolve();
           });
         })
@@ -1207,7 +1207,7 @@ app.get('/api/getPlotsByTestVersion', isLoggedIn, (req: api.APIGetPlotsByTestVer
   const test = req.query.test;
   const version = req.query.version;
   const sql = queries.plots_by_test_version;
-  execSQL([test, version], sql).then((result: any[]) => {
+  execSQL([test, version], sql).then((result) => {
     apimultiget(result.map(e => Number(e.plot_id))).then(
       result => {
         res.status(200).json(result);
@@ -1431,7 +1431,7 @@ app.post('/api/getPNG', (req, res) => {
   });
 });
 
-function PromiseTimeout(x) {
+function PromiseTimeout(x: number) {
   return new Promise(resolve => {
     setTimeout(() => {
       resolve();
@@ -1541,14 +1541,10 @@ async function getPNG(body) {
   });
 }
 
-app.get('/api/checkMCTool', (req, res) => {
+app.get('/api/checkMCTool', (req: api.APIcheckMCToolRequest, res: api.APIcheckMCToolResponse) => {
   const versionid = req.query.versionid;
   const name = req.query.name;
   const model = req.query.model;
-  if (!versionid || !name || !model) {
-    res.status(400).json({ status: 'error', description: 'Some parameters not specified' });
-    return;
-  }
   const sql =
     'select count(mctool_name_version.mctool_name_version_id) from mctool_name_version ' +
     'inner join mctool_name  on mctool_name.mctool_name_id  = mctool_name_version.mctool_name_id ' +
@@ -1557,14 +1553,14 @@ app.get('/api/checkMCTool', (req, res) => {
     'limit 1';
   execSQL([versionid, name, model], sql).then(result => {
     if (result[0].count > 0) {
-      res.status(200).json({ status: true });
+      res.status(200).json(true);
     } else {
-      res.status(200).json({ status: false });
+      res.status(200).json(false);
     }
   });
 });
 
-app.get('/api/uniqlookup', (req, res) => {
+app.get('/api/uniqlookup', (req: api.APIuniqlookupRequest, res: api.APIuniqlookuplResponse) => {
   const test_id = req.query.test_id;
   const JSONAttr = req.query.JSONAttr;
   const getSQL = {
@@ -1586,11 +1582,7 @@ app.get('/api/uniqlookup', (req, res) => {
       'select parnames, parvalues from plot where plot.test_id = $1 group by parnames, parvalues'
   };
   const sql = getSQL[JSONAttr];
-  if (!JSONAttr || !sql) {
-    res.status(400).json({ status: 'Error' });
-    return;
-  }
-  execSQL([test_id], sql).then((result: any[]) => {
+  execSQL([test_id], sql).then((result) => {
     const r = [];
     for (const i of result) {
       if (JSONAttr !== 'metadata.parameters') r.push(i.out);
@@ -1669,7 +1661,7 @@ app.get('/api/getPlotId', (req, res) => {
     }
     if (sqllist.length !== 0) sql += ` and ( ${sqllist.join(' or ')})`;
   }
-  execSQL(params, sql).then((result: any[]) => {
+  execSQL(params, sql).then((result) => {
     const r = [];
     for (let i = 0; i < result.length; i++) r.push(result[i].plot_id);
     res.status(200).json(r);
@@ -1725,7 +1717,7 @@ app.get('/api/getExceptionText', (req, res) => {
 app.get('/api/getIdHint', (req, res) => {
   const id = req.query.id;
   const sql = queries.get_id_hint;
-  execSQL([`${id}%`], sql).then((result: any[]) => {
+  execSQL([`${id}%`], sql).then((result) => {
     const r = { hint: [] };
     for (let i = 0; i < result.length; i++) r.hint.push(result[i].plot_id);
     res.status(200).json(r);
@@ -1902,7 +1894,7 @@ app.get('/api/onlineMenuFilter', (req, res) => {
   }
 
   p_all.push(
-    execSQL(menuQueries[0].params, menuQueries[0].sql).then((result: any[]) => {
+    execSQL(menuQueries[0].params, menuQueries[0].sql).then((result) => {
       for (const ri of result) {
         r.mctool_name_version_id.push(ri.mctool_name_version_id);
       }
@@ -1932,7 +1924,7 @@ app.get('/api/onlineMenuFilter', (req, res) => {
   }
 
   p_all.push(
-    execSQL(menuQueries[1].params, menuQueries[1].sql).then((result: any[]) => {
+    execSQL(menuQueries[1].params, menuQueries[1].sql).then((result) => {
       for (const ri of result) {
         r.p1name.push(ri.p1name);
       }
@@ -1940,7 +1932,7 @@ app.get('/api/onlineMenuFilter', (req, res) => {
   );
 
   p_all.push(
-    execSQL(menuQueries[2].params, menuQueries[2].sql).then((result: any[]) => {
+    execSQL(menuQueries[2].params, menuQueries[2].sql).then((result) => {
       for (const ri of result) {
         r.mctool_model_name.push(ri.mctool_model_name);
       }
@@ -1948,7 +1940,7 @@ app.get('/api/onlineMenuFilter', (req, res) => {
   );
 
   p_all.push(
-    execSQL(menuQueries[3].params, menuQueries[3].sql).then((result: any[]) => {
+    execSQL(menuQueries[3].params, menuQueries[3].sql).then((result) => {
       for (const ri of result) {
         r.target_name.push(ri.target_name);
       }
@@ -1956,7 +1948,7 @@ app.get('/api/onlineMenuFilter', (req, res) => {
   );
 
   p_all.push(
-    execSQL(menuQueries[4].params, menuQueries[4].sql).then((result: any[]) => {
+    execSQL(menuQueries[4].params, menuQueries[4].sql).then((result) => {
       for (const ri of result) {
         r.p2name.push(ri.p2name);
       }
@@ -1965,7 +1957,7 @@ app.get('/api/onlineMenuFilter', (req, res) => {
 
   p_all.push(
     execSQL(menuQueries[6].params, menuQueries[6].sql)
-      .then((result: any[]) => {
+      .then((result) => {
         for (const ri of result) {
           r.benergies.push(ri.benergies);
         }
@@ -1976,7 +1968,7 @@ app.get('/api/onlineMenuFilter', (req, res) => {
         }
       })
       .then(() =>
-        execSQL(menuQueries[5].params, menuQueries[5].sql).then((result: any[]) => {
+        execSQL(menuQueries[5].params, menuQueries[5].sql).then((result) => {
           for (const ri of result) {
             r.observable_name.push(ri.observable_name);
           }
@@ -2008,7 +2000,7 @@ app.get('/api/onlineMenuFilter', (req, res) => {
         PGJoin(q.observables.length === 0 ? r.observable_name : q.observables.split('|'))
       ],
       sql
-    ).then((result: any[]) => {
+    ).then((result) => {
       const obj = {};
       for (const rr of result) {
         if (rr.parnames.length === 0) continue;
@@ -2095,7 +2087,7 @@ app.get('/api/exceptionMenuFilter', (req, res) => {
   }
 
   let sync = 0;
-  execSQL([q.testid].concat(queryvars), menuQueries[1].sql).then((result: any[]) => {
+  execSQL([q.testid].concat(queryvars), menuQueries[1].sql).then((result) => {
     for (const i of result) {
       r.versions.push(i);
     }
@@ -2107,7 +2099,7 @@ app.get('/api/exceptionMenuFilter', (req, res) => {
     }
   });
 
-  execSQL([q.testid].concat(queryvars), menuQueries[0].sql).then((result: any[]) => {
+  execSQL([q.testid].concat(queryvars), menuQueries[0].sql).then((result) => {
     for (const i of result) {
       r.beam.push(i.particle_name);
     }
@@ -2139,7 +2131,7 @@ app.get('/api/exception_tool_info_by_test_id', (req, res) => {
 app.get('/api/exception_particle_name_by_test_id', (req, res) => {
   const sql = queries.exceptions_particle_name_by_test_id;
 
-  execSQL([req.query.test_id], sql).then((result: any[]) => {
+  execSQL([req.query.test_id], sql).then((result) => {
     const r = result.map(a => a.particle_name);
     res.status(200).json(r);
   });

@@ -53,3 +53,26 @@ export interface APIgetExpPlotsByInspireIdRequest extends express.Request {
 export interface APIgetExpPlotsByInspireIdResponse extends express.Response {
     json(body: GvpJSON[]);
 }
+
+export interface APIcheckMCToolRequest extends express.Request {
+    query: {
+        versionid: number;
+        name: string;
+        model: string;
+    }
+}
+
+export interface APIcheckMCToolResponse extends express.Response {
+    json(body: boolean);
+}
+
+export interface APIuniqlookupRequest extends express.Request {
+    query: {
+        test_id: number;
+        JSONAttr: string;
+    }
+}
+
+export interface APIuniqlookuplResponse extends express.Response {
+    json(body: {JSONAttr: string, values: any[]});
+}
