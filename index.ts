@@ -263,13 +263,17 @@ function getFilledArray(len: number, value: any) {
   return new Array(len).fill(value);
 }
 
+interface SQLRow {
+  [key: string]: string | number;
+}
+
 /**
  * Main function for quering database
  * @param {list} params list of param values
  * @param {string} sql SQL with parameter substitution
  * @returns Promise
  */
-function execSQL(params: any[], sql: string): Promise<any[]> {
+function execSQL(params: any[], sql: string): Promise<SQLRow[]> {
   //let response = {};
   //Start connection
   return new Promise((resolve, reject) => {
@@ -933,7 +937,7 @@ app.post('/upload', isLoggedIn, (req, res) => {
             )
               .then(() => {
                 execSQL([], 'select plot_id from plot order by plot_id desc limit 1;').then(r1 => {
-                  plot_id = r1[0].plot_id;
+                  plot_id = Number(r1[0].plot_id);
                   res.status(200).send(`plot_id = ${JSON.stringify(plot_id)}`);
                   resolve();
                 });
@@ -995,7 +999,7 @@ app.post('/upload', isLoggedIn, (req, res) => {
             )
               .then(() => {
                 execSQL([], 'select plot_id from plot order by plot_id desc limit 1;').then(r1 => {
-                  plot_id = r1[0].plot_id;
+                  plot_id = Number(r1[0].plot_id);
                   res.status(200).send(`plot_id = ${JSON.stringify(plot_id)}`);
                   resolve();
                 });
