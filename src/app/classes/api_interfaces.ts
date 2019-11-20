@@ -1,5 +1,5 @@
 import * as express from 'express';
-import {GvpJSON} from './gvp-plot';
+import { GvpJSON } from './gvp-plot';
 
 export interface APILoggedIn extends express.Request {
     user: string;
@@ -17,7 +17,7 @@ export interface APIGetRequest extends express.Request {
 }
 
 export interface APIGetResponse extends express.Response {
-    json (body: GvpJSON);
+    json(body: GvpJSON);
 }
 
 export interface APIMultigetRequest extends express.Request {
@@ -27,8 +27,19 @@ export interface APIMultigetRequest extends express.Request {
 }
 
 export interface APIMultigetResponse extends express.Response {
-    json (body: GvpJSON[]);
+    json(body: GvpJSON[]);
 }
 
 export interface APIGetRawResponse extends express.Response {
+}
+
+export interface APIGetPlotsByTestVersionRequest extends express.Request {
+    query: {
+        test: string;
+        version: string;
+    }
+}
+
+export interface APIGetPlotsByTestVersionResponse extends express.Response {
+    json(body: GvpJSON[]);
 }

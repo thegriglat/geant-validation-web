@@ -1200,17 +1200,17 @@ app.get('/api/multiget', (req: api.APIMultigetRequest, res: api.APIMultigetRespo
   );
 });
 
-app.get('/api/getPlotsByTestVersion', isLoggedIn, (req, res) => {
+app.get('/api/getPlotsByTestVersion', isLoggedIn, (req: api.APIGetPlotsByTestVersionRequest, res: api.APIGetPlotsByTestVersionResponse) => {
   const test = req.query.test;
   const version = req.query.version;
   const sql = queries.plots_by_test_version;
   execSQL([test, version], sql).then((result: any[]) => {
-    apimultiget(result.map(e => e.plot_id)).then(
+    apimultiget(result.map(e => Number(e.plot_id))).then(
       result => {
         res.status(200).json(result);
       },
       () => {
-        res.status(400).json(null);
+        res.status(400).json([]);
       }
     );
   });
