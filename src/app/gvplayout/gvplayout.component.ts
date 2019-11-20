@@ -120,7 +120,7 @@ export class GvplayoutComponent implements OnInit {
       });
     });
     // Populate caches
-    this.api.get<GvpMctoolNameVersion[]>('api/mctool_name_version').subscribe(response => {
+    this.api._get<GvpMctoolNameVersion[]>('api/mctool_name_version').subscribe(response => {
       for (const elem of response) {
         this.MCToolNameVersionCache.set(elem.mctool_name_version_id, {
           version: elem.version,
@@ -130,7 +130,7 @@ export class GvplayoutComponent implements OnInit {
       }
     });
 
-    this.api.get<GvpMctoolName[]>('api/mctool_name').subscribe(response => {
+    this.api._get<GvpMctoolName[]>('api/mctool_name').subscribe(response => {
       for (const elem of response) {
         this.MCToolNameCache.set(elem.mctool_name_id, elem.mctool_name_name);
       }
@@ -196,7 +196,7 @@ export class GvplayoutComponent implements OnInit {
   private waitForTest(): Promise<any> {
     this.ALLTESTS.length = 0;
     return new Promise((resolve) => {
-      this.api.get<GvpTest[]>('api/test').subscribe(data => {
+      this.api._get<GvpTest[]>('api/test').subscribe(data => {
           this.ALLTESTS = data.filter(elem => elem.test_name !== 'experiment');
           resolve();
         });
@@ -207,7 +207,7 @@ export class GvplayoutComponent implements OnInit {
   private updateExpDescription(testId: number) {
     let httpParams = new HttpParams();
     httpParams = httpParams.set('test_id', String(testId));
-    this.api.get<GvpExpData[]>('api/getexperimentsinspirefortest', httpParams).subscribe((result) => {
+    this.api._get<GvpExpData[]>('api/getexperimentsinspirefortest', httpParams).subscribe((result) => {
       const rmod = result.map(e => {
         e.expname = e.expname ? e.expname : 'exp. data';
         return e;
@@ -243,7 +243,7 @@ export class GvplayoutComponent implements OnInit {
     config = config.set('namefield', 'mctool_name_version_id');
     config = config.set('JSONAttr', 'mctool.version');
 
-    this.api.get<GvpUniq<number>>('api/uniqlookup', config).subscribe((response) => {
+    this.api._get<GvpUniq<number>>('api/uniqlookup', config).subscribe((response) => {
       this.menuVersions = [];
       const versions = new Map<number, string>();
       for (const i of response.values) {
@@ -292,7 +292,7 @@ export class GvplayoutComponent implements OnInit {
     let config = new HttpParams();
     config = config.set('test_id', String(test.test_id));
     config = config.set('JSONAttr', 'mctool.model');
-    this.api.get<GvpUniq<string>>('/api/uniqlookup', config).subscribe(response => {
+    this.api._get<GvpUniq<string>>('/api/uniqlookup', config).subscribe(response => {
       this.models  = this.models.slice();
       const responceValues = response.values.slice();
       responceValues.sort();
