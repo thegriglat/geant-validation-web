@@ -1028,7 +1028,7 @@ router.route('/get/:id').get((req: api.APIGetRequest, res: api.APIGetResponse) =
 });
 
 // Route for gnuplot text data
-router.route('/getRaw/:id').get((req: api.APIGetRequest, res: express.Response) => {
+router.route('/getRaw/:id').get((req: api.APIGetRequest, res) => {
   const id = Number(req.params.id);
   apigetJSON(id).then(
     (result: any) => {
@@ -1195,7 +1195,7 @@ app.get('/api/multiget', (req: api.APIMultigetRequest, res: api.APIMultigetRespo
       res.status(200).json(result);
     },
     () => {
-      res.status(400).json(null);
+      res.status(400).json([]);
     }
   );
 });
