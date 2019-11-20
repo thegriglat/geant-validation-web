@@ -237,7 +237,7 @@ app.get('/logout', (req: api.APILogout, res) => {
  * Pass web page content to callback function
  * Needed for Inspire metadata parsing
  */
-function getPageContents(callback: {(str: string): void}, host: string, url: string): void {
+function getPageContents(callback: { (str: string): void }, host: string, url: string): void {
   const hostport = host.split(':');
   const options = {
     host: hostport[0],
@@ -248,7 +248,7 @@ function getPageContents(callback: {(str: string): void}, host: string, url: str
   const call = response => {
     let str = '';
     // another chunk of data has been recieved, so append it to `str`
-    response.on('data', (chunk:string) => {
+    response.on('data', (chunk: string) => {
       str += chunk;
     });
     // the whole response has been recieved, so we just print it out here
@@ -279,7 +279,7 @@ function execSQL(params: any[], sql: string): Promise<any[]> {
         console.error('error fetching client from pool', err);
         reject(Error('error fetching client from poo'));
       }
-      return client.query(sql, params, (err, result): void  => {
+      return client.query(sql, params, (err, result): void => {
         logger.debug(`SQL: ${sql}\nPARAMS: ${params}`);
         done();
         if (err) {
@@ -318,130 +318,130 @@ function PGJoin(arr: any[]): string {
  */
 function apigetJSON(id: number): Promise<GvpJSON> {
   const sqlPrint =
-      'SELECT inspire.*, target.*, mctool_model.*, mctool_name.*, mctool_name_version.*, observable.*, ' +
-      'particle_beam.particle_name as particle_beam, particle_sec.particle_name as particle_sec, plot.*, plot_type.*, reaction.*, test.* ' +
-      'FROM plot INNER JOIN inspire ON plot.inspire_id=inspire.inspire_id ' +
-      'INNER JOIN target ON plot.target=target.target_id ' +
-      'INNER JOIN mctool_model ON plot.mctool_model_id=mctool_model.mctool_model_id ' +
-      'INNER JOIN mctool_name_version ON plot.mctool_name_version_id=mctool_name_version.mctool_name_version_id ' +
-      'INNER JOIN mctool_name ON mctool_name_version.mctool_name_id=mctool_name.mctool_name_id ' +
-      'INNER JOIN observable ON plot.observable_id=observable.observable_id ' +
-      'INNER JOIN particle as particle_beam ON particle_beam.pdgid=plot.beam_particle_pdgid ' +
-      'INNER JOIN particle as particle_sec ON particle_sec.pdgid=plot.secondary_pdgid ' +
-      'INNER JOIN test ON plot.test_id=test.test_id ' +
-      'INNER JOIN plot_type ON plot.plot_type_id=plot_type.plot_type_id ' +
-      'INNER JOIN reaction ON plot.reaction_id=reaction.reaction_id ' +
-      'WHERE plot.plot_id=$1';
+    'SELECT inspire.*, target.*, mctool_model.*, mctool_name.*, mctool_name_version.*, observable.*, ' +
+    'particle_beam.particle_name as particle_beam, particle_sec.particle_name as particle_sec, plot.*, plot_type.*, reaction.*, test.* ' +
+    'FROM plot INNER JOIN inspire ON plot.inspire_id=inspire.inspire_id ' +
+    'INNER JOIN target ON plot.target=target.target_id ' +
+    'INNER JOIN mctool_model ON plot.mctool_model_id=mctool_model.mctool_model_id ' +
+    'INNER JOIN mctool_name_version ON plot.mctool_name_version_id=mctool_name_version.mctool_name_version_id ' +
+    'INNER JOIN mctool_name ON mctool_name_version.mctool_name_id=mctool_name.mctool_name_id ' +
+    'INNER JOIN observable ON plot.observable_id=observable.observable_id ' +
+    'INNER JOIN particle as particle_beam ON particle_beam.pdgid=plot.beam_particle_pdgid ' +
+    'INNER JOIN particle as particle_sec ON particle_sec.pdgid=plot.secondary_pdgid ' +
+    'INNER JOIN test ON plot.test_id=test.test_id ' +
+    'INNER JOIN plot_type ON plot.plot_type_id=plot_type.plot_type_id ' +
+    'INNER JOIN reaction ON plot.reaction_id=reaction.reaction_id ' +
+    'WHERE plot.plot_id=$1';
   return execSQL([id], sqlPrint).then((resultlist: any[]) => {
-      if (resultlist.length === 0) {
-        logger.warn(`No data for id ${id} found`);
-        return null;
-      }
-      let result:any = resultlist[0];
-      let params: GvpParameter[] = [];
-      for (let i = 0; i < result.parnames.length; i++) {
-        params.push({ names: result.parnames[i], values: result.parvalues[i] });
-      };
-      let r: GvpJSON;
-      r = {
-        id: result.plot_id,
-        article: {
-          inspireId: result.inspire_id
-        },
-        mctool: {
-          name: result.mctool_name_name,
-          version: result.version,
-          model: result.mctool_model_name
-        },
-        testName: result.test_name,
-        metadata: {
-          observableName: result.observable_name,
-          reaction: result.reaction_name,
-          targetName: result.target_name,
-          beamParticle: result.particle_beam,
-          beamEnergies: result.beam_energy,
-          beam_energy_str: result.beam_energy_str,
-          secondaryParticle: result.particle_sec,
-          // fill parameters
-          parameters: params
-        },
-        plotType: result.plot_type_name,
+    if (resultlist.length === 0) {
+      logger.warn(`No data for id ${id} found`);
+      return null;
+    }
+    let result: any = resultlist[0];
+    let params: GvpParameter[] = [];
+    for (let i = 0; i < result.parnames.length; i++) {
+      params.push({ names: result.parnames[i], values: result.parvalues[i] });
+    };
+    let r: GvpJSON;
+    r = {
+      id: result.plot_id,
+      article: {
+        inspireId: result.inspire_id
+      },
+      mctool: {
+        name: result.mctool_name_name,
+        version: result.version,
+        model: result.mctool_model_name
+      },
+      testName: result.test_name,
+      metadata: {
+        observableName: result.observable_name,
+        reaction: result.reaction_name,
+        targetName: result.target_name,
+        beamParticle: result.particle_beam,
+        beamEnergies: result.beam_energy,
+        beam_energy_str: result.beam_energy_str,
+        secondaryParticle: result.particle_sec,
+        // fill parameters
+        parameters: params
+      },
+      plotType: result.plot_type_name,
 
-      };
-      if (result.plot_npoints === null) {
-        // histogram
-        r.chart = null;
-        let h: GvpHistogram = new GvpHistogram();
-        h.nBins = result.plot_nbins.length !== 0 ? result.plot_nbins : [result.plot_val.length];
-        h.binEdgeLow = result.plot_bin_min || [];
-        h.binEdgeHigh = result.plot_bin_max || [];
-        h.binContent = result.plot_val || [];
-        h.yStatErrorsPlus =
-          result.plot_err_stat_plus.length === 0
-            ? getFilledArray(result.plot_val.length, 0)
-            : result.plot_err_stat_plus;
-        h.yStatErrorsMinus =
-          result.plot_err_stat_minus.length === 0
-            ? getFilledArray(result.plot_val.length, 0)
-            : result.plot_err_stat_minus;
-        h.ySysErrorsPlus =
-          result.plot_err_sys_plus.length === 0
-            ? getFilledArray(result.plot_val.length, 0)
-            : result.plot_err_sys_plus;
-        h.ySysErrorsMinus =
-          result.plot_err_sys_minus.length === 0
-            ? getFilledArray(result.plot_val.length, 0)
-            : result.plot_err_sys_minus;
-        h.binLabel = result.plot_bin_label || [];
-        r.histogram = h;
-      } else {
-        // chart
-        r.histogram = null;
-        let h: GvpChart = new GvpChart();
-        h.nPoints = result.plot_npoints;
-        h.xValues = result.plot_val.slice(0, result.plot_val.length / 2);
-        h.yValues = result.plot_val.slice(result.plot_val.length / 2, result.plot_val.length);
+    };
+    if (result.plot_npoints === null) {
+      // histogram
+      r.chart = null;
+      let h: GvpHistogram = new GvpHistogram();
+      h.nBins = result.plot_nbins.length !== 0 ? result.plot_nbins : [result.plot_val.length];
+      h.binEdgeLow = result.plot_bin_min || [];
+      h.binEdgeHigh = result.plot_bin_max || [];
+      h.binContent = result.plot_val || [];
+      h.yStatErrorsPlus =
+        result.plot_err_stat_plus.length === 0
+          ? getFilledArray(result.plot_val.length, 0)
+          : result.plot_err_stat_plus;
+      h.yStatErrorsMinus =
+        result.plot_err_stat_minus.length === 0
+          ? getFilledArray(result.plot_val.length, 0)
+          : result.plot_err_stat_minus;
+      h.ySysErrorsPlus =
+        result.plot_err_sys_plus.length === 0
+          ? getFilledArray(result.plot_val.length, 0)
+          : result.plot_err_sys_plus;
+      h.ySysErrorsMinus =
+        result.plot_err_sys_minus.length === 0
+          ? getFilledArray(result.plot_val.length, 0)
+          : result.plot_err_sys_minus;
+      h.binLabel = result.plot_bin_label || [];
+      r.histogram = h;
+    } else {
+      // chart
+      r.histogram = null;
+      let h: GvpChart = new GvpChart();
+      h.nPoints = result.plot_npoints;
+      h.xValues = result.plot_val.slice(0, result.plot_val.length / 2);
+      h.yValues = result.plot_val.slice(result.plot_val.length / 2, result.plot_val.length);
 
-        h.xStatErrorsPlus = result.plot_err_stat_plus.slice(
-          0,
-          result.plot_err_stat_plus.length / 2
-        );
-        h.yStatErrorsPlus = result.plot_err_stat_plus.slice(
-          result.plot_err_stat_plus.length / 2,
-          result.plot_err_stat_plus.length
-        );
+      h.xStatErrorsPlus = result.plot_err_stat_plus.slice(
+        0,
+        result.plot_err_stat_plus.length / 2
+      );
+      h.yStatErrorsPlus = result.plot_err_stat_plus.slice(
+        result.plot_err_stat_plus.length / 2,
+        result.plot_err_stat_plus.length
+      );
 
-        h.xStatErrorsMinus = result.plot_err_stat_minus.slice(
-          0,
-          result.plot_err_stat_minus.length / 2
-        );
-        h.yStatErrorsMinus = result.plot_err_stat_minus.slice(
-          result.plot_err_stat_minus.length / 2,
-          result.plot_err_stat_minus.length
-        );
+      h.xStatErrorsMinus = result.plot_err_stat_minus.slice(
+        0,
+        result.plot_err_stat_minus.length / 2
+      );
+      h.yStatErrorsMinus = result.plot_err_stat_minus.slice(
+        result.plot_err_stat_minus.length / 2,
+        result.plot_err_stat_minus.length
+      );
 
-        h.xSysErrorsPlus = result.plot_err_sys_plus.slice(0, result.plot_err_sys_plus.length / 2);
-        h.ySysErrorsPlus = result.plot_err_sys_plus.slice(
-          result.plot_err_sys_plus.length / 2,
-          result.plot_err_sys_plus.length
-        );
+      h.xSysErrorsPlus = result.plot_err_sys_plus.slice(0, result.plot_err_sys_plus.length / 2);
+      h.ySysErrorsPlus = result.plot_err_sys_plus.slice(
+        result.plot_err_sys_plus.length / 2,
+        result.plot_err_sys_plus.length
+      );
 
-        h.xSysErrorsMinus = result.plot_err_sys_minus.slice(
-          0,
-          result.plot_err_sys_minus.length / 2
-        );
-        h.ySysErrorsMinus = result.plot_err_sys_minus.slice(
-          result.plot_err_sys_minus.length / 2,
-          result.plot_err_sys_minus.length
-        );
-        r.chart = h;
-      }
-      let h = (r.chart) ? r.chart : r.histogram;
-      h.title = result.plot_title;
-      h.xAxisName = result.plot_axis_title[0];
-      h.yAxisName = result.plot_axis_title[1];
-      return r;
-    });
+      h.xSysErrorsMinus = result.plot_err_sys_minus.slice(
+        0,
+        result.plot_err_sys_minus.length / 2
+      );
+      h.ySysErrorsMinus = result.plot_err_sys_minus.slice(
+        result.plot_err_sys_minus.length / 2,
+        result.plot_err_sys_minus.length
+      );
+      r.chart = h;
+    }
+    let h = (r.chart) ? r.chart : r.histogram;
+    h.title = result.plot_title;
+    h.xAxisName = result.plot_axis_title[0];
+    h.yAxisName = result.plot_axis_title[1];
+    return r;
+  });
 }
 
 /**
@@ -498,7 +498,7 @@ app.post('/uploadException', isLoggedIn, (req, res) => {
       'select mctool_name_version_id from mctool_name_version ' +
       'inner join mctool_name on mctool_name.mctool_name_id = mctool_name_version.mctool_name_id ' +
       'where lower(mctool_name.mctool_name_name) = lower($1) and lower(mctool_name_version.version) = lower($2)';
-    execSQL([mctool_name, mctool_version], sql).then((result:any[]) => {
+    execSQL([mctool_name, mctool_version], sql).then((result: any[]) => {
       // return minimum values of plot_id
       if (result.length === 0) {
         res.status(400).json({ status: 'Error', description: 'No such name/version found' });
@@ -513,7 +513,7 @@ app.post('/uploadException', isLoggedIn, (req, res) => {
       () =>
         new Promise((resolve, reject) => {
           execSQL([testName], 'select test_id from test where lower(test_name) = lower($1)').then(
-            (result:any[]) => {
+            (result: any[]) => {
               if (result.length === 0) {
                 res.status(400).json({ status: 'Error', description: 'No valid test found' });
                 reject();
@@ -531,7 +531,7 @@ app.post('/uploadException', isLoggedIn, (req, res) => {
           execSQL(
             [mctool_model],
             'select mctool_model_id from mctool_model where lower(mctool_model_name) = lower($1)'
-          ).then((result:any[]) => {
+          ).then((result: any[]) => {
             if (result.length === 0) {
               res.status(400).json({ status: 'Error', description: 'No valid MCTool name found' });
               reject();
@@ -548,7 +548,7 @@ app.post('/uploadException', isLoggedIn, (req, res) => {
           execSQL(
             [beamparticle],
             'select pdgid from particle where lower(particle_name) = lower($1) or lower($1) in (SELECT lower(x) FROM unnest(synonyms::text[]) x);'
-          ).then((result:any[]) => {
+          ).then((result: any[]) => {
             if (result.length === 0) {
               res.status(400).json({ status: 'Error', description: 'No valid particle found' });
               reject();
@@ -565,7 +565,7 @@ app.post('/uploadException', isLoggedIn, (req, res) => {
           execSQL(
             [target],
             'select target_id from target where lower(target_name) = lower($1)'
-          ).then((result:any[]) => {
+          ).then((result: any[]) => {
             if (result.length === 0) {
               res.status(400).json({ status: 'Error', description: 'No valid target found' });
               reject();
@@ -632,7 +632,7 @@ app.post('/upload', isLoggedIn, (req, res) => {
   let test_id = -1;
   // then().then()... can be simplified
   new Promise((resolve, reject) => {
-    execSQL([inspireid], 'select inspire_id from inspire where inspire_id = $1;').then((result:any[]) => {
+    execSQL([inspireid], 'select inspire_id from inspire where inspire_id = $1;').then((result: any[]) => {
       if (result.length === 0) {
         getPageContents(
           r1 => {
@@ -687,7 +687,7 @@ app.post('/upload', isLoggedIn, (req, res) => {
           execSQL(
             [mctool.name, mctool.model],
             'select t1.mctool_model_id, t2.mctool_name_id from mctool_model as t1 inner join mctool_name as t2 on t1.mctool_name_id = t2.mctool_name_id where lower(t2.mctool_name_name) = lower($1) and lower(t1.mctool_model_name) = lower($2);'
-          ).then((result:any[]) => {
+          ).then((result: any[]) => {
             if (result.length === 0) {
               res.status(400).json({
                 status: 'Error',
@@ -708,7 +708,7 @@ app.post('/upload', isLoggedIn, (req, res) => {
           execSQL(
             [mctool.name, mctool.version],
             'select t1.mctool_name_version_id from mctool_name_version as t1 inner join mctool_name as t2 on t1.mctool_name_id = t2.mctool_name_id where lower(t2.mctool_name_name) = lower($1) and t1.version = $2;'
-          ).then((result:any[]) => {
+          ).then((result: any[]) => {
             if (result.length === 0) {
               res.status(400).json({
                 status: 'Error',
@@ -729,7 +729,7 @@ app.post('/upload', isLoggedIn, (req, res) => {
           execSQL(
             [json.testName],
             'select test_id from test where lower(test_name) = lower($1);'
-          ).then((result:any[]) => {
+          ).then((result: any[]) => {
             if (result.length === 0) {
               res.status(400).json({ status: 'Error', description: 'No valid test_id found.' });
               reject();
@@ -747,7 +747,7 @@ app.post('/upload', isLoggedIn, (req, res) => {
           execSQL(
             [beamParticleName],
             'select pdgid from particle where lower(particle_name) = lower($1) or lower($1) in (SELECT lower(x) FROM unnest(synonyms::text[]) x);'
-          ).then((result:any[]) => {
+          ).then((result: any[]) => {
             if (result.length === 0) {
               res
                 .status(400)
@@ -767,7 +767,7 @@ app.post('/upload', isLoggedIn, (req, res) => {
           execSQL(
             [json.metadata.targetName],
             'select target_id from target where lower(target_name) = lower($1);'
-          ).then((result:any[]) => {
+          ).then((result: any[]) => {
             if (result.length === 0) {
               res.status(400).json({ status: 'Error', description: 'No valid target_id found.' });
               reject();
@@ -785,7 +785,7 @@ app.post('/upload', isLoggedIn, (req, res) => {
           execSQL(
             [json.metadata.observableName],
             'select observable_id from observable where lower(observable_name) = lower($1);'
-          ).then((result:any[]) => {
+          ).then((result: any[]) => {
             if (result.length === 0) {
               res
                 .status(400)
@@ -805,7 +805,7 @@ app.post('/upload', isLoggedIn, (req, res) => {
             execSQL(
               [json.metadata.secondaryParticle],
               'select pdgid from particle where lower(particle_name) = lower($1) or lower($1) in (SELECT lower(x) FROM unnest(synonyms::text[]) x);'
-            ).then((result:any[]) => {
+            ).then((result: any[]) => {
               if (result.length === 0) {
                 res.status(400).json({
                   status: 'Error',
@@ -826,7 +826,7 @@ app.post('/upload', isLoggedIn, (req, res) => {
           execSQL(
             [json.metadata.reaction],
             'select reaction_id from reaction where lower(reaction_name) = lower($1);'
-          ).then((result:any[]) => {
+          ).then((result: any[]) => {
             if (result.length !== 0) {
               reaction_id = result[0].reaction_id;
             }
@@ -853,7 +853,7 @@ app.post('/upload', isLoggedIn, (req, res) => {
           execSQL(
             [json.plotType],
             'select plot_type_id from plot_type where lower(plot_type_name) = lower($1);'
-          ).then((result:any[]) => {
+          ).then((result: any[]) => {
             if (result.length === 0) {
               res
                 .status(400)
@@ -926,11 +926,11 @@ app.post('/upload', isLoggedIn, (req, res) => {
                 PGJoin(plot_err_sys_minus)
               ],
               'insert into plot (test_id,inspire_id,mctool_name_version_id,mctool_model_id,' +
-                'beam_particle_pdgid,beam_energy,target,observable_id,secondary_pdgid,reaction_id,' +
-                'isPublic,parnames,parvalues,plot_type_id,plot_title,plot_npoints,' +
-                'plot_axis_title,plot_val,plot_err_stat_plus,plot_err_stat_minus,' +
-                'plot_err_sys_plus,plot_err_sys_minus) values ' +
-                '($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22);'
+              'beam_particle_pdgid,beam_energy,target,observable_id,secondary_pdgid,reaction_id,' +
+              'isPublic,parnames,parvalues,plot_type_id,plot_title,plot_npoints,' +
+              'plot_axis_title,plot_val,plot_err_stat_plus,plot_err_stat_minus,' +
+              'plot_err_sys_plus,plot_err_sys_minus) values ' +
+              '($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22);'
             )
               .then(() => {
                 execSQL([], 'select plot_id from plot order by plot_id desc limit 1;').then(r1 => {
@@ -988,11 +988,11 @@ app.post('/upload', isLoggedIn, (req, res) => {
                 PGJoin(bin_labels)
               ],
               'insert into plot (test_id,inspire_id,mctool_name_version_id,mctool_model_id,' +
-                'beam_particle_pdgid,beam_energy,target,observable_id,secondary_pdgid,reaction_id,' +
-                'isPublic,parnames,parvalues,plot_type_id,plot_title,plot_nbins,plot_bin_min,plot_bin_max,' +
-                'plot_axis_title,plot_val,plot_err_stat_plus,plot_err_stat_minus,' +
-                'plot_err_sys_plus,plot_err_sys_minus,plot_bin_label) values ' +
-                '($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25);'
+              'beam_particle_pdgid,beam_energy,target,observable_id,secondary_pdgid,reaction_id,' +
+              'isPublic,parnames,parvalues,plot_type_id,plot_title,plot_nbins,plot_bin_min,plot_bin_max,' +
+              'plot_axis_title,plot_val,plot_err_stat_plus,plot_err_stat_minus,' +
+              'plot_err_sys_plus,plot_err_sys_minus,plot_bin_label) values ' +
+              '($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25);'
             )
               .then(() => {
                 execSQL([], 'select plot_id from plot order by plot_id desc limit 1;').then(r1 => {
@@ -1031,7 +1031,7 @@ router.route('/get/:id').get((req: api.APIGetRequest, res: api.APIGetResponse) =
 router.route('/getRaw/:id').get((req: api.APIGetRequest, res: express.Response) => {
   const id = Number(req.params.id);
   apigetJSON(id).then(
-    (result:any) => {
+    (result: any) => {
       let parameters = '';
 
       for (const p of result.metadata.parameters) {
@@ -1092,7 +1092,7 @@ router.route('/getRaw/:id').get((req: api.APIGetRequest, res: express.Response) 
       ];
       let gPlot = `set title "Beam: ${result.metadata.beamParticle},Energy: ${
         result.metadata.beamEnergies.length !== 1 ? 'Multiple' : result.metadata.beamEnergies[0]
-      },Target: ${result.metadata.targetName}"\n`;
+        },Target: ${result.metadata.targetName}"\n`;
 
       const metadataFormatted = columnify(metadata, { showHeaders: false });
       let table = '';
@@ -1130,7 +1130,7 @@ router.route('/getRaw/:id').get((req: api.APIGetRequest, res: express.Response) 
 
         gPlot += `set term png\n${`set xlabel "${result.chart.xAxisName}"\n`}${`set ylabel "${
           result.chart.yAxisName
-        }"\n`}${`set bars small\n`}${`set grid\n`}plot '-' using 1:2:($1-sqrt($3**2+$7**2)):($1+sqrt($4**2+$8**2)):($2-sqrt($5**2+$9**2)):($2+sqrt($6**2+$10**2)) notitle with xyerrorlines linecolor rgb "blue"`;
+          }"\n`}${`set bars small\n`}${`set grid\n`}plot '-' using 1:2:($1-sqrt($3**2+$7**2)):($1+sqrt($4**2+$8**2)):($2-sqrt($5**2+$9**2)):($2+sqrt($6**2+$10**2)) notitle with xyerrorlines linecolor rgb "blue"`;
       } else {
         rows = [];
 
@@ -1164,7 +1164,7 @@ router.route('/getRaw/:id').get((req: api.APIGetRequest, res: express.Response) 
 
         gPlot += `set term png\n${`set xlabel "${result.histogram.xAxisName}"\n`}${`set ylabel "${
           result.histogram.yAxisName
-        }"\n`}${`set bars small\n`}${`set grid\n`}plot '-' using (($1+$2)/2):3:($3-sqrt($4**2+$6**2)):($3+sqrt($5**2+$7**2)):($2-$1) notitle with boxerrorbars linecolor rgb "blue"`;
+          }"\n`}${`set bars small\n`}${`set grid\n`}plot '-' using (($1+$2)/2):3:($3-sqrt($4**2+$6**2)):($3+sqrt($5**2+$7**2)):($2-$1) notitle with boxerrorbars linecolor rgb "blue"`;
       }
 
       res.write(`${metadataFormatted}\n\n\n${gPlot}\n${table}`);
@@ -1189,7 +1189,7 @@ function clean(obj) {
 }
 
 app.get('/api/multiget', (req: api.APIMultigetRequest, res: api.APIMultigetResponse) => {
-  const ids: number[] = req.query.ids.map( e => Number(e));
+  const ids: number[] = req.query.ids.map(e => Number(e));
   apimultiget(ids).then(
     result => {
       res.status(200).json(result);
@@ -1227,7 +1227,7 @@ app.get('/api/getExpPlotsByInspireId', (req, res) => {
   const sql =
     'select plot.plot_id from plot inner join mctool_name_version on plot.mctool_name_version_id = mctool_name_version.mctool_name_version_id ' +
     "where mctool_name_version.version = 'experiment' and plot.inspire_id = $1";
-  execSQL([inspire_id], sql).then((result:any[]) => {
+  execSQL([inspire_id], sql).then((result: any[]) => {
     apimultiget(result.map(e => e.plot_id)).then(
       result => {
         res.status(200).json(result);
@@ -1352,7 +1352,7 @@ app.post('/api/getPDF', (req, res) => {
   for (const pair of ids) {
     const p = apimultiget(pair).then(jsons => {
       const params = { data: jsons, refid: jsons[0].id };
-      return getPNG(params).then((res:any) => {
+      return getPNG(params).then((res: any) => {
         console.log('getPNG');
         return res.filename;
       });
@@ -1409,12 +1409,12 @@ app.post('/api/getPDF', (req, res) => {
         }
         const message = `Dear user,\n\nYou can download requested (${params.test} test, ${
           params.beam
-        } beam, ${params.limits[0]}/${
+          } beam, ${params.limits[0]}/${
           params.limits[1]
-        } p-value limits) pdf report from https://geant-val.cern.ch/${filename_report.replace(
-          'assets/cache',
-          ''
-        )}\n\nBest regards,\n  Geant-val team`;
+          } p-value limits) pdf report from https://geant-val.cern.ch/${filename_report.replace(
+            'assets/cache',
+            ''
+          )}\n\nBest regards,\n  Geant-val team`;
         exec(
           `echo "${message}" | mail -s 'Report from geant-val.cern.ch is ready' ${params.email}`,
           (error, stdout, stderr) => {
@@ -1592,7 +1592,7 @@ app.get('/api/uniqlookup', (req, res) => {
     res.status(400).json({ status: 'Error' });
     return;
   }
-  execSQL([test_id], sql).then((result:any[]) => {
+  execSQL([test_id], sql).then((result: any[]) => {
     const r = [];
     for (const i of result) {
       if (JSONAttr !== 'metadata.parameters') r.push(i.out);
@@ -1671,7 +1671,7 @@ app.get('/api/getPlotId', (req, res) => {
     }
     if (sqllist.length !== 0) sql += ` and ( ${sqllist.join(' or ')})`;
   }
-  execSQL(params, sql).then((result:any[]) => {
+  execSQL(params, sql).then((result: any[]) => {
     const r = [];
     for (let i = 0; i < result.length; i++) r.push(result[i].plot_id);
     res.status(200).json(r);
@@ -1705,7 +1705,7 @@ app.get('/api/getExceptionText', (req, res) => {
 
   const sql = queries.exception_text_by_id;
 
-  execSQL([exception_id], sql).then((resultlist:any[]) => {
+  execSQL([exception_id], sql).then((resultlist: any[]) => {
     if (resultlist.length === 0) {
       res.status(400).json({ status: 'Error', description: 'No required exception found' });
       return;
@@ -1727,7 +1727,7 @@ app.get('/api/getExceptionText', (req, res) => {
 app.get('/api/getIdHint', (req, res) => {
   const id = req.query.id;
   const sql = queries.get_id_hint;
-  execSQL([`${id}%`], sql).then((result:any[]) => {
+  execSQL([`${id}%`], sql).then((result: any[]) => {
     const r = { hint: [] };
     for (let i = 0; i < result.length; i++) r.hint.push(result[i].plot_id);
     res.status(200).json(r);
@@ -1904,7 +1904,7 @@ app.get('/api/onlineMenuFilter', (req, res) => {
   }
 
   p_all.push(
-    execSQL(menuQueries[0].params, menuQueries[0].sql).then((result:any[]) => {
+    execSQL(menuQueries[0].params, menuQueries[0].sql).then((result: any[]) => {
       for (const ri of result) {
         r.mctool_name_version_id.push(ri.mctool_name_version_id);
       }
@@ -1934,7 +1934,7 @@ app.get('/api/onlineMenuFilter', (req, res) => {
   }
 
   p_all.push(
-    execSQL(menuQueries[1].params, menuQueries[1].sql).then((result:any[]) => {
+    execSQL(menuQueries[1].params, menuQueries[1].sql).then((result: any[]) => {
       for (const ri of result) {
         r.p1name.push(ri.p1name);
       }
@@ -1942,7 +1942,7 @@ app.get('/api/onlineMenuFilter', (req, res) => {
   );
 
   p_all.push(
-    execSQL(menuQueries[2].params, menuQueries[2].sql).then((result:any[]) => {
+    execSQL(menuQueries[2].params, menuQueries[2].sql).then((result: any[]) => {
       for (const ri of result) {
         r.mctool_model_name.push(ri.mctool_model_name);
       }
@@ -1950,7 +1950,7 @@ app.get('/api/onlineMenuFilter', (req, res) => {
   );
 
   p_all.push(
-    execSQL(menuQueries[3].params, menuQueries[3].sql).then((result:any[]) => {
+    execSQL(menuQueries[3].params, menuQueries[3].sql).then((result: any[]) => {
       for (const ri of result) {
         r.target_name.push(ri.target_name);
       }
@@ -1958,7 +1958,7 @@ app.get('/api/onlineMenuFilter', (req, res) => {
   );
 
   p_all.push(
-    execSQL(menuQueries[4].params, menuQueries[4].sql).then((result:any[]) => {
+    execSQL(menuQueries[4].params, menuQueries[4].sql).then((result: any[]) => {
       for (const ri of result) {
         r.p2name.push(ri.p2name);
       }
@@ -1967,7 +1967,7 @@ app.get('/api/onlineMenuFilter', (req, res) => {
 
   p_all.push(
     execSQL(menuQueries[6].params, menuQueries[6].sql)
-      .then((result:any[]) => {
+      .then((result: any[]) => {
         for (const ri of result) {
           r.benergies.push(ri.benergies);
         }
@@ -1978,7 +1978,7 @@ app.get('/api/onlineMenuFilter', (req, res) => {
         }
       })
       .then(() =>
-        execSQL(menuQueries[5].params, menuQueries[5].sql).then((result:any[]) => {
+        execSQL(menuQueries[5].params, menuQueries[5].sql).then((result: any[]) => {
           for (const ri of result) {
             r.observable_name.push(ri.observable_name);
           }
@@ -2010,7 +2010,7 @@ app.get('/api/onlineMenuFilter', (req, res) => {
         PGJoin(q.observables.length === 0 ? r.observable_name : q.observables.split('|'))
       ],
       sql
-    ).then((result:any[]) => {
+    ).then((result: any[]) => {
       const obj = {};
       for (const rr of result) {
         if (rr.parnames.length === 0) continue;
@@ -2097,7 +2097,7 @@ app.get('/api/exceptionMenuFilter', (req, res) => {
   }
 
   let sync = 0;
-  execSQL([q.testid].concat(queryvars), menuQueries[1].sql).then((result:any[]) => {
+  execSQL([q.testid].concat(queryvars), menuQueries[1].sql).then((result: any[]) => {
     for (const i of result) {
       r.versions.push(i);
     }
@@ -2109,7 +2109,7 @@ app.get('/api/exceptionMenuFilter', (req, res) => {
     }
   });
 
-  execSQL([q.testid].concat(queryvars), menuQueries[0].sql).then((result:any[]) => {
+  execSQL([q.testid].concat(queryvars), menuQueries[0].sql).then((result: any[]) => {
     for (const i of result) {
       r.beam.push(i.particle_name);
     }
@@ -2141,7 +2141,7 @@ app.get('/api/exception_tool_info_by_test_id', (req, res) => {
 app.get('/api/exception_particle_name_by_test_id', (req, res) => {
   const sql = queries.exceptions_particle_name_by_test_id;
 
-  execSQL([req.query.test_id], sql).then((result:any[]) => {
+  execSQL([req.query.test_id], sql).then((result: any[]) => {
     const r = result.map(a => a.particle_name);
     res.status(200).json(r);
   });
