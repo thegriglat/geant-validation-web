@@ -1,4 +1,5 @@
 import { GvpJSON, GvpParameter, GvpHistogram, GvpChart } from "./src/app/classes/gvp-plot";
+import * as api from './src/app/classes/api_interfaces';
 
 /* globals require, process */
 import * as express from 'express';
@@ -223,11 +224,11 @@ if (USESSL) {
   );
 }
 
-app.get('/loggedin', (req, res) => {
+app.get('/loggedin', (req: api.APILoggedIn, res) => {
   res.send(req.isAuthenticated() ? JSON.stringify(req.user) : '0');
 });
 
-app.get('/logout', (req, res) => {
+app.get('/logout', (req: api.APILogout, res) => {
   req.logout();
   res.redirect('/');
 });
@@ -372,7 +373,7 @@ function apigetJSON(id: number): Promise<GvpJSON> {
       if (result.plot_npoints === null) {
         // histogram
         r.chart = null;
-        let h: GvpHistogram = r.histogram;
+        let h: GvpHistogram = new GvpHistogram();
         h.nBins = result.plot_nbins.length !== 0 ? result.plot_nbins : [result.plot_val.length];
         h.binEdgeLow = result.plot_bin_min || [];
         h.binEdgeHigh = result.plot_bin_max || [];
@@ -394,10 +395,11 @@ function apigetJSON(id: number): Promise<GvpJSON> {
             ? getFilledArray(result.plot_val.length, 0)
             : result.plot_err_sys_minus;
         h.binLabel = result.plot_bin_label || [];
+        r.histogram = h;
       } else {
         // chart
         r.histogram = null;
-        let h: GvpChart = r.chart;
+        let h: GvpChart = new GvpChart();
         h.nPoints = result.plot_npoints;
         h.xValues = result.plot_val.slice(0, result.plot_val.length / 2);
         h.yValues = result.plot_val.slice(result.plot_val.length / 2, result.plot_val.length);
@@ -434,6 +436,7 @@ function apigetJSON(id: number): Promise<GvpJSON> {
           result.plot_err_sys_minus.length / 2,
           result.plot_err_sys_minus.length
         );
+        r.chart = h;
       }
       let h = (r.chart) ? r.chart : r.histogram;
       h.title = result.plot_title;
@@ -1016,8 +1019,8 @@ app.post('/upload', isLoggedIn, (req, res) => {
 });
 
 // Route to retrieve data via command-line
-router.route('/get/:id').get((req, res) => {
-  const id = req.params.id;
+router.route('/get/:id').get((req: api.APIGetRequest, res: api.APIGetResponse) => {
+  const id = Number(req.params.id);
   apigetJSON(id).then(
     result => {
       res.status(200).json(result);
@@ -1029,8 +1032,8 @@ router.route('/get/:id').get((req, res) => {
 });
 
 // Route for gnuplot text data
-router.route('/getRaw/:id').get((req, res) => {
-  const id = req.params.id;
+router.route('/getRaw/:id').get((req: api.APIGetRequest, res: express.Response) => {
+  const id = Number(req.params.id);
   apigetJSON(id).then(
     (result:any) => {
       let parameters = '';
@@ -1189,8 +1192,8 @@ function clean(obj) {
   }
 }
 
-app.get('/api/multiget', (req, res) => {
-  const ids = typeof req.query.ids === 'string' ? [parseInt(req.query.ids)] : req.query.ids;
+app.get('/api/multiget', (req: api.APIMultigetRequest, res: api.APIMultigetResponse) => {
+  const ids: number[] = req.query.ids.map( e => Number(e));
   apimultiget(ids).then(
     result => {
       res.status(200).json(result);
