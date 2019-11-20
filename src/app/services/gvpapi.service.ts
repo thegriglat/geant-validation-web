@@ -44,4 +44,17 @@ export class GVPAPIService {
     query.query.ids = ids;
     return this._get<GvpJSON[]>("api/multiget", query);
   }
+
+  public getPlotsByTestVersion(test: string, version: string) {
+    let query: api.APIGetPlotsByTestVersionRequest;
+    query.query.test = test;
+    query.query.version = version;
+    return this._get<GvpJSON[]>("api/getPlotsByTestVersion", query);
+  }
+
+  public getExpPlotsByInspireId(inspireId: number) {
+    let query: api.APIgetExpPlotsByInspireIdRequest;
+    query.query.inspire_id = inspireId;
+    return this._get<GvpJSON[]>("api/getExpPlotsByInspireId", query);
+  }
 }
