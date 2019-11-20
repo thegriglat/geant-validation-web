@@ -317,8 +317,7 @@ function PGJoin(arr: any[]): string {
  * @returns JSON
  */
 function apigetJSON(id: number): Promise<GvpJSON> {
-  const promise: Promise<GvpJSON> = new Promise((resolve, reject) => {
-    const sqlPrint =
+  const sqlPrint =
       'SELECT inspire.*, target.*, mctool_model.*, mctool_name.*, mctool_name_version.*, observable.*, ' +
       'particle_beam.particle_name as particle_beam, particle_sec.particle_name as particle_sec, plot.*, plot_type.*, reaction.*, test.* ' +
       'FROM plot INNER JOIN inspire ON plot.inspire_id=inspire.inspire_id ' +
@@ -333,11 +332,10 @@ function apigetJSON(id: number): Promise<GvpJSON> {
       'INNER JOIN plot_type ON plot.plot_type_id=plot_type.plot_type_id ' +
       'INNER JOIN reaction ON plot.reaction_id=reaction.reaction_id ' +
       'WHERE plot.plot_id=$1';
-    execSQL([id], sqlPrint).then((resultlist: any[]) => {
+  return execSQL([id], sqlPrint).then((resultlist: any[]) => {
       if (resultlist.length === 0) {
         logger.warn(`No data for id ${id} found`);
-        reject();
-        return;
+        return null;
       }
       let result:any = resultlist[0];
       let params: GvpParameter[] = [];
@@ -442,10 +440,8 @@ function apigetJSON(id: number): Promise<GvpJSON> {
       h.title = result.plot_title;
       h.xAxisName = result.plot_axis_title[0];
       h.yAxisName = result.plot_axis_title[1];
-      resolve(r);
+      return r;
     });
-  });
-  return promise;
 }
 
 /**
