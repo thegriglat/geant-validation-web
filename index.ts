@@ -36,7 +36,6 @@ require('dotenv').config();
 require('array-find');
 
 //QUERIES FILE
-
 const queries = require('./queries.json');
 
 //GLOBALS
@@ -1189,7 +1188,7 @@ function clean(obj) {
 }
 
 app.get('/api/multiget', (req: api.APIMultigetRequest, res: api.APIMultigetResponse) => {
-  const ids: number[] = req.query.ids.map(e => Number(e));
+  const ids: number[] = req.query.ids;
   apimultiget(ids).then(
     result => {
       res.status(200).json(result);

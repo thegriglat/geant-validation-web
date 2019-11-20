@@ -22,7 +22,7 @@ export interface APIGetResponse extends express.Response {
 
 export interface APIMultigetRequest extends express.Request {
     query: {
-        ids: string[];
+        ids: number[];
     }
 }
 
