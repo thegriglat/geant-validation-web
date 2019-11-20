@@ -1216,25 +1216,20 @@ app.get('/api/getPlotsByTestVersion', isLoggedIn, (req: api.APIGetPlotsByTestVer
   });
 });
 
-app.get('/api/getExpPlotsByInspireId', (req, res) => {
+app.get('/api/getExpPlotsByInspireId', (req: api.APIgetExpPlotsByInspireIdRequest, res: api.APIgetExpPlotsByInspireIdResponse) => {
   logger.info('Request /api/getExpPlotsByInspireId');
   const inspire_id = req.query.inspire_id;
-  if (isNaN(inspire_id)) {
-    logger.warn(`/api/getExpPlotsByInspireId returns null, params ${req.query.inspire_id}`);
-    res.status(400).json(null);
-    return;
-  }
   const sql =
     'select plot.plot_id from plot inner join mctool_name_version on plot.mctool_name_version_id = mctool_name_version.mctool_name_version_id ' +
     "where mctool_name_version.version = 'experiment' and plot.inspire_id = $1";
-  execSQL([inspire_id], sql).then((result: any[]) => {
-    apimultiget(result.map(e => e.plot_id)).then(
+  execSQL([inspire_id], sql).then(result => {
+    apimultiget(result.map(e => Number(e.plot_id))).then(
       result => {
         res.status(200).json(result);
       },
       () => {
         logger.error('Cannot finish request');
-        res.status(400).json(null);
+        res.status(400).json([]);
       }
     );
   });
