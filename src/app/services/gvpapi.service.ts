@@ -2,8 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import * as api from './../classes/api_interfaces';
-import { GvpJSON, GvpTest, GvpMctoolNameVersion, GvpMctoolName } from '../classes/gvp-plot';
+import { GvpJSON, GvpTest, GvpMctoolNameVersion, GvpMctoolName, GvpParameter } from '../classes/gvp-plot';
 
 @Injectable({
   providedIn: 'root'
@@ -77,9 +76,33 @@ export class GVPAPIService {
     return this._get<GvpMctoolName[]>("/api/mctool_name", params);
   }
 
-  public uniqlookup<T>(test_id: number, JSONAttr: string) {
+  private uniqlookup<T>(test_id: number, JSONAttr: string) {
     let params = new HttpParams().set("test_id", String(test_id)).set("JSONAttr", JSONAttr);
-    return this._get<T[]>("/api/uniqlookup", params);
+    return this._get<T>("/api/uniqlookup", params);
   }
 
+  public uniqlookup_version(test_id: number) {
+    return this.uniqlookup<number[]>(test_id, "mctool.version");
+  }
+  public uniqlookup_beamParticle(test_id: number) {
+    return this.uniqlookup<string[]>(test_id, "metadata.beamParticle");
+  }
+  public uniqlookup_beamEnergies(test_id: number) {
+    return this.uniqlookup<string[]>(test_id, "metadata.beamEnergies");
+  }
+  public uniqlookup_model(test_id: number) {
+    return this.uniqlookup<string[]>(test_id, "mctool.model");
+  }
+  public uniqlookup_targetName(test_id: number) {
+    return this.uniqlookup<string[]>(test_id, "metadata.targetName");
+  }
+  public uniqlookup_secondaryParticle(test_id: number) {
+    return this.uniqlookup<string[]>(test_id, "metadata.secondaryParticle");
+  }
+  public uniqlookup_observableName(test_id: number) {
+    return this.uniqlookup<string[]>(test_id, "metadata.observableName");
+  }
+  public uniqlookup_parameters(test_id: number) {
+    return this.uniqlookup<GvpParameter[]>(test_id, "metadata.parameters");
+  }
 }

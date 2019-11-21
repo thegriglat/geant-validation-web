@@ -243,7 +243,7 @@ export class GvplayoutComponent implements OnInit {
     // config = config.set('namefield', 'mctool_name_version_id');
     // config = config.set('JSONAttr', 'mctool.version');
 
-    this.api.uniqlookup<number>(test.test_id, "mctool.version").subscribe((response) => {
+    this.api.uniqlookup_version(test.test_id).subscribe((response) => {
       this.menuVersions = [];
       const versions = new Map<number, string>();
       for (const i of response) {
@@ -291,7 +291,7 @@ export class GvplayoutComponent implements OnInit {
     const testlist = this.ALLTESTS.filter(elem => elem.test_name === testname);
     if (testlist.length === 0) { return; }
     const test = testlist[0];
-    this.api.uniqlookup<string>(test.test_id, "mctool.model").subscribe(response => {
+    this.api.uniqlookup_model(test.test_id).subscribe(response => {
       this.models = this.models.slice();
       const responceValues = response.slice();
       responceValues.sort();

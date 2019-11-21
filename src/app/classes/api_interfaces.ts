@@ -1,5 +1,5 @@
 import * as express from 'express';
-import { GvpJSON, GvpTest, GvpMctoolNameVersion, GvpMctoolName } from './gvp-plot';
+import { GvpJSON, GvpTest, GvpMctoolNameVersion, GvpMctoolName, GvpParameter } from './gvp-plot';
 
 export interface APILoggedIn extends express.Request {
     user: string;
@@ -74,7 +74,7 @@ export interface APIuniqlookupRequest extends express.Request {
 }
 
 export interface APIuniqlookupResponse extends express.Response {
-    json(body: any[]);
+    json(body: [number | string | GvpParameter][]);
 }
 
 export interface APITestRequest extends express.Request {

@@ -1494,7 +1494,7 @@ app.get('/api/uniqlookup', (req: api.APIuniqlookupRequest, res: api.APIuniqlooku
     const r = [];
     for (const i of result) {
       if (JSONAttr !== 'metadata.parameters') r.push(i.out);
-      else r.push([i['parnames'][0], i['parvalues'][0]]);
+      else r.push({names: i['parnames'][0], values: i['parvalues'][0]} as GvpParameter);
     }
     res.status(200).json(r);
   });
