@@ -73,8 +73,8 @@ export interface APIuniqlookupRequest extends express.Request {
     }
 }
 
-export interface APIuniqlookuplResponse extends express.Response {
-    json(body: { JSONAttr: string, values: any[] });
+export interface APIuniqlookupResponse extends express.Response {
+    json(body: any[]);
 }
 
 export interface APITestRequest extends express.Request {

@@ -77,4 +77,9 @@ export class GVPAPIService {
     return this._get<GvpMctoolName[]>("/api/mctool_name", params);
   }
 
+  public uniqlookup<T>(test_id: number, JSONAttr: string) {
+    let params = new HttpParams().set("test_id", String(test_id)).set("JSONAttr", JSONAttr);
+    return this._get<T[]>("/api/uniqlookup", params);
+  }
+
 }

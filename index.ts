@@ -1468,7 +1468,7 @@ app.get('/api/checkMCTool', (req: api.APIcheckMCToolRequest, res: api.APIcheckMC
   });
 });
 
-app.get('/api/uniqlookup', (req: api.APIuniqlookupRequest, res: api.APIuniqlookuplResponse) => {
+app.get('/api/uniqlookup', (req: api.APIuniqlookupRequest, res: api.APIuniqlookupResponse) => {
   const test_id = req.query.test_id;
   const JSONAttr = req.query.JSONAttr;
   const getSQL = {
@@ -1496,7 +1496,7 @@ app.get('/api/uniqlookup', (req: api.APIuniqlookupRequest, res: api.APIuniqlooku
       if (JSONAttr !== 'metadata.parameters') r.push(i.out);
       else r.push([i['parnames'][0], i['parvalues'][0]]);
     }
-    res.status(200).json({ JSONAttr: JSONAttr, values: r });
+    res.status(200).json(r);
   });
 });
 

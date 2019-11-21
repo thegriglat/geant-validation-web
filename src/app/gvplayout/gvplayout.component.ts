@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChildren, QueryList, ViewChild } from '@angular/core';
 import { LayoutService } from '../services/layout.service';
-import { GvpPlot, GvpTest, GvpTestRequest, GvpExpData, GvpUniq, GvpMctoolNameVersion, GvpMctoolName , GvpLayout} from '../classes/gvp-plot';
+import { GvpPlot, GvpTest, GvpTestRequest, GvpExpData, GvpUniq, GvpMctoolNameVersion, GvpMctoolName, GvpLayout } from '../classes/gvp-plot';
 import { PlotComponent } from '../plot/plot.component';
 import { GVPAPIService } from '../services/gvpapi.service';
 import { HttpParams } from '@angular/common/http';
@@ -38,7 +38,7 @@ export class GvplayoutComponent implements OnInit {
   /** List of selected models */
   modelsSel = new Array<string>();
   /** Binding: 2D array representing the layout */
-  plots =  new Array<Array<GvpPlot>>();
+  plots = new Array<Array<GvpPlot>>();
   /** Value of layout dropdown */
   selectedLayout = '';
   /** Binding: contents of Layout dropdown; also used for creating tag filter */
@@ -95,14 +95,14 @@ export class GvplayoutComponent implements OnInit {
    * key: database ID (used in API requests)
    * release_date field not used
    */
-  MCToolNameVersionCache = new Map<number, {version: string, mctool_name_id: number, release_date: string}>();
+  MCToolNameVersionCache = new Map<number, { version: string, mctool_name_id: number, release_date: string }>();
   // *del* versionHumanName = {};
   // *del* releaseDate = {};
 
   selectedVersions: GvpMctoolNameVersion[] = [];
   menuVersions: GvpMctoolNameVersion[] = [];
   menuLoaded = false;
-  
+
   ngOnInit() {
     this.layoutService.getAllLayouts().subscribe((data) => {
       this.pTemplates = [];
@@ -120,7 +120,7 @@ export class GvplayoutComponent implements OnInit {
       });
     });
     // Populate caches
-    this.api._get<GvpMctoolNameVersion[]>('api/mctool_name_version').subscribe(response => {
+    this.api.mctool_name_version().subscribe(response => {
       for (const elem of response) {
         this.MCToolNameVersionCache.set(elem.mctool_name_version_id, {
           version: elem.version,
@@ -130,7 +130,7 @@ export class GvplayoutComponent implements OnInit {
       }
     });
 
-    this.api._get<GvpMctoolName[]>('api/mctool_name').subscribe(response => {
+    this.api.mctool_name().subscribe(response => {
       for (const elem of response) {
         this.MCToolNameCache.set(elem.mctool_name_id, elem.mctool_name_name);
       }
@@ -196,10 +196,10 @@ export class GvplayoutComponent implements OnInit {
   private waitForTest(): Promise<any> {
     this.ALLTESTS.length = 0;
     return new Promise((resolve) => {
-      this.api._get<GvpTest[]>('api/test').subscribe(data => {
-          this.ALLTESTS = data.filter(elem => elem.test_name !== 'experiment');
-          resolve();
-        });
+      this.api.test().subscribe(data => {
+        this.ALLTESTS = data.filter(elem => elem.test_name !== 'experiment');
+        resolve();
+      });
     });
   }
 
@@ -235,18 +235,18 @@ export class GvplayoutComponent implements OnInit {
 
     this.selectedItem = test;
     this.updateExpDescription(test.test_id);
-    let config = new HttpParams();
-    config = config.set('test_id', String(test.test_id));
-    config = config.set('table', 'mctool_name_version');
-    config = config.set('onplot', 'mctool_name_version_id');
-    config = config.set('ontable', 'mctool_name_version_id');
-    config = config.set('namefield', 'mctool_name_version_id');
-    config = config.set('JSONAttr', 'mctool.version');
+    // let config = new HttpParams();
+    // config = config.set('test_id', String(test.test_id));
+    // config = config.set('table', 'mctool_name_version');
+    // config = config.set('onplot', 'mctool_name_version_id');
+    // config = config.set('ontable', 'mctool_name_version_id');
+    // config = config.set('namefield', 'mctool_name_version_id');
+    // config = config.set('JSONAttr', 'mctool.version');
 
-    this.api._get<GvpUniq<number>>('api/uniqlookup', config).subscribe((response) => {
+    this.api.uniqlookup<number>(test.test_id, "mctool.version").subscribe((response) => {
       this.menuVersions = [];
       const versions = new Map<number, string>();
-      for (const i of response.values) {
+      for (const i of response) {
         if (!this.versions.has(i)) {
           // this.versionDropDowns[0].values.push(i);
           const result = this.MCToolNameVersionCache.get(i);
@@ -263,11 +263,13 @@ export class GvplayoutComponent implements OnInit {
           // this.releaseDate[mctoolNameVersionId] = release_date;
           versions.set(i, `${name}: ${version}`);
           this.menuVersions.push(
-            {mctool_name_version_id: i,
+            {
+              mctool_name_version_id: i,
               version: result.version,
               mctool_name_id: result.mctool_name_id,
-              release_date: result.release_date}
-            );
+              release_date: result.release_date
+            }
+          );
         }
       }
 
@@ -289,12 +291,9 @@ export class GvplayoutComponent implements OnInit {
     const testlist = this.ALLTESTS.filter(elem => elem.test_name === testname);
     if (testlist.length === 0) { return; }
     const test = testlist[0];
-    let config = new HttpParams();
-    config = config.set('test_id', String(test.test_id));
-    config = config.set('JSONAttr', 'mctool.model');
-    this.api._get<GvpUniq<string>>('/api/uniqlookup', config).subscribe(response => {
-      this.models  = this.models.slice();
-      const responceValues = response.values.slice();
+    this.api.uniqlookup<string>(test.test_id, "mctool.model").subscribe(response => {
+      this.models = this.models.slice();
+      const responceValues = response.slice();
       responceValues.sort();
       for (const v of responceValues) {
         if (this.models.indexOf(v) === -1) {
@@ -409,17 +408,17 @@ export class GvplayoutComponent implements OnInit {
     return list.map(t => t[1].tags).reduce((p, c) => p.concat(c), []).filter(this.distinct);
   }
 
-updateExp(e: GvpExpData){
-  if (this.checkedExp.indexOf(e) === -1){
-    this.checkedExp.push(e);
-  } else {
-    this.checkedExp.splice(this.checkedExp.indexOf(e), 1);
+  updateExp(e: GvpExpData) {
+    if (this.checkedExp.indexOf(e) === -1) {
+      this.checkedExp.push(e);
+    } else {
+      this.checkedExp.splice(this.checkedExp.indexOf(e), 1);
+    }
+    console.log(this.checkedExp)
   }
-  console.log(this.checkedExp)
-}
 
-  updateTags(tag:string){
-    if (this.checkedTags.indexOf(tag) === -1){
+  updateTags(tag: string) {
+    if (this.checkedTags.indexOf(tag) === -1) {
       this.checkedTags.push(tag);
     } else {
       this.checkedTags.splice(this.checkedTags.indexOf(tag), 1);
@@ -451,15 +450,15 @@ updateExp(e: GvpExpData){
       }
     }
     return true;
-}
+  }
 
-versionFormatter(item: GvpMctoolNameVersion, query?: string): string {
-  return item.version;
-}
+  versionFormatter(item: GvpMctoolNameVersion, query?: string): string {
+    return item.version;
+  }
 
-layoutFormatter(item: [string, GvpLayout], query?:string): string {
-  return item[1].title;
-}
+  layoutFormatter(item: [string, GvpLayout], query?: string): string {
+    return item[1].title;
+  }
   /** Event handler: layout selected */
   onSelectLayout(layout: [string, GvpLayout]) {
     this.menuLoaded = false;
