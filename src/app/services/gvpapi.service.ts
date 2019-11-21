@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import * as api from './../classes/api_interfaces';
-import { GvpJSON } from '../classes/gvp-plot';
+import { GvpJSON, GvpTest, GvpMctoolNameVersion, GvpMctoolName } from '../classes/gvp-plot';
 
 @Injectable({
   providedIn: 'root'
@@ -40,21 +40,41 @@ export class GVPAPIService {
 
   public multiget(ids: number[]) {
     // TODO: check this
-    let query: api.APIMultigetRequest;
-    query.query.ids = ids;
-    return this._get<GvpJSON[]>("api/multiget", query);
+    let params = new HttpParams()
+    for (let i of ids)
+      params.append("ids", String(i));
+    return this._get<GvpJSON[]>("api/multiget", params);
   }
 
   public getPlotsByTestVersion(test: string, version: string) {
-    let query: api.APIGetPlotsByTestVersionRequest;
-    query.query.test = test;
-    query.query.version = version;
-    return this._get<GvpJSON[]>("api/getPlotsByTestVersion", query);
+    let params = new HttpParams().set("test", test).set("version", version);
+    return this._get<GvpJSON[]>("api/getPlotsByTestVersion", params);
   }
 
   public getExpPlotsByInspireId(inspireId: number) {
-    let query: api.APIgetExpPlotsByInspireIdRequest;
-    query.query.inspire_id = inspireId;
-    return this._get<GvpJSON[]>("api/getExpPlotsByInspireId", query);
+    let params = new HttpParams().set("inspire_id", String(inspireId));
+    return this._get<GvpJSON[]>("api/getExpPlotsByInspireId", params);
   }
+
+  public test(id?: number) {
+    let params = new HttpParams();
+    if (id !== undefined)
+      params.set("id", String(id));
+    return this._get<GvpTest[]>("/api/test", params);
+  }
+
+  public mctool_name_version(id?: number) {
+    let params = new HttpParams();
+    if (id !== undefined)
+      params.set("id", String(id));
+    return this._get<GvpMctoolNameVersion[]>("/api/mctool_name_version", params);
+  }
+
+  public mctool_name(id?: number) {
+    let params = new HttpParams();
+    if (id !== undefined)
+      params.set("id", String(id));
+    return this._get<GvpMctoolName[]>("/api/mctool_name", params);
+  }
+
 }

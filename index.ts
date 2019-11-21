@@ -1,4 +1,4 @@
-import { GvpJSON, GvpParameter, GvpHistogram, GvpChart } from "./src/app/classes/gvp-plot";
+import { GvpJSON, GvpParameter, GvpHistogram, GvpChart, GvpTest, GvpMctoolNameVersion, GvpMctoolName } from "./src/app/classes/gvp-plot";
 import * as api from './src/app/classes/api_interfaces';
 
 /* globals require, process */
@@ -1238,98 +1238,6 @@ app.get('/api/getExpPlotsByInspireId', (req: api.APIgetExpPlotsByInspireIdReques
   });
 });
 
-//Methods to substitute /api/table
-
-/**
- * Returns the information of Test Table
- *
- * @param id Optional parameter if we only want to retrieve information of only one specific row
- */
-app.get('/api/test', (req, res) => {
-  const id = req.query.id;
-  let query = queries.all_tests;
-  const sqlparams = [];
-  if (id !== undefined) {
-    sqlparams.push(id);
-    query = queries.test_by_id;
-  }
-  execSQL(sqlparams, query).then(result => {
-    res.status(200).json(result);
-  });
-});
-
-/**
- * Returns the information of mctool_name_version Table
- *
- * @param id Optional parameter if we only want to retrieve information of only one specific row
- */
-app.get('/api/mctool_name_version', (req, res) => {
-  const id = req.query.id;
-  let query = queries.all_mctool_name_version;
-  const sqlparams = [];
-  if (id !== undefined) {
-    sqlparams.push(id);
-    query = queries.mctool_name_version_by_id;
-  }
-  execSQL(sqlparams, query).then(result => {
-    res.status(200).json(result);
-  });
-});
-
-/**
- * Returns the information of mctool_name Table
- *
- * @param id Optional parameter if we only want to retrieve information of only one specific row
- */
-app.get('/api/mctool_name', (req, res) => {
-  const id = req.query.id;
-  let query = queries.all_mctool_name;
-  const sqlparams = [];
-  if (id !== undefined) {
-    sqlparams.push(id);
-    query = queries.mctool_name_by_id;
-  }
-  execSQL(sqlparams, query).then(result => {
-    res.status(200).json(result);
-  });
-});
-
-/**
- * Returns the information of inspire Table
- *
- * @param id Optional parameter if we only want to retrieve information of only one specific row
- */
-app.get('/api/inspire', (req, res) => {
-  const id = req.query.id;
-  let query = queries.all_inspire;
-  const sqlparams = [];
-  if (id !== undefined) {
-    sqlparams.push(id);
-    query = queries.inspire_by_id;
-  }
-  execSQL(sqlparams, query).then(result => {
-    res.status(200).json(result);
-  });
-});
-
-/**
- * Returns the information of observable Table
- *
- * @param id Optional parameter if we only want to retrieve information of only one specific row
- */
-app.get('/api/observable', (req, res) => {
-  const id = req.query.id;
-  let query = queries.all_observable;
-  const sqlparams = [];
-  if (id !== undefined) {
-    sqlparams.push(id);
-    query = queries.observable_by_id;
-  }
-  execSQL(sqlparams, query).then(result => {
-    res.status(200).json(result);
-  });
-});
-
 const updateObj = (src, dest) => {
   for (const key in dest) {
     if (!src.hasOwnProperty(key)) {
@@ -2189,6 +2097,8 @@ app.get('/api/setLoggingStatus', (req, res) => {
   }
 });
 
+//Methods to substitute 
+
 //Methods to substitute /api/table
 
 /**
@@ -2196,16 +2106,16 @@ app.get('/api/setLoggingStatus', (req, res) => {
  *
  * @param id Optional parameter if we only want to retrieve information of only one specific row
  */
-app.get('/api/test', (req, res) => {
+app.get('/api/test', (req: api.APITestRequest, res: api.APITestResponse) => {
   const id = req.query.id;
-  let query = queries.all_tests;
+  let query: string = queries.all_tests;
   const sqlparams = [];
   if (id !== undefined) {
     sqlparams.push(id);
     query = queries.test_by_id;
   }
   execSQL(sqlparams, query).then(result => {
-    res.status(200).json(result);
+    res.status(200).json(result as GvpTest[]);
   });
 });
 
@@ -2214,16 +2124,16 @@ app.get('/api/test', (req, res) => {
  *
  * @param id Optional parameter if we only want to retrieve information of only one specific row
  */
-app.get('/api/mctool_name_version', (req, res) => {
+app.get('/api/mctool_name_version', (req: api.APITestRequest, res: api.APIMCtoolNameVersionResponse) => {
   const id = req.query.id;
-  let query = queries.all_mctool_name_version;
+  let query: string = queries.all_mctool_name_version;
   const sqlparams = [];
   if (id !== undefined) {
     sqlparams.push(id);
     query = queries.mctool_name_version_by_id;
   }
   execSQL(sqlparams, query).then(result => {
-    res.status(200).json(result);
+    res.status(200).json(result as GvpMctoolNameVersion[]);
   });
 });
 
@@ -2232,7 +2142,7 @@ app.get('/api/mctool_name_version', (req, res) => {
  *
  * @param id Optional parameter if we only want to retrieve information of only one specific row
  */
-app.get('/api/mctool_name', (req, res) => {
+app.get('/api/mctool_name', (req: api.APITestRequest, res: api.APIMCtoolNameResponse) => {
   const id = req.query.id;
   let query = queries.all_mctool_name;
   const sqlparams = [];
@@ -2241,7 +2151,7 @@ app.get('/api/mctool_name', (req, res) => {
     query = queries.mctool_name_by_id;
   }
   execSQL(sqlparams, query).then(result => {
-    res.status(200).json(result);
+    res.status(200).json(result as GvpMctoolName[]);
   });
 });
 
