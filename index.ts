@@ -1,4 +1,4 @@
-import { GvpJSON, GvpParameter, GvpHistogram, GvpChart, GvpTest, GvpMctoolNameVersion, GvpMctoolName } from "./src/app/classes/gvp-plot";
+import { GvpJSON, GvpParameter, GvpHistogram, GvpChart, GvpTest, GvpMctoolNameVersion, GvpMctoolName, EXPERIMENT_TEST_ID, GvpInspire } from "./src/app/classes/gvp-plot";
 import * as api from './src/app/classes/api_interfaces';
 
 /* globals require, process */
@@ -2045,14 +2045,9 @@ app.get('/api/exception_particle_name_by_test_id', (req, res) => {
   });
 });
 
-app.get('/api/getexperimentsinspirefortest', (req, res) => {
+app.get('/api/getexperimentsinspirefortest', (req: api.APIgetExpretimentsInspireForTestRequest, res: api.APIgetExpretimentsInspireForTestResponse) => {
   let test_id = req.query.test_id;
-  if (isNaN(test_id)) {
-    res.status(400).json(null);
-    return;
-  }
-  test_id = parseInt(test_id);
-  const experiment_test_id = 102;
+  const experiment_test_id = EXPERIMENT_TEST_ID;
   if (test_id !== experiment_test_id) {
     const sql =
       'select * from inspire where inspire_id in (select inspire_id from plot where test_id = $1 ' +
@@ -2064,12 +2059,12 @@ app.get('/api/getexperimentsinspirefortest', (req, res) => {
       'and parvalues IN (select parvalues from plot where test_id = $2) ' +
       'group by inspire_id);';
     execSQL([experiment_test_id, test_id], sql).then(result => {
-      res.status(200).json(result);
+      res.status(200).json(result as GvpInspire[]);
     });
   } else {
     const sql = 'select * from inspire;';
     execSQL([], sql).then(result => {
-      res.status(200).json(result);
+      res.status(200).json(result as GvpInspire[]);
     });
   }
 });

@@ -40,6 +40,21 @@ export class GvpHistogram {
   binLabel?: Array<string>;
 }
 
+export class GvpInspire {
+  inspire_id: number;
+  authors: string[];
+  title: string;
+  journal: string;
+  ern: string;
+  pages: string;
+  volume: string;
+  year: number;
+  abstract: string;
+  keywords: string[];
+  linkurl: string;
+  expname: string;
+}
+
 /** Container for Plot data (as returned by `/api/getPlotData`) */
 export class GvpJSON {
   id: number;
@@ -180,23 +195,6 @@ export class GvpTestRequest {
   calorimeter: string;
   pname: string;
   oname: string;
-}
-
-/** Information about experimental data as returned by API */
-export class GvpExpData {
-  // tslint:disable-next-line: variable-name
-  inspire_id: number;
-  authors?: string;
-  title: string;
-  journal?: string;
-  ern?: string;
-  pages?: string;
-  volume?: string;
-  year?: string;
-  abstract?: string;
-  keywords?: string;
-  linkurl?: string;
-  expname: string;
 }
 
 /** Parameters for /api/uniq method */

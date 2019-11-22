@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { GvpJSON, GvpTest, GvpMctoolNameVersion, GvpMctoolName, GvpParameter } from '../classes/gvp-plot';
+import { GvpJSON, GvpTest, GvpMctoolNameVersion, GvpMctoolName, GvpParameter, GvpInspire } from '../classes/gvp-plot';
 
 @Injectable({
   providedIn: 'root'
@@ -104,5 +104,10 @@ export class GVPAPIService {
   }
   public uniqlookup_parameters(test_id: number) {
     return this.uniqlookup<GvpParameter[]>(test_id, "metadata.parameters");
+  }
+
+  public getExperimentsInspireForTest(test_id: number) {
+    let params = new HttpParams().set("test_id", String(test_id));
+    return this._get<GvpInspire[]>("/api/getexperimentsinspirefortest", params);
   }
 }

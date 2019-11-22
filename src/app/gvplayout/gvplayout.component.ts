@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { LayoutService } from '../services/layout.service';
-import { GvpPlot, GvpTest, GvpExpData, GvpMctoolNameVersion, GvpLayout, GvpPlotConfig } from '../classes/gvp-plot';
+import { GvpPlot, GvpTest, GvpMctoolNameVersion, GvpLayout, GvpPlotConfig, GvpInspire } from '../classes/gvp-plot';
 import { GVPAPIService } from '../services/gvpapi.service';
-import { HttpParams } from '@angular/common/http';
 
 /**
  * Shows [plots]{@link PlotComponent} for a given version(s) and model(s) using a predefined or custom template
@@ -38,7 +37,7 @@ export class GvplayoutComponent implements OnInit {
   /** Binding: selected tags (used for filtering layouts list) */
   checkedTags: string[] = [];
   /** Binding: selected experimental data (inspireId-s) */
-  checkedExp: GvpExpData[] = [];
+  checkedExp: GvpInspire[] = [];
   /** Binding: disabled state of "Plot" button */
   cantPlot: boolean;
 
@@ -54,7 +53,7 @@ export class GvplayoutComponent implements OnInit {
   /** Maps test name to test information; TODO: remove ALLTESTS in favour of this? */
   TESTMAP = new Map<string, GvpTest>();
   /** WIP: Experimental data */
-  availableExpDataforTest = new Array<GvpExpData>();
+  availableExpDataforTest: GvpInspire[] = [];
   /**
    * Cache of MC tool names, populated on page load
    * key: database ID (used in API requests)
@@ -175,9 +174,7 @@ export class GvplayoutComponent implements OnInit {
 
   /** Set human-readable experimental data names */
   private updateExpDescription(testId: number) {
-    let httpParams = new HttpParams();
-    httpParams = httpParams.set('test_id', String(testId));
-    this.api._get<GvpExpData[]>('api/getexperimentsinspirefortest', httpParams).subscribe((result) => {
+    this.api.getExperimentsInspireForTest(testId).subscribe((result) => {
       const rmod = result.map(e => {
         e.expname = e.expname ? e.expname : 'exp. data';
         return e;
@@ -283,7 +280,6 @@ export class GvplayoutComponent implements OnInit {
           }
         }
       }
-      console.log(this.models);
     });
   }
 
@@ -362,7 +358,7 @@ export class GvplayoutComponent implements OnInit {
     return list.map(t => t[1].tags).reduce((p, c) => p.concat(c), []).filter(this.distinct);
   }
 
-  updateExp(e: GvpExpData) {
+  updateExp(e: GvpInspire) {
     if (this.checkedExp.indexOf(e) === -1) {
       this.checkedExp.push(e);
     } else {
