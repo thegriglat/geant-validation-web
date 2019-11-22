@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { LayoutService } from '../services/layout.service';
-import { GvpPlot, GvpTest, GvpMctoolNameVersion, GvpLayout, GvpPlotConfig, GvpInspire } from '../classes/gvp-plot';
+import { GvpPlot, GvpTest, GvpMctoolNameVersion, GvpLayout, GvpInspire, GvpPngRequest, GvpPlotXML } from '../classes/gvp-plot';
 import { GVPAPIService } from '../services/gvpapi.service';
 
 /**
@@ -474,6 +474,7 @@ export class GvplayoutComponent implements OnInit {
 
   /** Event handler: 'Plot' button clicked */
   magic() {
+    this.magicPressed = true;
     /*
     this.magicPressed = true;
     this.plotList.forEach((aplot) => {
@@ -502,7 +503,20 @@ export class GvplayoutComponent implements OnInit {
     */
   }
 
-  getPlotConfig(plot: GvpPlot): GvpPlotConfig {
-    return null;
+  getPlotConfig(p: GvpPlot): GvpPngRequest {
+    console.log("p = "); console.log(p);
+    if (p === undefined) return null;
+    let r: GvpPngRequest;
+    r.data = [];
+    r.markerSize = p.markerSize;
+    r.onlyratio = p.onlyratio;
+    r.xaxis = p.xaxis;
+    r.yaxis = p.yaxis;
+    r.xmin = p.xmin;
+    r.xmax = p.xmax;
+    r.ymin = p.ymin;
+    r.ymax = p.ymax;
+    r.data = [];
+    return r;
   }
 }

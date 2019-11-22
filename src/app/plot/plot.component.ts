@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { GvpPlotConfig } from '../classes/gvp-plot';
 import { GVPAPIService } from '../services/gvpapi.service';
+import { GvpPngRequest } from '../classes/gvp-plot';
 
 /**
  * Container for a single plot. WIP.
@@ -13,7 +13,7 @@ import { GVPAPIService } from '../services/gvpapi.service';
 export class PlotComponent implements OnInit {
 
   @Input()
-  config: GvpPlotConfig;
+  config: GvpPngRequest;
 
   url: string = "";
   status = false;
@@ -23,19 +23,18 @@ export class PlotComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.doStuff();
+    console.log("config:");console.log(this.config);
+    if (this.config) this.doStuff();
   }
 
   doStuff(): void {
     this.inProgress = true;
-    /*
     // TODO.
-    this.api.getPNG(this.config.config).subscribe(res => {
+    this.api.getPNG(this.config).subscribe(res => {
       this.status = res.status;
-      this.url = (this.status) ? res.filename : "";
+      this.url = res.filename;
       this.inProgress = false;
     })
-    */
   }
   /*
     draw_old() {

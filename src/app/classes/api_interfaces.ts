@@ -1,5 +1,5 @@
 import * as express from 'express';
-import { GvpJSON, GvpTest, GvpMctoolNameVersion, GvpMctoolName, GvpParameter, GvpInspire } from './gvp-plot';
+import { GvpJSON, GvpTest, GvpMctoolNameVersion, GvpMctoolName, GvpParameter, GvpInspire, GvpPngRequest, GvpPlotIdRequest } from './gvp-plot';
 
 export interface APILoggedIn extends express.Request {
     user: string;
@@ -103,4 +103,16 @@ export interface APIgetExpretimentsInspireForTestRequest extends express.Request
 
 export interface APIgetExpretimentsInspireForTestResponse extends express.Response {
     json(body: GvpInspire[]);
+}
+
+export interface APIgetPNGRequest extends express.Request {
+    body: GvpPngRequest;
+}
+
+export interface APIgetPlotIdRequest extends express.Request {
+    query: GvpPlotIdRequest;
+}
+
+export interface APIgetPlotIdResponse extends express.Response {
+    json(body: number[]);
 }

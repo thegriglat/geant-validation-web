@@ -104,33 +104,31 @@ export class GvpPlotXML {
   parname?: string;
   parvalue?: string;
   markerSize?: number;
-  onlyration?: boolean;
+  onlyratio?: boolean;
 }
 
 /** Parameters of `/api/getPlotId` method */
 export class GvpPlotIdRequest {
-  /* tslint:disable:variable-name */
-  test_id: number;
-  version_id: number;
-  // beam_energy?: string;
-  /* tslint:enable:variable-name */
-  observable: string;
-  beamparticle: string;
-  model: string;
-  target: string;
-  secondary: string;
-  parameters: string;
+    test_id: number[];
+    target: string[];
+    version_id: number[];
+    model: string[];
+    secondary: string[];
+    beamparticle: string[];
+    observable: string[];
+    parameters: [string, string[]][];
+    beam_energy?: string[];
 
-  constructor(plot: GvpPlotXML, testId: number, versionId: number, parameters?: {}) {
-    this.test_id = testId;
-    this.version_id = versionId;
-    this.observable = plot.observable;
-    this.beamparticle = plot.beam;
-    this.model = plot.model;
-    this.target = plot.target;
-    this.secondary = plot.secondary;
-    this.parameters = JSON.stringify(parameters);
-  }
+  // constructor(plot: GvpPlotXML, testId: number, versionId: number, parameters?: {}) {
+  //   this.test_id = testId;
+  //   this.version_id = versionId;
+  //   this.observable = plot.observable;
+  //   this.beamparticle = plot.beam;
+  //   this.model = plot.model;
+  //   this.target = plot.target;
+  //   this.secondary = plot.secondary;
+  //   this.parameters = JSON.stringify(parameters);
+  // }
 }
 
 /** Plot with additional properties used for displaying it */
@@ -153,9 +151,16 @@ export class GvpPngRequest {
   xmin?: number;
   ymax?: number;
   ymin?: number;
-  refid?: number | string;
-  onlyratio: boolean;
-  markersize: number;
+  refid?: number;
+  onlyratio?: boolean;
+  markerSize?: number;
+  plotStyle?: string;
+}
+
+export class GvpPngResponse {
+  status: boolean;
+  filename: string;
+  description?: string;
 }
 
 /** Not used? */
@@ -220,16 +225,6 @@ export class GvpMctoolName {
   mctool_name_name: string;
   // tslint:disable-next-line: variable-name
   mctool_name_id: number;
-}
-
-export class GvpPlotConfig {
-  config: GvpPngRequest;
-  reference?: GvpJSON;
-}
-
-export class GvpPngResponse {
-  status: boolean;
-  filename?: string;
 }
 
 export const EXPERIMENT_VERSION_ID = -1;

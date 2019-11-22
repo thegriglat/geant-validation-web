@@ -72,7 +72,7 @@
             Submit
         </button>
     </div>
-    <div class="twelve wide column">
+    <div class="twelve wide column" *ngIf="magicPressed">
         <ng-container *ngFor="let row of plots">
             <ng-container *ngFor="let plot of row">
                     <app-plot [config]="getPlotConfig(plot)"></app-plot>

@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { GvpJSON, GvpTest, GvpMctoolNameVersion, GvpMctoolName, GvpParameter, GvpInspire } from '../classes/gvp-plot';
+import { GvpJSON, GvpTest, GvpMctoolNameVersion, GvpMctoolName, GvpParameter, GvpInspire, GvpPngRequest, GvpPngResponse, GvpPlotIdRequest } from '../classes/gvp-plot';
+import { concatMap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -109,5 +110,19 @@ export class GVPAPIService {
   public getExperimentsInspireForTest(test_id: number) {
     let params = new HttpParams().set("test_id", String(test_id));
     return this._get<GvpInspire[]>("/api/getexperimentsinspirefortest", params);
+  }
+
+  public getPNG(config: GvpPngRequest) {
+    return this._post<GvpPngResponse>("/api/getPNG", config);
+  }
+
+  public getPlotId(query: GvpPlotIdRequest) {
+    return this._get<number[]>("/api/getPlotId", query);
+  }
+
+  public getPlotJSON(query: GvpPlotIdRequest) {
+    return this.getPlotId(query).pipe(
+      concatMap(ids => this.multiget(ids))
+    )
   }
 }

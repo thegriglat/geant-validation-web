@@ -1,4 +1,4 @@
-import { GvpJSON, GvpParameter, GvpHistogram, GvpChart, GvpTest, GvpMctoolNameVersion, GvpMctoolName, EXPERIMENT_TEST_ID, GvpInspire } from "./src/app/classes/gvp-plot";
+import { GvpJSON, GvpParameter, GvpHistogram, GvpChart, GvpTest, GvpMctoolNameVersion, GvpMctoolName, EXPERIMENT_TEST_ID, GvpInspire, GvpPngRequest, GvpPngResponse } from "./src/app/classes/gvp-plot";
 import * as api from './src/app/classes/api_interfaces';
 
 /* globals require, process */
@@ -1333,7 +1333,7 @@ app.post('/api/getPDF', (req, res) => {
   });
 });
 
-app.post('/api/getPNG', (req, res) => {
+app.post('/api/getPNG', (req: api.APIgetPNGRequest, res) => {
   getPNG(req.body).then(data => {
     res.json(data);
   });
@@ -1347,7 +1347,7 @@ function PromiseTimeout(x: number) {
   });
 }
 
-async function getPNG(body) {
+async function getPNG(body: GvpPngRequest): Promise<GvpPngResponse> {
   const data = body.data;
   let yaxis = body.yaxis || 'auto';
   let xaxis = body.xaxis || 'auto';
@@ -1364,20 +1364,19 @@ async function getPNG(body) {
   if (xaxis !== 'auto' && xaxis !== 'lin' && xaxis !== 'log') xaxis = 'auto';
   if (yaxis !== 'auto' && yaxis !== 'lin' && yaxis !== 'log') yaxis = 'auto';
 
-  if (data === undefined) {
+  if (data === undefined || data.length === 0) {
     return new Promise((resolve, reject) =>
-      reject(updateObj({ status: 'error', description: 'Ids not introduced' }, body))
+      reject({ status: false, description: 'Ids not introduced', filename: null })
     );
   }
   if (refid !== undefined && isNaN(refid)) {
-    return new Promise((resolvem, reject) => {
-      reject(updateObj({ status: 'error', description: 'Reference id is not a number' }, body));
+    return new Promise((resolve, reject) => {
+      reject({ status: false, description: 'Reference id is not a number', filename: null });
     });
   }
 
-  refid = parseInt(refid);
   const refid_jsons = data.filter(e => e.id === refid);
-  if (refid_jsons.lenght === 0) refid = -1;
+  if (refid_jsons.length === 0) refid = -1;
   else refid = data.indexOf(refid_jsons[0]);
   const config = {
     data,
@@ -1392,16 +1391,12 @@ async function getPNG(body) {
     onlyratio,
     plotStyle
   };
-  for (const d of config.data) {
-    delete d.divid;
-    delete d.name;
-  }
   const hash = md5(JSON.stringify(config));
   const fname = `dist/gvp-template/assets/cache/${hash}`;
   if (fs.existsSync(`${fname}.png`)) {
     console.log(`file ${fname.replace('dist/gvp-template/', '')} found in cache`);
     return new Promise(resolve =>
-      resolve(updateObj({ status: 'OK', filename: `${fname.replace('dist/gvp-template/', '')}.png` }, body))
+      resolve({ status: true, filename: `${fname.replace('dist/gvp-template/', '')}.png` })
     );
   }
   const refid_option = refid !== -1 ? ` -r ${refid}` : '';
@@ -1440,10 +1435,10 @@ async function getPNG(body) {
         });
       }
       if (!error) {
-        resolve(updateObj({ status: 'OK', filename: filename }, body));
+        resolve({ status: true, filename: filename });
       } else {
         logger.error(stderr);
-        reject(updateObj({ status: 'FAIL', filename: null }, body));
+        reject({ status: false, description: "Plotter utility fails", filename: null });
       }
     });
   });
@@ -1503,44 +1498,18 @@ app.get('/api/uniqlookup', (req: api.APIuniqlookupRequest, res: api.APIuniqlooku
 /**
  * Gets the id of the plot that corresponds with the specified parameters
  */
-app.get('/api/getPlotId', (req, res) => {
-  let test_id =
-    req.query.test_id.indexOf('|') !== -1 ? req.query.test_id.split('|') : [req.query.test_id];
-  let target =
-    req.query.target.indexOf('|') !== -1 ? req.query.target.split('|') : [req.query.target];
-  let version_id =
-    req.query.version_id.indexOf('|') !== -1
-      ? req.query.version_id.split('|')
-      : [req.query.version_id];
-  let model = req.query.model.indexOf('|') !== -1 ? req.query.model.split('|') : [req.query.model];
-  let secondary =
-    req.query.secondary.indexOf('|') !== -1
-      ? req.query.secondary.split('|')
-      : [req.query.secondary];
-  let beamparticle =
-    req.query.beamparticle.indexOf('|') !== -1
-      ? req.query.beamparticle.split('|')
-      : [req.query.beamparticle];
-  let observable =
-    req.query.observable.indexOf('|') !== -1
-      ? req.query.observable.split('|')
-      : [req.query.observable];
-  let beam_energy = req.query.beam_energy;
-  const parameters: [string, string[]][] = req.query.parameters ? JSON.parse(req.query.parameters) : [];
-  if (beam_energy)
-    beam_energy =
-      req.query.beam_energy.indexOf('|') !== -1
-        ? req.query.beam_energy.split('|')
-        : [req.query.beam_energy];
-  test_id = PGJoin(test_id);
-  target = target.map(e => `${e.replace('+', '\\+')}[0-9.]*`).join('|');
-  version_id = PGJoin(version_id);
-  model = PGJoin(model);
-  secondary = PGJoin(secondary);
-  beamparticle = PGJoin(beamparticle);
-  observable = PGJoin(observable);
+app.get('/api/getPlotId', (req: api.APIgetPlotIdRequest, res: api.APIgetPlotIdResponse) => {
+  const parameters: [string, string[]][] = req.query.parameters;
+  const beam_energy = req.query.beam_energy;
+  const test_id = PGJoin(req.query.test_id);
+  const target = req.query.target.map(e => `${e.replace('+', '\\+')}[0-9.]*`).join('|');
+  const version_id = PGJoin(req.query.version_id);
+  const model = PGJoin(req.query.model);
+  const secondary = PGJoin(req.query.secondary);
+  const beamparticle = PGJoin(req.query.beamparticle);
+  const observable = PGJoin(req.query.observable);
 
-  let sql = queries.plot_id_by_all_params;
+  let sql: string = queries.plot_id_by_all_params;
   const params = [test_id, target, version_id, model, secondary, observable, beamparticle];
   let pindex = 8; // parameter index;
   if (beam_energy) {
@@ -1556,7 +1525,7 @@ app.get('/api/getPlotId', (req, res) => {
     sql += ` and (${sqlsuffix.join(' or ')})`;
   }
   if (parameters) {
-    const sqllist = [];
+    const sqllist: string[] = [];
     for (const pair of Object.entries(parameters)) {
       const key: string = pair[0];
       const values: string[] = pair[1][1];
@@ -1570,7 +1539,7 @@ app.get('/api/getPlotId', (req, res) => {
     if (sqllist.length !== 0) sql += ` and ( ${sqllist.join(' or ')})`;
   }
   execSQL(params, sql).then((result) => {
-    const r = [];
+    const r: number[] = [];
     for (let i = 0; i < result.length; i++) r.push(result[i].plot_id);
     res.status(200).json(r);
   });
