@@ -1,0 +1,13 @@
+node_modules
+npm-debug.log
+plotter
+.idea
+getchi2
+nohup.out
+getKS
+.git
+scripts
+docker_build.sh
+Dockerfile
+SSL
+.env*
