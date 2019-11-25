@@ -82,8 +82,20 @@ export class GvpJSON {
   histogram?: GvpHistogram;
 }
 
+export class GvpPlotterArgs {
+  xaxis?: string;
+  yaxis?: string;
+  xmax?: number;
+  xmin?: number;
+  ymax?: number;
+  ymin?: number;
+  onlyratio?: boolean;
+  markerSize?: number;
+  plotStyle?: string;
+}
+
 /** Plot information for loading from XML file */
-export class GvpPlotXML {
+export class GvpPlotXML extends GvpPlotterArgs {
   test: string;
   observable: string;
   beam: string;
@@ -95,29 +107,21 @@ export class GvpPlotXML {
   reference?: GvpPlot;
   text?: string;
   title?: string;
-  xaxis?: string;
-  yaxis?: string;
-  xmax?: number;
-  xmin?: number;
-  ymax?: number;
-  ymin?: number;
   parname?: string;
   parvalue?: string;
-  markerSize?: number;
-  onlyratio?: boolean;
 }
 
 /** Parameters of `/api/getPlotId` method */
 export class GvpPlotIdRequest {
-    test_id: number[];
-    target: string[];
-    version_id: number[];
-    model: string[];
-    secondary: string[];
-    beamparticle: string[];
-    observable: string[];
-    parameters: [string, string[]][];
-    beam_energy?: string[];
+  test_id: number[];
+  target: string;
+  version_id: number[];
+  model: string[];
+  secondary: string[];
+  beamparticle: string[];
+  observable: string[];
+  parameters: [string, string[]][];
+  beam_energy?: string[];
 
   // constructor(plot: GvpPlotXML, testId: number, versionId: number, parameters?: {}) {
   //   this.test_id = testId;
@@ -143,18 +147,9 @@ export class GvpPlot extends GvpPlotXML {
 }
 
 /** Parameters of `/api/getPNG` method */
-export class GvpPngRequest {
+export class GvpPngRequest extends GvpPlotterArgs {
   data: GvpJSON[];
-  xaxis?: string;
-  yaxis?: string;
-  xmax?: number;
-  xmin?: number;
-  ymax?: number;
-  ymin?: number;
   refid?: number;
-  onlyratio?: boolean;
-  markerSize?: number;
-  plotStyle?: string;
 }
 
 export class GvpPngResponse {

@@ -3,17 +3,11 @@
     <div class="four wide column">
         <div class="ui segment">
             <h3>Template</h3>
-            <sui-select class="selection container"
-                [(ngModel)]="currentLayout"
-                [options]="pTemplates"
-                [isSearchable]="true"
-                [isDisabled]="false"
-                [optionFormatter]="layoutFormatter"
-                (selectedOptionChange)="onSelectLayout($event)"
-                #select>
-                <ng-container  *ngFor="let layout of select.filteredOptions">
-                    <sui-select-option  *ngIf="isLayoutShown(layout[1].tags)"
-                        [value]="layout">
+            <sui-select class="selection container" [(ngModel)]="currentLayout" [options]="pTemplates"
+                [isSearchable]="true" [isDisabled]="false" [optionFormatter]="layoutFormatter"
+                (selectedOptionChange)="onSelectLayout($event)" #select>
+                <ng-container *ngFor="let layout of select.filteredOptions">
+                    <sui-select-option *ngIf="isLayoutShown(layout[1].tags)" [value]="layout">
                     </sui-select-option>
                 </ng-container>
             </sui-select>
@@ -29,17 +23,11 @@
             <div class="ui active inverted dimmer" *ngIf="!menuLoaded">
                 <div class="ui loader"></div>
             </div>
-            <sui-multi-select class="selection container"
-            [(ngModel)]="versionsSel"
-            [options]="menuVersions"
-            [isSearchable]="true"
-            [isDisabled]="false"
-            [optionFormatter]="versionFormatter"
-            [optionsFilter]="versionSelectFilter"
-            #multiSelect>
-                <sui-select-option *ngFor="let obj of multiSelect.filteredOptions"
-                    [value]="obj">
-            </sui-select-option>
+            <sui-multi-select class="selection container" [(ngModel)]="versionsSel" [options]="menuVersions"
+                [isSearchable]="true" [isDisabled]="false" [optionFormatter]="versionFormatter"
+                [optionsFilter]="versionSelectFilter" #multiSelect>
+                <sui-select-option *ngFor="let obj of multiSelect.filteredOptions" [value]="obj">
+                </sui-select-option>
             </sui-multi-select>
         </div>
         <div class="ui segment container" *ngIf="currentLayout">
@@ -47,35 +35,32 @@
             <div class="ui active inverted dimmer" *ngIf="!menuLoaded">
                 <div class="ui loader"></div>
             </div>
-            <sui-multi-select class="selection container"
-            [(ngModel)]="modelsSel"
-            [options]="models"
-            [isSearchable]="true"
-            [isDisabled]="false"
-            #multiSelect>
-                <sui-select-option *ngFor="let obj of multiSelect.filteredOptions"
-                    [value]="obj">
-            </sui-select-option>
-        </sui-multi-select>
+            <sui-multi-select class="selection container" [(ngModel)]="modelsSel" [options]="models"
+                [isSearchable]="true" [isDisabled]="false" #multiSelect>
+                <sui-select-option *ngFor="let obj of multiSelect.filteredOptions" [value]="obj">
+                </sui-select-option>
+            </sui-multi-select>
         </div>
         <div class="ui segment container" *ngIf="currentLayout">
             <h3>Reference data</h3>
             <div class="ui active inverted dimmer" *ngIf="!menuLoaded">
                 <div class="ui loader"></div>
             </div>
-            <div  *ngFor="let e of availableExpDataforTest">
+            <div *ngFor="let e of availableExpDataforTest">
                 <sui-checkbox (click)="updateExp(e)">{{e.expname}}</sui-checkbox>
             </div>
         </div>
-        <button class="ui primary button container" *ngIf="currentLayout"
-        [ngClass]="{disabled: updateCantPlot()}" (click)="magic()">
+        <button class="ui primary button container" *ngIf="currentLayout" [ngClass]="{disabled: updateCantPlot()}"
+            (click)="magic()">
             Submit
         </button>
     </div>
     <div class="twelve wide column" *ngIf="magicPressed">
         <ng-container *ngFor="let row of plots">
             <ng-container *ngFor="let plot of row">
-                    <app-plot [config]="getPlotConfig(plot)"></app-plot>
+                <ng-container class="ui segment" *ngIf="plot.type !== 'text'">
+                    <app-plot *oneTime [configObs]="getPlotConfig(plot)"></app-plot>
+                </ng-container>
             </ng-container>
         </ng-container>
     </div>

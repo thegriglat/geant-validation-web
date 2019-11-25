@@ -1,6 +1,8 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core';
 import { GVPAPIService } from '../services/gvpapi.service';
 import { GvpPngRequest } from '../classes/gvp-plot';
+import { Observable } from 'rxjs';
+import { typeWithParameters } from '@angular/compiler/src/render3/util';
 
 /**
  * Container for a single plot. WIP.
@@ -8,12 +10,12 @@ import { GvpPngRequest } from '../classes/gvp-plot';
 @Component({
   selector: 'app-plot',
   templateUrl: './plot.component.html',
-  styleUrls: ['./plot.component.css']
+  styleUrls: ['./plot.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PlotComponent implements OnInit {
 
-  @Input()
-  config: GvpPngRequest;
+  @Input() configObs: Observable<GvpPngRequest> = null;
 
   url: string = "";
   status = false;
@@ -23,14 +25,20 @@ export class PlotComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log("config:");console.log(this.config);
-    if (this.config) this.doStuff();
+    if (this.configObs) {
+      this.configObs.subscribe(e => {
+        console.log("config");
+        console.log(e);
+        if (e) this.doStuff(e);
+      });
+
+    }
   }
 
-  doStuff(): void {
+  doStuff(config: GvpPngRequest): void {
     this.inProgress = true;
     // TODO.
-    this.api.getPNG(this.config).subscribe(res => {
+    this.api.getPNG(config).subscribe(res => {
       this.status = res.status;
       this.url = res.filename;
       this.inProgress = false;

@@ -110,7 +110,10 @@ export interface APIgetPNGRequest extends express.Request {
 }
 
 export interface APIgetPlotIdRequest extends express.Request {
-    query: GvpPlotIdRequest;
+    query: {
+        // JSON.stringify GvpPlotIdRequest
+        json_encoded: string;
+    };
 }
 
 export interface APIgetPlotIdResponse extends express.Response {

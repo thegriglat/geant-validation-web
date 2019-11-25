@@ -16,6 +16,7 @@ import { RecordViewerComponent } from './record-viewer/record-viewer.component';
 import { ExpViewerComponent } from './exp-viewer/exp-viewer.component';
 import { LookupViewComponent } from './lookup-view/lookup-view.component';
 import { MenuHeaderComponent } from './menu-header/menu-header.component';
+import { OneTimeDirective } from './one-time.directive';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { MenuHeaderComponent } from './menu-header/menu-header.component';
     ExpViewerComponent,
     LookupViewComponent,
     MenuHeaderComponent,
+    OneTimeDirective,
   ],
   imports: [
     SuiModule,

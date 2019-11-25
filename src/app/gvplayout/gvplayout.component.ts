@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { LayoutService } from '../services/layout.service';
-import { GvpPlot, GvpTest, GvpMctoolNameVersion, GvpLayout, GvpInspire, GvpPngRequest, GvpPlotXML } from '../classes/gvp-plot';
+import { GvpPlot, GvpTest, GvpMctoolNameVersion, GvpLayout, GvpInspire, GvpPngRequest, GvpPlotXML, GvpPlotIdRequest } from '../classes/gvp-plot';
 import { GVPAPIService } from '../services/gvpapi.service';
+import { concatMap, flatMap, filter, mergeMap, map } from 'rxjs/operators';
+import { Observable, forkJoin, from } from 'rxjs';
 
 /**
  * Shows [plots]{@link PlotComponent} for a given version(s) and model(s) using a predefined or custom template
@@ -503,10 +505,8 @@ export class GvplayoutComponent implements OnInit {
     */
   }
 
-  getPlotConfig(p: GvpPlot): GvpPngRequest {
-    console.log("p = "); console.log(p);
-    if (p === undefined) return null;
-    let r: GvpPngRequest;
+  getPlotConfig(p: GvpPlot) {
+    let r: GvpPngRequest = new GvpPngRequest();
     r.data = [];
     r.markerSize = p.markerSize;
     r.onlyratio = p.onlyratio;
@@ -516,7 +516,36 @@ export class GvplayoutComponent implements OnInit {
     r.xmax = p.xmax;
     r.ymin = p.ymin;
     r.ymax = p.ymax;
-    r.data = [];
-    return r;
+    r.plotStyle = p.plotStyle;
+
+    let query: GvpPlotIdRequest = new GvpPlotIdRequest();
+    query.beam_energy = [p.energy];
+    query.beamparticle = [p.beam];
+    query.model = this.modelsSel;
+    query.observable = [p.observable];
+    query.secondary = [p.secondary];
+    query.target = p.target;
+    query.version_id = this.versionsSel.map(e => e.mctool_name_version_id);
+    // convert parameters
+    let par: [string, string[]][] = [];
+    if (p.parname && p.parvalue) {
+      const pname = p.parname.split(',');
+      const pval = p.parvalue.split(',');
+      for (let i of pname) {
+        console.log([i, [pval[pname.indexOf(i)]]]);
+        par.push([i, [pval[pname.indexOf(i)]]]);
+      }
+    }
+    query.parameters = par;
+    const tests = this.ALLTESTS.filter(e => e.test_name === p.test);
+    query.test_id = tests.map(e => e.test_id);
+    return this.api.getPlotJSON(query).pipe(
+      map(e => {
+        r.data = e;
+        console.log("r");
+        console.log(r);
+        return r;
+      })
+    );
   }
 }

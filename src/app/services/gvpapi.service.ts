@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, from } from 'rxjs';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { GvpJSON, GvpTest, GvpMctoolNameVersion, GvpMctoolName, GvpParameter, GvpInspire, GvpPngRequest, GvpPngResponse, GvpPlotIdRequest } from '../classes/gvp-plot';
-import { concatMap } from 'rxjs/operators';
+import { concatMap, flatMap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -40,9 +40,12 @@ export class GVPAPIService {
 
   public multiget(ids: number[]) {
     // TODO: check this
-    let params = new HttpParams()
+    if (ids.length === 0) {
+      return from([[] as GvpJSON[]]);
+    }
+    let params = new HttpParams();
     for (let i of ids)
-      params.append("ids", String(i));
+      params = params.append("ids", String(i));
     return this._get<GvpJSON[]>("api/multiget", params);
   }
 
@@ -117,12 +120,14 @@ export class GVPAPIService {
   }
 
   public getPlotId(query: GvpPlotIdRequest) {
-    return this._get<number[]>("/api/getPlotId", query);
+    let s = JSON.stringify(query);
+    let params = new HttpParams().set("json_encoded", s);
+    return this._get<number[]>("/api/getPlotId", params);
   }
 
   public getPlotJSON(query: GvpPlotIdRequest) {
     return this.getPlotId(query).pipe(
-      concatMap(ids => this.multiget(ids))
+      flatMap(ids => this.multiget(ids))
     )
   }
 }

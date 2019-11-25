@@ -1,4 +1,4 @@
-import { GvpJSON, GvpParameter, GvpHistogram, GvpChart, GvpTest, GvpMctoolNameVersion, GvpMctoolName, EXPERIMENT_TEST_ID, GvpInspire, GvpPngRequest, GvpPngResponse } from "./src/app/classes/gvp-plot";
+import { GvpJSON, GvpParameter, GvpHistogram, GvpChart, GvpTest, GvpMctoolNameVersion, GvpMctoolName, EXPERIMENT_TEST_ID, GvpInspire, GvpPngRequest, GvpPngResponse, GvpPlotIdRequest } from "./src/app/classes/gvp-plot";
 import * as api from './src/app/classes/api_interfaces';
 
 /* globals require, process */
@@ -1355,7 +1355,7 @@ async function getPNG(body: GvpPngRequest): Promise<GvpPngResponse> {
   const xmax = body.xmax;
   const ymin = body.ymin;
   const ymax = body.ymax;
-  let refid = body.refid;
+  const refid = body.refid;
   const plotStyle = body.plotStyle;
   const onlyratio = body.onlyratio || false;
 
@@ -1374,10 +1374,6 @@ async function getPNG(body: GvpPngRequest): Promise<GvpPngResponse> {
       reject({ status: false, description: 'Reference id is not a number', filename: null });
     });
   }
-
-  const refid_jsons = data.filter(e => e.id === refid);
-  if (refid_jsons.length === 0) refid = -1;
-  else refid = data.indexOf(refid_jsons[0]);
   const config = {
     data,
     xaxis,
@@ -1499,15 +1495,16 @@ app.get('/api/uniqlookup', (req: api.APIuniqlookupRequest, res: api.APIuniqlooku
  * Gets the id of the plot that corresponds with the specified parameters
  */
 app.get('/api/getPlotId', (req: api.APIgetPlotIdRequest, res: api.APIgetPlotIdResponse) => {
-  const parameters: [string, string[]][] = req.query.parameters;
-  const beam_energy = req.query.beam_energy;
-  const test_id = PGJoin(req.query.test_id);
-  const target = req.query.target.map(e => `${e.replace('+', '\\+')}[0-9.]*`).join('|');
-  const version_id = PGJoin(req.query.version_id);
-  const model = PGJoin(req.query.model);
-  const secondary = PGJoin(req.query.secondary);
-  const beamparticle = PGJoin(req.query.beamparticle);
-  const observable = PGJoin(req.query.observable);
+  const body: GvpPlotIdRequest = JSON.parse(req.query.json_encoded);
+  const parameters: [string, string[]][] = body.parameters;
+  const beam_energy = body.beam_energy;
+  const test_id = PGJoin(body.test_id);
+  const target = body.target;
+  const version_id = PGJoin(body.version_id);
+  const model = PGJoin(body.model);
+  const secondary = PGJoin(body.secondary);
+  const beamparticle = PGJoin(body.beamparticle);
+  const observable = PGJoin(body.observable);
 
   let sql: string = queries.plot_id_by_all_params;
   const params = [test_id, target, version_id, model, secondary, observable, beamparticle];
@@ -1526,9 +1523,9 @@ app.get('/api/getPlotId', (req: api.APIgetPlotIdRequest, res: api.APIgetPlotIdRe
   }
   if (parameters) {
     const sqllist: string[] = [];
-    for (const pair of Object.entries(parameters)) {
-      const key: string = pair[0];
-      const values: string[] = pair[1][1];
+    for (const pair of parameters) {
+      const key = pair[0];
+      const values = pair[1];
       for (const value of values) {
         sqllist.push(`($${pindex} = ANY(plot.parnames) and $${pindex + 1} = ANY(plot.parvalues))`);
         params.push(key);
