@@ -2,7 +2,6 @@ import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core
 import { GVPAPIService } from '../services/gvpapi.service';
 import { GvpPngRequest } from '../classes/gvp-plot';
 import { Observable } from 'rxjs';
-import { typeWithParameters } from '@angular/compiler/src/render3/util';
 
 /**
  * Container for a single plot. WIP.

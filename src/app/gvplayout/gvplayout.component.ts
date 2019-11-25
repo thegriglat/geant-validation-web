@@ -2,8 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { LayoutService } from '../services/layout.service';
 import { GvpPlot, GvpTest, GvpMctoolNameVersion, GvpLayout, GvpInspire, GvpPngRequest, GvpPlotXML, GvpPlotIdRequest } from '../classes/gvp-plot';
 import { GVPAPIService } from '../services/gvpapi.service';
-import { concatMap, flatMap, filter, mergeMap, map } from 'rxjs/operators';
-import { Observable, forkJoin, from } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 /**
  * Shows [plots]{@link PlotComponent} for a given version(s) and model(s) using a predefined or custom template
