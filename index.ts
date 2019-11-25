@@ -1192,7 +1192,7 @@ function clean(obj) {
 }
 
 app.get('/api/multiget', (req: api.APIMultigetRequest, res: api.APIMultigetResponse) => {
-  const ids: number[] = req.query.ids;
+  const ids: number[] = JSON.parse(req.query.ids_json);
   apimultiget(ids).then(
     result => {
       res.status(200).json(result);
@@ -1395,7 +1395,7 @@ async function getPNG(body: GvpPngRequest): Promise<GvpPngResponse> {
       resolve({ status: true, filename: `${fname.replace('dist/gvp-template/', '')}.png` })
     );
   }
-  const refid_option = refid !== -1 ? ` -r ${refid}` : '';
+  const refid_option = refid !== undefined ? ` -r ${refid}` : '';
   const xmin_option = !isNaN(xmin) ? `--xmin ${xmin}` : '';
   const xmax_option = !isNaN(xmax) ? `--xmax ${xmax}` : '';
   const ymin_option = !isNaN(ymin) ? `--ymin ${ymin}` : '';
@@ -1409,8 +1409,8 @@ async function getPNG(body: GvpPngRequest): Promise<GvpPngResponse> {
     fs.writeFileSync(tmp_filename, JSON.stringify(j));
     j_options.push(tmp_filename);
   }
-  const plotter_cmd = `${PLOTTERPATH}/plotter -j ${j_options.join(
-    ' -j '
+  const plotter_cmd = `${PLOTTERPATH}/plotter -i ${data.map(e => e.id).join(
+    ' -i '
   )} -s markerSize=${markerSize} ${ratio_option} -f root png json eps ${refid_option} -y ${yaxis} -x ${xaxis} -o ${fname} ${xmin_option} ${xmax_option} ${ymin_option} ${ymax_option} ${plotStyle_option} && sed -i'' '/MarkerSize/s/2/0.8/g' ${fname}.json`;
   console.log(`PLOTTER_CMD = ${plotter_cmd}`);
   // eslint-disable-next-line

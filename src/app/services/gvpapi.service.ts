@@ -43,9 +43,7 @@ export class GVPAPIService {
     if (ids.length === 0) {
       return from([[] as GvpJSON[]]);
     }
-    let params = new HttpParams();
-    for (let i of ids)
-      params = params.append("ids", String(i));
+    let params = new HttpParams().set("ids_json", JSON.stringify(ids));
     return this._get<GvpJSON[]>("api/multiget", params);
   }
 

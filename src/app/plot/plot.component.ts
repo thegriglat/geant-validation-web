@@ -15,7 +15,6 @@ import { Observable } from 'rxjs';
 export class PlotComponent implements OnInit {
 
   @Input() configObs: Observable<GvpPngRequest> = null;
-
   url: string = "";
   status = false;
   inProgress = false;
@@ -26,8 +25,6 @@ export class PlotComponent implements OnInit {
   ngOnInit() {
     if (this.configObs) {
       this.configObs.subscribe(e => {
-        console.log("config");
-        console.log(e);
         if (e) this.doStuff(e);
       });
 
@@ -38,9 +35,12 @@ export class PlotComponent implements OnInit {
     this.inProgress = true;
     // TODO.
     this.api.getPNG(config).subscribe(res => {
-      this.status = res.status;
-      this.url = res.filename;
-      this.inProgress = false;
+      if (res.status) {
+        this.status = res.status;
+        this.url = res.filename;
+      };
+      this.inProgress = !res.status;
+      console.log(`url = ${this.url}`);
     })
   }
   /*

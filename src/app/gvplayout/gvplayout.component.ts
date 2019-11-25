@@ -289,6 +289,22 @@ export class GvplayoutComponent implements OnInit {
     return arr.indexOf(value) === index;
   }
 
+  private _columnClass(rowlen: number): string {
+    if (rowlen <= 1) return "sixteen";
+    if ([6, 7, 8].indexOf(rowlen) !== -1) return "two";
+    if (rowlen > 8) return "one"
+    return {
+      2: "eight",
+      3: "five",
+      4: "four",
+      5: "three",
+    }[rowlen];
+  }
+
+  columnClass(rowlen: number): string {
+    return `${this._columnClass(rowlen)} wide column`;
+  }
+
   /** Parse layout file and populate GUI elements */
   updateMenu(xml: Document | null) {
 
@@ -365,7 +381,6 @@ export class GvplayoutComponent implements OnInit {
     } else {
       this.checkedExp.splice(this.checkedExp.indexOf(e), 1);
     }
-    console.log(this.checkedExp)
   }
 
   updateTags(tag: string) {
@@ -531,7 +546,6 @@ export class GvplayoutComponent implements OnInit {
       const pname = p.parname.split(',');
       const pval = p.parvalue.split(',');
       for (let i of pname) {
-        console.log([i, [pval[pname.indexOf(i)]]]);
         par.push([i, [pval[pname.indexOf(i)]]]);
       }
     }
@@ -541,8 +555,6 @@ export class GvplayoutComponent implements OnInit {
     return this.api.getPlotJSON(query).pipe(
       map(e => {
         r.data = e;
-        console.log("r");
-        console.log(r);
         return r;
       })
     );
