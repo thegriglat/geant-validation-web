@@ -1,4 +1,4 @@
-<img class="ui medium rounded centered image" [src]="url" *ngIf="!inProgress" (mousemove)="hint($event)"
+<img class="ui rounded centered image" [src]="url" *ngIf="!inProgress" (mousemove)="hint($event)"
     (mouseout)="hideHint()">
 <div class="hint" *ngIf="showHint" [style.left]="getMousePos().x" [style.top]="getMousePos().y">
     <b>Observable</b>: {{getHintData().observable}}<br>
