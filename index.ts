@@ -1533,7 +1533,7 @@ app.get('/api/getPlotId', (req: api.APIgetPlotIdRequest, res: api.APIgetPlotIdRe
         pindex += 2;
       }
     }
-    if (sqllist.length !== 0) sql += ` and ( ${sqllist.join(' or ')})`;
+    if (sqllist.length !== 0) sql += ` and ( ${sqllist.join(' and ')})`;
   }
   execSQL(params, sql).then((result) => {
     const r: number[] = [];
