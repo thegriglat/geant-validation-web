@@ -272,6 +272,7 @@ export class GvplayoutComponent implements OnInit {
 
       // check default values
       if (this.DefaultBlock.has('model')) {
+        this.modelsSel = this.modelsSel.slice();
         for (const i of this.DefaultBlock.get('model').split('|')) {
           if (
             this.models.indexOf(i) !== -1 &&
