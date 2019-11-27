@@ -36,12 +36,12 @@ require('dotenv').config();
 require('array-find');
 
 //QUERIES FILE
-const queries = require('./queries.json');
+const queries: {[key: string]: string} = require('./queries.json');
 
 //GLOBALS
 const PLOTTERPATH = process.cwd();
-const PORTNODE = process.env.PORTNODE || 80;
-const PORTNODESSL = process.env.PORTNODESSL || 443;
+const PORTNODE = process.env.PORTNODE || "80";
+const PORTNODESSL = process.env.PORTNODESSL || "443";
 const USERNAMEDB = process.env.USERNAMEDB;
 const PASSWORD = process.env.PASSWORD;
 const DATABASE = process.env.DATABASE;
@@ -50,7 +50,7 @@ const HOSTDB = process.env.HOSTDB;
 const OAUTHID = process.env.OAUTHID;
 const OAUTHCS = process.env.OAUTHCS;
 const OAUTHCB = process.env.OAUTHCB;
-const USESSL = process.env.USESSL || false;
+const USESSL = Boolean(process.env.USESSL) || false;
 const KEYFILE = 'SSL/geant-val.cern.ch.key';
 const PEMFILE = 'SSL/fullchain.cer';
 
@@ -1923,8 +1923,8 @@ app.get('/api/exceptionMenuFilter', (req, res) => {
 
   const numberOfQueries = menuQueries.length;
 
-  const querynames = [];
-  const queryvars = [];
+  const querynames: string[] = [];
+  const queryvars: string[] = [];
 
   if (q.beams.lenght !== 0 && q.beams[0] !== '') {
     querynames.push('particle.particle_name');
