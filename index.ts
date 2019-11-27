@@ -1926,7 +1926,7 @@ app.get('/api/exceptionMenuFilter', (req, res) => {
   const querynames: string[] = [];
   const queryvars: string[] = [];
 
-  if (q.beams.lenght !== 0 && q.beams[0] !== '') {
+  if (q.beams.length !== 0 && q.beams[0] !== '') {
     querynames.push('particle.particle_name');
     queryvars.push(PGJoin(q.beams));
   }
