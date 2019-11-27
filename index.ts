@@ -36,7 +36,7 @@ require('dotenv').config();
 require('array-find');
 
 //QUERIES FILE
-const queries: {[key: string]: string} = require('./queries.json');
+const queries: { [key: string]: string } = require('./queries.json');
 
 //GLOBALS
 const PLOTTERPATH = process.cwd();
@@ -1403,14 +1403,14 @@ async function getPNG(body: GvpPngRequest): Promise<GvpPngResponse> {
   const ratio_option = (onlyratio) ? "--only-ratio 1" : "";
   const plotStyle_option = (plotStyle) ? `--style "${plotStyle}"` : "";
 
-  const j_options = [];
+  const j_options: string[] = [];
   for (const j of data) {
-    const tmp_filename = mktemp.createFileSync('/tmp/XXXXX.tmp');
+    const tmp_filename: string = mktemp.createFileSync('/tmp/XXXXX.tmp');
     fs.writeFileSync(tmp_filename, JSON.stringify(j));
     j_options.push(tmp_filename);
   }
-  const plotter_cmd = `${PLOTTERPATH}/plotter -i ${data.map(e => e.id).join(
-    ' -i '
+  const plotter_cmd = `${PLOTTERPATH}/plotter -j ${j_options.join(
+    ' -j '
   )} -s markerSize=${markerSize} ${ratio_option} -f root png json eps ${refid_option} -y ${yaxis} -x ${xaxis} -o ${fname} ${xmin_option} ${xmax_option} ${ymin_option} ${ymax_option} ${plotStyle_option} && sed -i'' '/MarkerSize/s/2/0.8/g' ${fname}.json`;
   console.log(`PLOTTER_CMD = ${plotter_cmd}`);
   // eslint-disable-next-line
