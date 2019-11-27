@@ -523,6 +523,7 @@ export class GvplayoutComponent implements OnInit {
     let r: GvpPngRequest = new GvpPngRequest();
     r.data = [];
     r.markerSize = p.markerSize;
+    if (!this.useMarkers) r.markerSize = 0;
     r.onlyratio = p.onlyratio;
     r.xaxis = p.xaxis;
     r.yaxis = p.yaxis;
