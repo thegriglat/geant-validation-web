@@ -492,32 +492,6 @@ export class GvplayoutComponent implements OnInit {
   /** Event handler: 'Plot' button clicked */
   magic() {
     this.magicPressed = true;
-    /*
-    this.magicPressed = true;
-    this.plotList.forEach((aplot) => {
-      if (aplot.config.test === 'experiment') {
-        aplot.testId = 102;
-        aplot.versionId = [-1];
-        // aplot.config.model = 'experiment';
-      } else {
-        const test = this.TESTMAP.get(aplot.config.test);
-        if (test === undefined) {
-          console.log(`Test ${aplot.config.test} not found!`);
-          return;
-        }
-        aplot.testId = test.test_id;
-        aplot.versionId = this.versionsSel.map(e => e.mctool_name_version_id);
-        // aplot.config.model = this.modelsSel.join('|');
-      }
-
-      aplot.useMarkers = this.useMarkers;
-      aplot.status = '';
-      aplot.expData = this.checkedExp.map(e => e.inspire_id);
-      aplot.model = this.modelsSel.join('|');
-      aplot.resizeImage(this.getImageSize());
-      aplot.draw();
-    });
-    */
   }
 
   getPlotConfig(p: GvpPlot) {
