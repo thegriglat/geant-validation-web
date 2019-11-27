@@ -1,2 +1,17 @@
-<img class="ui medium rounded centered image" [src]="url" *ngIf="!inProgress">
+<img class="ui medium rounded centered image" [src]="url" *ngIf="!inProgress" (mousemove)="hint($event)"
+    (mouseout)="hideHint()">
+<div class="hint" *ngIf="showHint" [style.left]="getMousePos().x" [style.top]="getMousePos().y">
+    <b>Observable</b>: {{getHintData().observable}}<br>
+    <b>Beam particle</b>: {{getHintData().beam}}<br>
+    <b>Beam energy</b>: {{getHintData().beam_energy}}<br>
+    <b>Target</b>: {{getHintData().target}}<br>
+    <ul>
+        <li *ngFor="let e of getHintData().items">
+            <b>{{e.version}}</b>, <b>{{e.model}}</b>
+            <ng-container *ngFor="let ep of e.parameters">
+                , {{ep.names}} = {{ep.values}}
+            </ng-container>
+        </li>
+    </ul>
+</div>
 <i class="fa fa-spinner fa-spin" *ngIf="inProgress"></i>
