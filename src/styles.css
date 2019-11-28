@@ -2,7 +2,6 @@
 
 @import '~katex/dist/katex.css';
 @import '~semantic-ui/dist/semantic.css';
-@import '~font-awesome/css/font-awesome.css';
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
