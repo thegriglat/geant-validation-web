@@ -14,8 +14,5 @@ start: index.js dist/gvp-template/index.html
 cleancache:
 	rm -rf dist/gvp-template/assets/cache/*
 
-docker: index.js dist/gvp-template/index.html
-	docker build -t gvp2 .
-
 clean:
 	rm -rf index.js dist/*
