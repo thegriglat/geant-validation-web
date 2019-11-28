@@ -57,11 +57,11 @@
     </div>
     <div class="twelve wide column" *ngIf="magicPressed">
         <div class="ui grid">
-            <div class="ui row" *ngFor="let row of plots">
+            <div class="ui centered row" *ngFor="let row of plots">
                 <ng-container *ngFor="let plot of row">
                     <div class="ui" [ngClass]="columnClass(row.length)" *ngIf="plot.type !== 'text'">
                         <app-plot [configObs]="getPlotConfig(plot)"></app-plot>
-                        <ng-katex *ngIf="plot.title !== ''" [equation]="plot.title"></ng-katex>
+                        <ng-katex class="center" *ngIf="plot.title !== ''" [equation]="plot.title"></ng-katex>
                     </div>
                     <ng-katex [equation]="plot.text" *ngIf="plot.type === 'text'"></ng-katex>
                 </ng-container>
