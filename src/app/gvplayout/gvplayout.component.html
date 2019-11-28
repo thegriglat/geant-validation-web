@@ -48,7 +48,7 @@
                 </sui-select-option>
             </sui-multi-select>
         </div>
-        <div class="ui segment container" *ngIf="currentLayout">
+        <div class="ui segment container" *ngIf="currentLayout && availableExpDataforTest.length !== 0">
             <h3>Reference data</h3>
             <div class="ui active inverted dimmer" *ngIf="!menuLoaded">
                 <div class="ui loader"></div>
