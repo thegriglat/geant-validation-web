@@ -2,3 +2,9 @@
     display: flex;
     justify-content: center;
 }
+
+.bpad {
+    margin-bottom: 1rem;
+    margin-top: 1rem;
+    margin-left: 1rem !important;
+}

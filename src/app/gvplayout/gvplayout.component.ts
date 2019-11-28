@@ -73,6 +73,7 @@ export class GvplayoutComponent implements OnInit {
   selectedVersions: GvpMctoolNameVersion[] = [];
   menuVersions: GvpMctoolNameVersion[] = [];
   menuLoaded = false;
+  isMenuCollapsed = false;
 
   ngOnInit() {
     this.layoutService.getAllLayouts().subscribe((data) => {
@@ -303,8 +304,14 @@ export class GvplayoutComponent implements OnInit {
     }[rowlen];
   }
 
-  columnClass(rowlen: number): string {
-    return `${this._columnClass(rowlen)} wide column`;
+  collapseMenu() {
+    this.isMenuCollapsed = !this.isMenuCollapsed;
+    const c = this.isMenuCollapsed;
+  }
+
+  columnWidth(rowlen: number): string {
+    const w = 100 / rowlen - 2;
+    return `${w}%`;
   }
 
   /** Parse layout file and populate GUI elements */

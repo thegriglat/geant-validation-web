@@ -1,8 +1,15 @@
 <h1 class="pageheader">User layouts</h1>
 <div class="ui grid">
-    <div class="four wide column">
+    <button *ngIf="isMenuCollapsed" class="ui icon mini basic button bpad" (click)="collapseMenu()">
+        <i class="icon angle right"></i>
+    </button>
+    <div class="four wide column" *ngIf="!isMenuCollapsed">
         <div class="ui segment">
-            <h3>Template</h3>
+            <h3>Template
+                <button class="ui right floated icon mini basic button" (click)="collapseMenu()">
+                    <i class="icon angle left"></i>
+                </button>
+            </h3>
             <sui-select class="selection container" [(ngModel)]="currentLayout" [options]="pTemplates"
                 [isSearchable]="true" [isDisabled]="false" [optionFormatter]="layoutFormatter"
                 (selectedOptionChange)="onSelectLayout($event)" #select>
@@ -15,7 +22,7 @@
             <div *ngFor="let tag of uniqueTags(pTemplates)">
                 <sui-checkbox (click)="updateTags(tag)">{{tag}}</sui-checkbox>
             </div>
-            <div class="ui  divider"></div>
+            <div class="ui divider"></div>
             <sui-checkbox class="toggle" [(ngModel)]="useMarkers">Use markers</sui-checkbox>
         </div>
         <div class="ui segment container" *ngIf="currentLayout">
@@ -55,11 +62,12 @@
             Submit
         </button>
     </div>
-    <div class="twelve wide column" *ngIf="magicPressed">
+    <div [ngClass]="{'sixteen wide column': isMenuCollapsed, 'twelve wide column': !isMenuCollapsed}"
+        *ngIf="magicPressed">
         <div class="ui grid">
             <div class="ui centered row" *ngFor="let row of plots">
                 <ng-container *ngFor="let plot of row">
-                    <div class="ui" [ngClass]="columnClass(row.length)" *ngIf="plot.type !== 'text'">
+                    <div class="ui" [style.width]="columnWidth(row.length)" *ngIf="plot.type !== 'text'">
                         <app-plot [configObs]="getPlotConfig(plot)"></app-plot>
                         <ng-katex class="center" *ngIf="plot.title !== ''" [equation]="plot.title"></ng-katex>
                     </div>
