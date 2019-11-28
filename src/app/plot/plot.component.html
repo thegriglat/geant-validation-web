@@ -1,3 +1,6 @@
+<div class="ui active inverted dimmer" *ngIf="inProgress">
+    <div class="ui loader"></div>
+</div>
 <img class="ui rounded centered image" [src]="url" *ngIf="!inProgress" (mousemove)="hint($event)"
     (mouseout)="hideHint()">
 <div class="hint" *ngIf="showHint" [style.left]="getMousePos().x" [style.top]="getMousePos().y">
@@ -14,4 +17,3 @@
         </li>
     </ul>
 </div>
-<i class="fa fa-spinner fa-spin" *ngIf="inProgress"></i>
