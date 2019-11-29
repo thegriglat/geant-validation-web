@@ -35,6 +35,7 @@ export class PlotComponent implements OnInit {
   showHint = false;
   modalShow = false;
   modalRoot = true;
+  config: GvpPngRequest = null;
   private hintData: HintData = null;
   private mousePos: { x: number, y: number } = { x: 0, y: 0 };
 
@@ -47,6 +48,7 @@ export class PlotComponent implements OnInit {
 
         if (e && e.data.length !== 0) {
           this.doStuff(e);
+          this.config = e;
           this.hintData = this.setHintData(e.data);
         }
       });
@@ -105,7 +107,9 @@ export class PlotComponent implements OnInit {
   }
 
   switchModalRoot() {
-    let h, w;
+    let h = 640, w = 480;
+    // keep png image size before draw jsroot
+    // so size png and jsroot's svg will be equal
     if (this.modalRoot) {
       // save height, width
       const d = document.getElementById('rootimg');
