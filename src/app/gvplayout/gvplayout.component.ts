@@ -418,6 +418,14 @@ export class GvplayoutComponent implements OnInit {
   /** Event handler: 'Plot' button clicked */
   magic() {
     this.magicPressed = true;
+    // dirty hack to update plots
+    // and then angular cache for getPlotConfig will be invalidated
+    // and new Observable from getPlotConfig will be generated
+    // TODO: fix this stupid hack
+    let plots: GvpPlot[][] = [];
+    for (let p of this.plots)
+      plots.push(p.slice());
+    this.plots = plots;
   }
 
   getPlotConfig(p: GvpPlot) {
