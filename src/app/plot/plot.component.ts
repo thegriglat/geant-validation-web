@@ -68,10 +68,16 @@ export class PlotComponent implements OnInit {
     })
   }
 
-  hint(event: MouseEvent) {
+  hint(mouse: MouseEvent) {
+    // check CSS for block width and height!!!
     this.showHint = true;
-    this.mousePos.x = event.offsetX;// + 100;
-    this.mousePos.y = event.offsetY;// + 15;
+    const wsize = this.getWindowSize();
+    const left =
+      mouse.clientX < wsize.width / 2 ? mouse.offsetX + 35 : mouse.offsetX - 400 - 15 + 5 * 2;
+    const top =
+      mouse.clientY <= wsize.height / 2 ? mouse.offsetY + 35 : mouse.offsetY - 150 - 15 - 5 * 2;
+    this.mousePos.x = left;
+    this.mousePos.y = top;
   }
 
   hideHint() {
@@ -127,5 +133,16 @@ export class PlotComponent implements OnInit {
         JSROOT.draw(div, obj, 'hist');
       }).send();
     }
+  }
+
+  private getWindowSize() {
+    const w = window;
+    const d = document;
+    const e = d.documentElement;
+    const g = d.getElementsByTagName('body')[0];
+    return {
+      width: w.innerWidth || e.clientWidth || g.clientWidth,
+      height: w.innerHeight || e.clientHeight || g.clientHeight
+    };
   }
 }
