@@ -11,3 +11,8 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 h1 {
 	border-bottom: 1px solid #eee;
 }
+
+#root_ctx_menu {
+	z-index: 2147483647;
+	/* top level on the page */
+  }
