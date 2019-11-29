@@ -26,9 +26,9 @@ export class GvplayoutComponent implements OnInit {
   versionsSel: GvpMctoolNameVersion[] = [];
 
   /** List of available models/physics lists */
-  models = new Array<string>();
+  models: string[] = [];
   /** List of selected models */
-  modelsSel = new Array<string>();
+  modelsSel: string[] = [];
   /** Binding: 2D array representing the layout */
   plots: GvpPlot[][] = [];
   /** Binding: contents of Layout dropdown; also used for creating tag filter */
@@ -45,13 +45,13 @@ export class GvplayoutComponent implements OnInit {
 
   // Internal variables
   /** List of all tests in selected layout */
-  tests = new Array<string>();
+  tests: string[] = [];
   /** Binding: can display layout */
   magicPressed = false;
   /** Default options for constructing [GvpPlotXML]{@link GvpPlotXML} */
   DefaultBlock = new Map<string, any>();
   /** List of available tests */
-  ALLTESTS = new Array<GvpTest>();
+  ALLTESTS: GvpTest[] = [];
   /** Maps test name to test information; TODO: remove ALLTESTS in favour of this? */
   TESTMAP = new Map<string, GvpTest>();
   /** WIP: Experimental data */
@@ -110,14 +110,14 @@ export class GvplayoutComponent implements OnInit {
   }
 
   /** Load default values from XML node */
-  readDefaultBlock(node: Element) {
+  private readDefaultBlock(node: Element) {
     for (const i of Array.from(node.attributes)) {
       this.DefaultBlock.set(i.name, i.value);
     }
   }
 
   /** Create [GvpPlot]{@link GvpPlot} object from XML node */
-  convertXMLPlot2Object(plot: Element): GvpPlot {
+  private convertXMLPlot2Object(plot: Element): GvpPlot {
     let obj: GvpPlot;
     if (plot.nodeName === 'plot') {
       obj = {
@@ -157,13 +157,6 @@ export class GvplayoutComponent implements OnInit {
     return obj;
   }
 
-  /** Populate list of tests used in a given layout */
-  private filltests(o: GvpPlot) {
-    if (o.type === 'plot' && o.test) {
-      this.tests.push(o.test);
-    }
-  }
-
   /** Populate list of available tests */
   private waitForTest(): Promise<any> {
     this.ALLTESTS.length = 0;
@@ -194,30 +187,19 @@ export class GvplayoutComponent implements OnInit {
   /** WIP: Populate list of MC Tool versions for which data exists for a given test */
   private getVersionsByTest(testname: string) {
     this.magicPressed = false;
-    // this.selected = '1';
     const testlist = this.ALLTESTS.filter(ele => ele.test_name === testname);
     if (testlist.length === 0) {
       return;
     }
-
     const test = testlist[0];
     this.TESTMAP.set(testname, test);
 
     this.updateExpDescription(test.test_id);
-    // let config = new HttpParams();
-    // config = config.set('test_id', String(test.test_id));
-    // config = config.set('table', 'mctool_name_version');
-    // config = config.set('onplot', 'mctool_name_version_id');
-    // config = config.set('ontable', 'mctool_name_version_id');
-    // config = config.set('namefield', 'mctool_name_version_id');
-    // config = config.set('JSONAttr', 'mctool.version');
-
     this.api.uniqlookup_version(test.test_id).subscribe((response) => {
       this.menuVersions = [];
       const versions = new Map<number, string>();
       for (const i of response) {
         if (this.menuVersions.map(e => e.mctool_name_version_id).indexOf(i) === -1) {
-          // this.versionDropDowns[0].values.push(i);
           const result = this.MCToolNameVersionCache.get(i);
           if (result === undefined) {
             console.log(`mctool.version ${i} not found!`);
@@ -225,11 +207,7 @@ export class GvplayoutComponent implements OnInit {
           }
           const version = result.version;
           const mctoolNameId = result.mctool_name_id;
-          // const mctoolNameVersionId = i;
-          // const release_date = result.release_date;
           const name = this.MCToolNameCache.get(mctoolNameId);
-          // this.versionHumanName[mctoolNameVersionId] = `${name}: ${version}`;
-          // this.releaseDate[mctoolNameVersionId] = release_date;
           versions.set(i, `${name}: ${version}`);
           this.menuVersions.push(
             {
@@ -254,7 +232,7 @@ export class GvplayoutComponent implements OnInit {
 
   /** Populate list of models (phys. lists) used in a given test */
 
-  getModelsByTest(testname: string) {
+  private getModelsByTest(testname: string) {
     const testlist = this.ALLTESTS.filter(elem => elem.test_name === testname);
     if (testlist.length === 0) { return; }
     const test = testlist[0];
@@ -290,18 +268,6 @@ export class GvplayoutComponent implements OnInit {
   /** Operator for Array.filter returning only unique items */
   private distinct(value, index: number, arr: any[]) {
     return arr.indexOf(value) === index;
-  }
-
-  private _columnClass(rowlen: number): string {
-    if (rowlen <= 1) return "sixteen";
-    if ([6, 7, 8].indexOf(rowlen) !== -1) return "two";
-    if (rowlen > 8) return "one"
-    return {
-      2: "eight",
-      3: "five",
-      4: "four",
-      5: "three",
-    }[rowlen];
   }
 
   collapseMenu() {
@@ -349,13 +315,10 @@ export class GvplayoutComponent implements OnInit {
           obj.isModelCanChange = true;
           obj.reference.isModelCanChange = true;
         }
-
         plotsLast.push(obj);
-
         if (obj.type === 'plot' && obj.test) {
           this.tests.push(obj.test);
         }
-
         if (obj.type === 'ratio') {
           if (obj.test) {
             this.tests.push(obj.test);
@@ -399,19 +362,6 @@ export class GvplayoutComponent implements OnInit {
       this.checkedTags.splice(this.checkedTags.indexOf(tag), 1);
     }
   }
-  /** Event handler for tag filter */
-  // checkTag(tag: string) {
-  //   if (this.checkedTags.has(tag)) {
-  //     this.checkedTags.delete(tag);
-  //   } else {
-  //     this.checkedTags.add(tag);
-  //   }
-  // }
-
-  /** Model -> View binding for tag filter */
-  // isTagChecked(tag: string) {
-  //   return this.checkedTags.has(tag);
-  // }
 
   /** Model <-> View binding to filter layouts based on tags */
   isLayoutShown(tags: string[]): boolean {
@@ -455,46 +405,14 @@ export class GvplayoutComponent implements OnInit {
    */
   updateCantPlot() {
     if (!this.currentLayout) {
-      // console.log('Can\'t plot: no layout selected');
       return true;
     }
 
     if (this.versionsSel.length * this.modelsSel.length === 0) {
-      // console.log('Can\'t plot: no versions selected');
       return true;
     }
 
     return false;
-  }
-
-  /** Calculates plot sizes; TODO: call this when opening/closing the menu */
-  getImageSize(bootstrapColumn?: number) {
-    const imageprop = 1500 / 1100;
-
-    if (!bootstrapColumn) {
-      bootstrapColumn = 12;
-    }
-
-    const plots = this.plots;
-    const wpadding = 0.025; // width padding in percents
-    const hpadding = 0.025; // width padding in percents
-    const maxwidth = ((window.innerWidth * bootstrapColumn) / 12) * (1 - wpadding * 2); // bootstrap col-lg-9
-    const maxheight = window.innerHeight * (1 - hpadding * 2);
-    if (plots.length === 0) {
-      return { width: 0, height: 0 };
-    }
-    const nrows = plots.length;
-    const ncols = 2; // WIP: fix Math.max(...plots.map(e => e.length));
-    const w = maxwidth / ncols;
-    let h = maxheight / (nrows === 1 ? 2 : nrows);
-
-    if (h < w / imageprop) {
-      h = w / imageprop;
-    }
-    return {
-      width: w,
-      height: h
-    };
   }
 
   /** Event handler: 'Plot' button clicked */
