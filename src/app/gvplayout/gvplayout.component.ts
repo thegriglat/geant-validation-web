@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { LayoutService } from '../services/layout.service';
-import { GvpPlot, GvpTest, GvpMctoolNameVersion, GvpLayout, GvpInspire, GvpPngRequest, GvpPlotXML, GvpPlotIdRequest, GvpJSON, GvpParameter } from '../classes/gvp-plot';
+import { GvpPlot, GvpTest, GvpMctoolNameVersion, GvpLayout, GvpInspire, GvpPngRequest, GvpPlotIdRequest, GvpJSON, GvpParameter } from '../classes/gvp-plot';
 import { GVPAPIService } from '../services/gvpapi.service';
 import { map, concatAll } from 'rxjs/operators';
 import { from } from 'rxjs';
@@ -395,7 +395,6 @@ export class GvplayoutComponent implements OnInit {
       this.availableExpDataforTest = [];
       this.checkedExp = [];
       this.updateMenu(results);
-      this.updateCantPlot();
       this.menuLoaded = true;
     });
   }
