@@ -2,7 +2,7 @@
     <div class="ui loader"></div>
 </div>
 <img class="ui rounded centered image" [src]="url" *ngIf="!inProgress" (mousemove)="hint($event)"
-    (mouseout)="hideHint()">
+    (mouseout)="hideHint()" (click)="modalShow = true;">
 <div class="hint" *ngIf="showHint" [style.left]="getMousePos().x" [style.top]="getMousePos().y">
     <b>Observable</b>: {{getHintData().observable}}<br>
     <b>Beam particle</b>: {{getHintData().beam}}<br>
@@ -17,3 +17,20 @@
         </li>
     </ul>
 </div>
+<!-- class="ui fullscreen modal" -->
+<sui-modal [isFullScreen]="false" [isClosable]="true" [transition]="" [isInverted]="true"
+    (dismissed)="modalShow = false;" [size]="normal" *ngIf="modalShow">
+    <div class="image content">
+        <img id="rootimg" class="ui rounded centered image" [src]="url" *ngIf="!inProgress && modalRoot">
+        <div id="jsrootimg" *ngIf="!inProgress && !modalRoot" class="jsrootimg"></div>
+    </div>
+    <div class="content">
+        <div class="ui buttons">
+            <button class="ui primary button" [ngClass]="{'disabled': modalRoot}"
+                (click)="switchModalRoot()">ROOT</button>
+            <div class="or"></div>
+            <button class="ui positive button" [ngClass]="{'disabled': !modalRoot}"
+                (click)="switchModalRoot()">JSROOT</button>
+        </div>
+    </div>
+</sui-modal>

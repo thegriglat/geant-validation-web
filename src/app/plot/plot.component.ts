@@ -3,6 +3,8 @@ import { GVPAPIService } from '../services/gvpapi.service';
 import { GvpPngRequest, GvpJSON, GvpPlot, GvpParameter } from '../classes/gvp-plot';
 import { Observable } from 'rxjs';
 
+declare var JSROOT: any;
+
 interface HintData {
   observable: string,
   beam: string,
@@ -31,6 +33,8 @@ export class PlotComponent implements OnInit {
   status = false;
   inProgress = false;
   showHint = false;
+  modalShow = false;
+  modalRoot = true;
   private hintData: HintData = null;
   private mousePos: { x: number, y: number } = { x: 0, y: 0 };
 
@@ -59,14 +63,13 @@ export class PlotComponent implements OnInit {
         this.url = res.filename;
       };
       this.inProgress = !res.status;
-      console.log(`url = ${this.url}`);
     })
   }
 
   hint(event: MouseEvent) {
     this.showHint = true;
-    this.mousePos.x = event.offsetX + 100;
-    this.mousePos.y = event.offsetY + 15;
+    this.mousePos.x = event.offsetX;// + 100;
+    this.mousePos.y = event.offsetY;// + 15;
   }
 
   hideHint() {
@@ -99,5 +102,26 @@ export class PlotComponent implements OnInit {
 
   getHintData(): HintData {
     return this.hintData;
+  }
+
+  switchModalRoot() {
+    let h, w;
+    if (this.modalRoot) {
+      // save height, width
+      const d = document.getElementById('rootimg');
+      h = d.clientHeight;
+      w = d.clientWidth;
+    }
+    this.modalRoot = !this.modalRoot;
+    if (!this.modalRoot) {
+      // JSROOT paint
+      const filename = `/${this.url.replace(".png", ".json")}`;
+      JSROOT.NewHttpRequest(filename, 'object', obj => {
+        let div = document.getElementById("jsrootimg");
+        div.style.height = `${h}px`;
+        div.style.width = `${w}px`;
+        JSROOT.draw(div, obj, 'hist');
+      }).send();
+    }
   }
 }
