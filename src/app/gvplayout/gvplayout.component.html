@@ -1,4 +1,11 @@
-<h1 class="pageheader">User layouts</h1>
+<h1 class="pageheader">
+    <ng-container *ngIf="currentLayout">
+        {{currentLayout[1].title}}
+    </ng-container>
+    <ng-container *ngIf="!currentLayout">
+        User layouts
+    </ng-container>
+</h1>
 <div class="ui grid">
     <button *ngIf="isMenuCollapsed" class="ui icon mini basic button bpad" (click)="collapseMenu()">
         <i class="icon angle right"></i>
