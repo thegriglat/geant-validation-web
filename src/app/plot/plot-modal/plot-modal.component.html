@@ -1,8 +1,8 @@
-<sui-modal [isFullScreen]="false" [isClosable]="true" [transition]="" [isInverted]="true" (dismissed)="emit();"
+<sui-modal [isFullScreen]="true" [isClosable]="true" [transition]="" [isInverted]="true" (dismissed)="emit();"
   size="normal">
   <div class="image content">
-    <img id="rootimg" class="ui rounded centered image" [src]="url" *ngIf="modalRoot">
-    <div id="jsrootimg" *ngIf="!modalRoot" class="jsrootimg"></div>
+    <img id="rootimg" class="ui rounded centered big image" [src]="url" *ngIf="modalRoot">
+    <div id="jsrootimg" class="ui centered image" *ngIf="!modalRoot"></div>
   </div>
   <div class="content">
     <div class="ui buttons">
