@@ -1,6 +1,9 @@
 <sui-modal [isFullScreen]="true" [isClosable]="true" [transition]="" [isInverted]="true" (dismissed)="emit();"
   size="normal">
   <div class="image content">
+    <div class="ui active inverted dimmer" *ngIf="inProgress">
+      <div class="ui loader"></div>
+    </div>
     <img id="rootimg" class="ui rounded centered big image" [src]="url" *ngIf="modalRoot">
     <div id="jsrootimg" class="ui centered image" *ngIf="!modalRoot"></div>
   </div>

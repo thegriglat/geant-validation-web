@@ -17,6 +17,7 @@ export class PlotModalComponent implements OnInit {
   modalRoot = true;
 
   selectedRef: GvpJSON = null;
+  inProgress = false;
 
   constructor(private api: GVPAPIService) { }
 
@@ -53,9 +54,11 @@ export class PlotModalComponent implements OnInit {
     this.config.refid = this.config.data.indexOf(p);
     this.modalRoot = true;
     this.selectedRef = p;
+    this.inProgress = true;
     this.api.getPNG(this.config).subscribe(e => {
       if (e.status) {
         this.url = e.filename;
+        this.inProgress = false;
       }
     })
   }
