@@ -472,9 +472,7 @@ export class GvplayoutComponent implements OnInit {
       }
       return true;
     }
-    const exps = from(this.checkedExp.map(e => this.api.getExpPlotsByInspireId(e.inspire_id))).pipe(
-      concatAll(),
-      // filter by target, beam ...
+    let exps = this.checkedExp.map(e => this.api.getExpPlotsByInspireId(e.inspire_id).pipe(
       map(e => {
         let res: GvpJSON[] = [];
         let pa: GvpParameter[] = par.map(e => {
@@ -491,14 +489,13 @@ export class GvplayoutComponent implements OnInit {
         return res;
       })
     )
-    let all = forkJoin(
-      plots,
-      exps
+    )
+    let all = forkJoin([plots, ...exps]
     ).pipe(
       map(e => {
-        let c = e[0];
-        c = c.concat(...e[1]);
-        r.data = c;
+        for (const i of e) {
+          r.data = r.data.concat(...i);
+        }
         return r;
       })
     )
