@@ -152,6 +152,11 @@ export class GvpPngRequest extends GvpPlotterArgs {
   refid?: number;
 }
 
+export class GvpPermalinkRequest extends GvpPlotterArgs {
+  ids: number[];
+  refid?: number;
+}
+
 export class GvpPngResponse {
   status: boolean;
   filename: string;

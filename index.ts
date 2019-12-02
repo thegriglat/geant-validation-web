@@ -1,4 +1,4 @@
-import { GvpJSON, GvpParameter, GvpHistogram, GvpChart, GvpTest, GvpMctoolNameVersion, GvpMctoolName, EXPERIMENT_TEST_ID, GvpInspire, GvpPngRequest, GvpPngResponse, GvpPlotIdRequest } from "./src/app/classes/gvp-plot";
+import { GvpJSON, GvpParameter, GvpHistogram, GvpChart, GvpTest, GvpMctoolNameVersion, GvpMctoolName, EXPERIMENT_TEST_ID, GvpInspire, GvpPngRequest, GvpPngResponse, GvpPlotIdRequest, GvpPermalinkRequest } from "./src/app/classes/gvp-plot";
 import * as api from './src/app/classes/api_interfaces';
 
 /* globals require, process */
@@ -1028,6 +1028,24 @@ router.route('/get/:id').get((req: api.APIGetRequest, res: api.APIGetResponse) =
       res.status(400).json(null);
     }
   );
+});
+
+router.route('/permalink/:hash').get((req: api.APIPermalinkRequest, res) => {
+  const hash = req.params.hash;
+  const j = (new Buffer(hash, 'base64')).toString('ascii');
+  const data: GvpPermalinkRequest = JSON.parse(j);
+  apimultiget(data.ids).then(jsons => {
+    let pr: any = data;
+    pr.data = jsons;
+    delete pr.ids;
+    let pngrequest: GvpPngRequest = pr;
+    getPNG(pngrequest).then(pres => {
+      const data = fs.readFileSync("dist/gvp-template/" + pres.filename);
+      const b64 = (new Buffer(data)).toString('base64');
+      const template = `<img src="data:image/png;base64,${b64}">`;
+      res.status(200).send(template);
+    })
+  })
 });
 
 // Route for gnuplot text data

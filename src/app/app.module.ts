@@ -17,6 +17,7 @@ import { ExpViewerComponent } from './exp-viewer/exp-viewer.component';
 import { LookupViewComponent } from './lookup-view/lookup-view.component';
 import { MenuHeaderComponent } from './menu-header/menu-header.component';
 import { PlotModalComponent } from './plot/plot-modal/plot-modal.component';
+import { PermalinkComponent } from './permalink/permalink.component';
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import { PlotModalComponent } from './plot/plot-modal/plot-modal.component';
     LookupViewComponent,
     MenuHeaderComponent,
     PlotModalComponent,
+    PermalinkComponent,
   ],
   imports: [
     SuiModule,

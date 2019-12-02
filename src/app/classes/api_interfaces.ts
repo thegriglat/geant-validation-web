@@ -16,6 +16,12 @@ export interface APIGetRequest extends express.Request {
     }
 }
 
+export interface APIPermalinkRequest extends express.Request {
+    params: {
+        hash: string;
+    }
+}
+
 export interface APIGetResponse extends express.Response {
     json(body: GvpJSON);
 }
