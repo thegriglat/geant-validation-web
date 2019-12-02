@@ -3,7 +3,7 @@ import { LayoutService } from '../services/layout.service';
 import { GvpPlot, GvpTest, GvpMctoolNameVersion, GvpLayout, GvpInspire, GvpPngRequest, GvpPlotIdRequest, GvpJSON, GvpParameter } from '../classes/gvp-plot';
 import { GVPAPIService } from '../services/gvpapi.service';
 import { map, concatAll } from 'rxjs/operators';
-import { from } from 'rxjs';
+import { from, forkJoin } from 'rxjs';
 
 /**
  * Shows [plots]{@link PlotComponent} for a given version(s) and model(s) using a predefined or custom template
@@ -491,13 +491,17 @@ export class GvplayoutComponent implements OnInit {
         return res;
       })
     )
-    const all = from([plots, exps]).pipe(
-      concatAll(),
+    let all = forkJoin(
+      plots,
+      exps
+    ).pipe(
       map(e => {
-        r.data = r.data.concat(...e);
+        let c = e[0];
+        c = c.concat(...e[1]);
+        r.data = c;
         return r;
       })
-    );
+    )
     return all;
   }
 }
