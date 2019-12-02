@@ -1,5 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { GvpPngRequest } from 'src/app/classes/gvp-plot';
+import { GvpPngRequest, GvpJSON } from 'src/app/classes/gvp-plot';
+import { GVPAPIService } from 'src/app/services/gvpapi.service';
 
 declare var JSROOT: any;
 
@@ -10,11 +11,14 @@ declare var JSROOT: any;
 })
 export class PlotModalComponent implements OnInit {
 
-  @Input() url: string = "";
-  @Input() config: GvpPngRequest = null;
+  @Input() url: string;
+  @Input() config: GvpPngRequest;
   @Output() out = new EventEmitter<boolean>();
   modalRoot = true;
-  constructor() { }
+
+  selectedRef: GvpJSON = null;
+
+  constructor(private api: GVPAPIService) { }
 
   ngOnInit() {
   }
@@ -43,5 +47,20 @@ export class PlotModalComponent implements OnInit {
         JSROOT.draw(div, obj, 'hist');
       }).send();
     }
+  }
+
+  selectRef(p: GvpJSON) {
+    this.config.refid = this.config.data.indexOf(p);
+    this.modalRoot = true;
+    this.selectedRef = p;
+    this.api.getPNG(this.config).subscribe(e => {
+      if (e.status) {
+        this.url = e.filename;
+      }
+    })
+  }
+
+  getName(p: GvpJSON): string {
+    return `${p.mctool.version} ${p.mctool.model}`;
   }
 }

@@ -12,6 +12,22 @@
         (click)="switchModalRoot()">JSROOT</button>
     </div>
     &nbsp;
+    <!-- reference menu -->
+    <div class="ui primary bottom pointing dropdown button" suiDropdown *ngIf="config.data.length > 1">
+      <div class="text" *ngIf="!selectedRef">Reference</div>
+      <div class="text" *ngIf="selectedRef">{{getName(selectedRef)}}</div>
+      <i class="dropdown icon"></i>
+      <div class="menu" suiDropdownMenu>
+        <div class="item" *ngFor="let p of config.data" (click)="selectRef(p)" [ngClass]="{'bold': selectedRef === p}">
+          {{getName(p)}}
+        </div>
+        <div class="item" *ngIf="selectedRef" (click)="selectRef(null)">
+          No reference
+        </div>
+      </div>
+
+    </div>
+    <!-- download menu  -->
     <div class="ui primary bottom pointing dropdown button" suiDropdown>
       <div class="text">Download</div>
       <i class="dropdown icon"></i>
