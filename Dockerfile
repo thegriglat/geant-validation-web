@@ -31,9 +31,9 @@ RUN yum install -y nodejs make gcc-c++
 RUN mkdir /var/www
 COPY ./ /var/www
 WORKDIR /var/www
-RUN npm install
-RUN npm run build
+RUN npm ci
 RUN npm run compile
+RUN npm run build
 
 FROM cern/cc7-base
 
@@ -58,15 +58,13 @@ USER gvalweb:gvalweb
 WORKDIR "/var/www"
 
 COPY --chown=gvalweb:gvalweb package.json package-lock.json /var/www/
-RUN npm install --only=production
+RUN npm install --only=production && rm -fv package.json package-lock.json
 
 COPY --from=plotter --chown=gvalweb:gvalweb /var/www/plotter /var/www/
 COPY --from=angular7 --chown=gvalweb:gvalweb /var/www/index.js /var/www/
 COPY --chown=gvalweb:gvalweb src/app/classes/ /var/www/src/app/classes/
 COPY --chown=gvalweb:gvalweb queries.json /var/www/queries.json
 COPY --from=angular7 --chown=gvalweb:gvalweb /var/www/dist/ /var/www/dist/
-
-RUN chown gvalweb.gvalweb -R /var/www
 
 EXPOSE 8080:8080
 EXPOSE 8443:8443
