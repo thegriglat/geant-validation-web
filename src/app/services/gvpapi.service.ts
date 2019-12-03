@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { Observable, from } from 'rxjs';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { GvpJSON, GvpTest, GvpMctoolNameVersion, GvpMctoolName, GvpParameter, GvpInspire, GvpPngRequest, GvpPngResponse, GvpPlotIdRequest } from '../classes/gvp-plot';
-import { flatMap } from 'rxjs/operators';
+import { GvpJSON, GvpTest, GvpMctoolNameVersion, GvpMctoolName, GvpParameter, GvpInspire, GvpPngRequest, GvpPngResponse, GvpPlotIdRequest, EXPERIMENT_TEST_ID, EXPERIMENT_VERSION_ID } from '../classes/gvp-plot';
+import { flatMap, map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -126,6 +126,20 @@ export class GVPAPIService {
   public getPlotJSON(query: GvpPlotIdRequest) {
     return this.getPlotId(query).pipe(
       flatMap(ids => this.multiget(ids))
+    )
+  }
+
+  public getExpMatchPlot(query: GvpPlotIdRequest) {
+    let exp_query = Object.assign({}, query);
+    exp_query.test_id = [EXPERIMENT_TEST_ID];
+    exp_query.version_id = [EXPERIMENT_VERSION_ID];
+    exp_query.model = ["experiment"];
+    return this.getPlotJSON(exp_query);
+  }
+
+  public getExpMatchPlotInspire(query: GvpPlotIdRequest, inspireId: number) {
+    return this.getExpMatchPlot(query).pipe(
+      map(jsons => jsons.filter(e => e.article.inspireId === inspireId))
     )
   }
 }
