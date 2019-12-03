@@ -20,7 +20,7 @@ export class PlotModalComponent implements OnInit {
 
   selectedRef: GvpJSON = null;
   inProgress = false;
-
+  useMarkers = true;
   private _names = new Map<GvpJSON, string>();
 
   constructor(private api: GVPAPIService) { }
@@ -72,6 +72,7 @@ export class PlotModalComponent implements OnInit {
 
   selectRef(p: GvpJSON) {
     this.config.refid = this.config.data.indexOf(p);
+    this.config.markerSize = (this.useMarkers) ? 1 : 0;
     this.modalRoot = true;
     this.selectedRef = p;
     this.inProgress = true;
