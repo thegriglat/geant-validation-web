@@ -68,7 +68,8 @@ export class GVPAPIService {
     const params = new HttpParams().set("id", String(id));
     return this._get<GvpInspire[]>("/api/inspire", params).pipe(
       // inspireId is unique
-      map(e => (e.length !== 0) ? e[0] : null)
+      // TODO: fallback if bad id???
+      map(e => e[0])
     );
   }
 
