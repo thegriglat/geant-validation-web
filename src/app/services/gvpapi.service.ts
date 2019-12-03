@@ -64,11 +64,16 @@ export class GVPAPIService {
     return this._get<GvpTest[]>("/api/test", params);
   }
 
-  public inspire(id?: number) {
-    let params = new HttpParams();
-    if (id !== undefined)
-      params.set("id", String(id));
-    return this._get<GvpInspire[]>("/api/inspire", params);
+  public inspireById(id: number) {
+    const params = new HttpParams().set("id", String(id));
+    return this._get<GvpInspire[]>("/api/inspire", params).pipe(
+      // inspireId is unique
+      map(e => (e.length !== 0) ? e[0] : null)
+    );
+  }
+
+  public inspire() {
+    return this._get<GvpInspire[]>("/api/inspire", {});
   }
 
   public mctool_name_version(id?: number) {

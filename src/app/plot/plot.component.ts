@@ -1,7 +1,8 @@
 import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core';
 import { GVPAPIService } from '../services/gvpapi.service';
-import { GvpPngRequest, GvpJSON, GvpPlot, GvpParameter } from '../classes/gvp-plot';
-import { Observable } from 'rxjs';
+import { GvpPngRequest, GvpJSON, GvpParameter } from '../classes/gvp-plot';
+import { Observable, from, forkJoin } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 interface HintData {
   observable: string,
@@ -9,9 +10,12 @@ interface HintData {
   target: string,
   beam_energy: string,
   items: {
+    inspireId: number,
+    isExp: boolean,
     version: string,
     model: string,
     parameters: GvpParameter[],
+    expname: string
   }[]
 }
 
@@ -47,7 +51,9 @@ export class PlotComponent implements OnInit {
         if (e && e.data.length !== 0) {
           this.doStuff(e);
           this.config = e;
-          this.hintData = this.setHintData(e.data);
+          this.setHintData(e.data).subscribe(e => {
+            this.hintData = e;
+          });
         }
       });
 
@@ -89,7 +95,7 @@ export class PlotComponent implements OnInit {
     }
   }
 
-  private setHintData(p: GvpJSON[]): HintData {
+  private setHintData(p: GvpJSON[]) {
     const r: HintData = {
       observable: p[0].metadata.observableName,
       beam: p[0].metadata.beamParticle,
@@ -97,13 +103,29 @@ export class PlotComponent implements OnInit {
       beam_energy: p[0].metadata.beam_energy_str,
       items: p.map(e => {
         return {
+          inspireId: e.article.inspireId,
+          isExp: false,
           version: e.mctool.version,
           model: e.mctool.model,
-          parameters: e.metadata.parameters
+          parameters: e.metadata.parameters,
+          expname: null
         }
       })
     }
-    return r;
+    const ejsons = p.filter(e => e.mctool.model === "experiment");
+    if (ejsons.length === 0) return from([r]);
+    return forkJoin(ejsons.map(ej => ej.article.inspireId).map(e => this.api.inspireById(e))).pipe(
+      map(elems => {
+        for (const i of elems) {
+          const e = r.items.filter(e => e.inspireId === i.inspire_id);
+          for (let q of e) {
+            q.expname = i.expname ? i.expname : "exp. data";
+            q.isExp = true;
+          }
+        }
+        return r
+      })
+    )
   }
 
   getHintData(): HintData {

@@ -4,14 +4,19 @@
 <app-permalink [config]="config" *ngIf="config"></app-permalink>
 <img class="ui rounded centered image" [src]="url" *ngIf="!inProgress" (mousemove)="hint($event)"
     (mouseout)="hideHint()" (click)="modalShow = true;">
-<div class="hint" *ngIf="showHint" [style.left]="getMousePos().x" [style.top]="getMousePos().y">
+<div class="hint" *ngIf="showHint && getHintData()" [style.left]="getMousePos().x" [style.top]="getMousePos().y">
     <b>Observable</b>: {{getHintData().observable}}<br>
     <b>Beam particle</b>: {{getHintData().beam}}<br>
     <b>Beam energy</b>: {{getHintData().beam_energy}}<br>
     <b>Target</b>: {{getHintData().target}}<br>
     <ul>
         <li *ngFor="let e of getHintData().items">
-            <b>{{e.version}}</b>, <b>{{e.model}}</b>
+            <ng-container *ngIf="!e.isExp">
+                <b>{{e.version}}</b>, <b>{{e.model}}</b>
+            </ng-container>
+            <ng-container *ngIf="e.isExp">
+                <b>{{e.expname}}</b>
+            </ng-container>
             <ng-container *ngFor="let ep of e.parameters">
                 , {{ep.names}} = {{ep.values}}
             </ng-container>
