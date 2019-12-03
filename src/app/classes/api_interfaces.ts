@@ -50,6 +50,16 @@ export interface APIGetPlotsByTestVersionResponse extends express.Response {
     json(body: GvpJSON[]);
 }
 
+export interface APIInspireRequest extends express.Request {
+    query: {
+        id?: string;
+    }
+}
+
+export interface APIInspireResponse extends express.Response {
+    json(body: GvpInspire[]);
+}
+
 export interface APIgetExpPlotsByInspireIdRequest extends express.Request {
     query: {
         inspire_id: number;

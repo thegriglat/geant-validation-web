@@ -2139,7 +2139,7 @@ app.get('/api/mctool_name', (req: api.APITestRequest, res: api.APIMCtoolNameResp
  *
  * @param id Optional parameter if we only want to retrieve information of only one specific row
  */
-app.get('/api/inspire', (req, res) => {
+app.get('/api/inspire', (req: api.APIInspireRequest, res: api.APIInspireResponse) => {
   const id = req.query.id;
   let query = queries.all_inspire;
   const sqlparams = [];
@@ -2148,7 +2148,7 @@ app.get('/api/inspire', (req, res) => {
     query = queries.inspire_by_id;
   }
   execSQL(sqlparams, query).then(result => {
-    res.status(200).json(result);
+    res.status(200).json(result as GvpInspire[]);
   });
 });
 
