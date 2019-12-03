@@ -40,8 +40,6 @@ export class GvplayoutComponent implements OnInit {
   checkedTags: string[] = [];
   /** Binding: selected experimental data (inspireId-s) */
   checkedExp: GvpInspire[] = [];
-  /** Binding: disabled state of "Plot" button */
-  cantPlot: boolean;
 
   // Internal variables
   /** List of all tests in selected layout */
@@ -72,7 +70,6 @@ export class GvplayoutComponent implements OnInit {
 
   selectedVersions: GvpMctoolNameVersion[] = [];
   menuVersions: GvpMctoolNameVersion[] = [];
-  menuLoaded = false;
   isMenuCollapsed = false;
 
   ngOnInit() {
@@ -386,7 +383,6 @@ export class GvplayoutComponent implements OnInit {
   }
   /** Event handler: layout selected */
   onSelectLayout(layout: [string, GvpLayout]) {
-    this.menuLoaded = false;
     this.layoutService.getLayout(layout[0]).subscribe((results) => {
       this.tests = [];
       this.models = [];
@@ -395,7 +391,6 @@ export class GvplayoutComponent implements OnInit {
       this.availableExpDataforTest = [];
       this.checkedExp = [];
       this.updateMenu(results);
-      this.menuLoaded = true;
     });
   }
 

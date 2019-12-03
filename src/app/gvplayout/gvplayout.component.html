@@ -17,6 +17,9 @@
                     <i class="icon angle left"></i>
                 </button>
             </h3>
+            <div class="ui active inverted dimmer" *ngIf="pTemplates.length === 0">
+                <div class="ui loader"></div>
+            </div>
             <sui-select class="selection enlarge" [(ngModel)]="currentLayout" [options]="pTemplates"
                 [isSearchable]="true" [isDisabled]="false" [optionFormatter]="layoutFormatter"
                 (selectedOptionChange)="onSelectLayout($event)" #select>
@@ -34,7 +37,7 @@
         </div>
         <div class="ui segment" *ngIf="currentLayout">
             <h3>Version</h3>
-            <div class="ui active inverted dimmer" *ngIf="!menuLoaded">
+            <div class="ui active inverted dimmer" *ngIf="menuVersions.length === 0">
                 <div class="ui loader"></div>
             </div>
             <sui-multi-select class="selection enlarge" [(ngModel)]="versionsSel" [options]="menuVersions"
@@ -46,7 +49,7 @@
         </div>
         <div class="ui segment" *ngIf="currentLayout">
             <h3>Physics List/Model</h3>
-            <div class="ui active inverted dimmer" *ngIf="!menuLoaded">
+            <div class="ui active inverted dimmer" *ngIf="models.length === 0">
                 <div class="ui loader"></div>
             </div>
             <sui-multi-select class="selection enlarge" [(ngModel)]="modelsSel" [options]="models" [isSearchable]="true"
@@ -57,9 +60,6 @@
         </div>
         <div class="ui segment" *ngIf="currentLayout && availableExpDataforTest.length !== 0">
             <h3>Reference data</h3>
-            <div class="ui active inverted dimmer" *ngIf="!menuLoaded">
-                <div class="ui loader"></div>
-            </div>
             <div *ngFor="let e of availableExpDataforTest">
                 <sui-checkbox (click)="updateExp(e)">{{e.expname}}</sui-checkbox>
             </div>
