@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { LayoutService } from '../services/layout.service';
-import { GvpPlot, GvpTest, GvpMctoolNameVersion, GvpLayout, GvpInspire, GvpPngRequest, GvpPlotIdRequest, GvpJSON, GvpParameter } from '../classes/gvp-plot';
+import { GvpPlot, GvpTest, GvpMctoolNameVersion, GvpLayout, GvpInspire, GvpPngRequest, GvpPlotIdRequest } from '../classes/gvp-plot';
 import { GVPAPIService } from '../services/gvpapi.service';
-import { map, concatAll } from 'rxjs/operators';
-import { from, forkJoin } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { forkJoin } from 'rxjs';
 
 /**
  * Shows [plots]{@link PlotComponent} for a given version(s) and model(s) using a predefined or custom template
@@ -427,6 +427,10 @@ export class GvplayoutComponent implements OnInit {
     this.plots = plots;
   }
 
+  private unroll<T>(arr: T[][]): T[] {
+    return arr.reduce((res, e) => (res = res.concat(...e)));
+  }
+
   getPlotConfig(p: GvpPlot) {
     let r: GvpPngRequest = new GvpPngRequest();
     r.data = [];
@@ -462,40 +466,11 @@ export class GvplayoutComponent implements OnInit {
     const tests = this.ALLTESTS.filter(e => e.test_name === p.test);
     query.test_id = tests.map(e => e.test_id);
     const plots = this.api.getPlotJSON(query)
-    const checkParams = (p1: GvpParameter[], p2: GvpParameter[]): boolean => {
-      if (p1.length !== p2.length) return false;
-      for (const i of p1) {
-        // no key
-        const idx = p2.map(e => e.names).indexOf(i.names);
-        if (idx === -1) return false;
-        if (p2[idx].values !== i.values) return false;
-      }
-      return true;
-    }
-    let exps = this.checkedExp.map(e => this.api.getExpPlotsByInspireId(e.inspire_id).pipe(
+    const exps = this.checkedExp.map(exp => this.api.getExpMatchPlotInspire(query, exp.inspire_id));
+
+    let all = forkJoin([plots, ...exps]).pipe(
       map(e => {
-        let res: GvpJSON[] = [];
-        let pa: GvpParameter[] = par.map(e => {
-          return { names: e[0], values: e[1][0] }
-        });
-        for (let i of e) {
-          if (i.metadata.beamParticle === p.beam &&
-            i.metadata.observableName === p.observable &&
-            i.metadata.secondaryParticle === p.secondary &&
-            i.metadata.targetName === p.target &&
-            checkParams(i.metadata.parameters, pa)
-          ) res.push(i);
-        }
-        return res;
-      })
-    )
-    )
-    let all = forkJoin([plots, ...exps]
-    ).pipe(
-      map(e => {
-        for (const i of e) {
-          r.data = r.data.concat(...i);
-        }
+        r.data = this.unroll(e);
         return r;
       })
     )
