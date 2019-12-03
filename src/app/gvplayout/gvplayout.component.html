@@ -6,7 +6,7 @@
         User layouts
     </ng-container>
 </h1>
-<div class="ui grid">
+<div class="ui stackable grid">
     <button *ngIf="isMenuCollapsed" class="ui icon mini basic button bpad" (click)="collapseMenu()">
         <i class="icon angle right"></i>
     </button>
@@ -17,7 +17,7 @@
                     <i class="icon angle left"></i>
                 </button>
             </h3>
-            <sui-select class="selection container" [(ngModel)]="currentLayout" [options]="pTemplates"
+            <sui-select class="selection enlarge" [(ngModel)]="currentLayout" [options]="pTemplates"
                 [isSearchable]="true" [isDisabled]="false" [optionFormatter]="layoutFormatter"
                 (selectedOptionChange)="onSelectLayout($event)" #select>
                 <ng-container *ngFor="let layout of select.filteredOptions">
@@ -32,30 +32,30 @@
             <div class="ui divider"></div>
             <sui-checkbox class="toggle" [(ngModel)]="useMarkers">Use markers</sui-checkbox>
         </div>
-        <div class="ui segment container" *ngIf="currentLayout">
+        <div class="ui segment" *ngIf="currentLayout">
             <h3>Version</h3>
             <div class="ui active inverted dimmer" *ngIf="!menuLoaded">
                 <div class="ui loader"></div>
             </div>
-            <sui-multi-select class="selection container" [(ngModel)]="versionsSel" [options]="menuVersions"
+            <sui-multi-select class="selection enlarge" [(ngModel)]="versionsSel" [options]="menuVersions"
                 [isSearchable]="true" [isDisabled]="false" [optionFormatter]="versionFormatter"
                 [optionsFilter]="versionSelectFilter" #multiSelect>
                 <sui-select-option *ngFor="let obj of multiSelect.filteredOptions" [value]="obj">
                 </sui-select-option>
             </sui-multi-select>
         </div>
-        <div class="ui segment container" *ngIf="currentLayout">
+        <div class="ui segment" *ngIf="currentLayout">
             <h3>Physics List/Model</h3>
             <div class="ui active inverted dimmer" *ngIf="!menuLoaded">
                 <div class="ui loader"></div>
             </div>
-            <sui-multi-select class="selection container" [(ngModel)]="modelsSel" [options]="models"
-                [isSearchable]="true" [isDisabled]="false" #multiSelect>
+            <sui-multi-select class="selection enlarge" [(ngModel)]="modelsSel" [options]="models" [isSearchable]="true"
+                [isDisabled]="false" #multiSelect>
                 <sui-select-option *ngFor="let obj of multiSelect.filteredOptions" [value]="obj">
                 </sui-select-option>
             </sui-multi-select>
         </div>
-        <div class="ui segment container" *ngIf="currentLayout && availableExpDataforTest.length !== 0">
+        <div class="ui segment" *ngIf="currentLayout && availableExpDataforTest.length !== 0">
             <h3>Reference data</h3>
             <div class="ui active inverted dimmer" *ngIf="!menuLoaded">
                 <div class="ui loader"></div>
@@ -64,14 +64,14 @@
                 <sui-checkbox (click)="updateExp(e)">{{e.expname}}</sui-checkbox>
             </div>
         </div>
-        <button class="ui primary button container" *ngIf="currentLayout" [ngClass]="{disabled: updateCantPlot()}"
+        <button class="enlarge ui primary button" *ngIf="currentLayout" [ngClass]="{disabled: updateCantPlot()}"
             (click)="magic()">
             Submit
         </button>
     </div>
     <div [ngClass]="{'sixteen wide column': isMenuCollapsed, 'twelve wide column': !isMenuCollapsed}"
         *ngIf="magicPressed">
-        <div class="ui grid">
+        <div class="ui stackable grid">
             <div class="ui centered row" *ngFor="let row of plots">
                 <ng-container *ngFor="let plot of row">
                     <div class="ui column" [style.width]="columnWidth(row.length)" *ngIf="plot.type !== 'text'">
