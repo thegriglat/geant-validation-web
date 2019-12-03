@@ -29,9 +29,10 @@ RUN curl --silent --location https://rpm.nodesource.com/setup_8.x | bash - \
 RUN yum install -y nodejs make gcc-c++
 
 RUN mkdir /var/www
-COPY ./ /var/www
 WORKDIR /var/www
+COPY package.json package-lock.json /var/www/
 RUN npm ci
+COPY ./ /var/www
 RUN npm run compile
 RUN npm run build
 
