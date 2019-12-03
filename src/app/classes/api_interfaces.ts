@@ -1,5 +1,5 @@
 import * as express from 'express';
-import { GvpJSON, GvpTest, GvpMctoolNameVersion, GvpMctoolName, GvpParameter, GvpInspire, GvpPngRequest, GvpPlotIdRequest } from './gvp-plot';
+import { GvpJSON, GvpTest, GvpMctoolNameVersion, GvpMctoolName, GvpParameter, GvpInspire, GvpPngRequest } from './gvp-plot';
 
 export interface APILoggedIn extends express.Request {
     user: string;
