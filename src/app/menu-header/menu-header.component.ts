@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 @Component({
   selector: 'app-menu-header',
@@ -7,9 +8,14 @@ import { Component, OnInit } from '@angular/core';
 })
 export class MenuHeaderComponent implements OnInit {
 
+  menuShown = false;
   constructor() { }
 
   ngOnInit() {
   }
 
+
+  showMenu(){
+    this.menuShown = !this.menuShown;
+  }
 }

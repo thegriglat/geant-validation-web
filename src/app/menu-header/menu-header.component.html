@@ -1,27 +1,32 @@
 <div class="header">
+	<a routerLink="/">
+		<img src="assets/gval_logo.png" class="logo">
+	</a>
+	<!--
+	<div class="ui stackable grid">
+		<div class="ui three wide column">
 
-<div class="ui grid">
-	<div class="three wide middle aligned column">
-		<a routerLink="/">
-			<img src="assets/gval_logo.png" class="logo">
-			<!-- <h3>Geant Validation Portal</h3> -->
-		</a>
+		</div>
+		<div class="ui column">
+			<i class="angle right icon" (click)="showMenu()"></i>
+		</div>
+		<ng-container *ngIf="menuShown">
+			<div class="ui column item">
+				<a routerLink="/layouts">USER LAYOUTS</a>
+			</div>
+			<div class="ui column item">
+				<a routerLink="/stat">STAT COMPARISON</a>
+			</div>
+			<div class="ui column item">
+				<a routerLink="/records">RECORD VIEWER</a>
+			</div>
+			<div class="ui column item">
+				<a routerLink="/exp">REFERENCE DATA</a>
+			</div>
+			<div class="ui column item">
+				<a routerLink="/lookup">LOOKUP TABLES</a>
+			</div>
+		</ng-container>
 	</div>
-	<div class="two wide middle aligned column headermenuitem" routerLink="/layouts">
-		<a routerLink="/layouts">USER LAYOUTS</a>
-	</div>
-	<div class="two wide middle aligned column headermenuitem" routerLink="/stat">
-		<a routerLink="/stat">STAT COMPARISON</a>
-	</div>
-	<div class="two wide middle aligned column headermenuitem" routerLink="/records">
-		<a routerLink="/records">RECORD VIEWER</a>
-	</div>
-	<div class="two wide middle aligned column headermenuitem" routerLink="/exp">
-		<a routerLink="/exp">REFERENCE DATA</a>
-	</div>
-	<div class="two wide middle aligned column headermenuitem" routerLink="/lookup">
-		<a routerLink="/lookup">LOOKUP TABLES</a>
-	</div>
+ -->
 </div>
-</div>
-
