@@ -71,6 +71,8 @@ export class GvplayoutComponent implements OnInit {
   selectedVersions: GvpMctoolNameVersion[] = [];
   menuVersions: GvpMctoolNameVersion[] = [];
   isMenuCollapsed = false;
+  // progress of plotting
+  progressValue: number = 0;
 
   ngOnInit() {
     this.layoutService.getAllLayouts().subscribe((data) => {
@@ -390,6 +392,7 @@ export class GvplayoutComponent implements OnInit {
       this.versionsSel = [];
       this.availableExpDataforTest = [];
       this.checkedExp = [];
+      this.progressValue = 0;
       this.updateMenu(results);
     });
   }
@@ -412,6 +415,7 @@ export class GvplayoutComponent implements OnInit {
   /** Event handler: 'Plot' button clicked */
   magic() {
     this.magicPressed = true;
+    this.progressValue = 0;
     // dirty hack to update plots
     // and then angular cache for getPlotConfig will be invalidated
     // and new Observable from getPlotConfig will be generated
@@ -470,5 +474,15 @@ export class GvplayoutComponent implements OnInit {
       })
     )
     return all;
+  }
+
+  isProgressValueShown(progress: number): boolean {
+    if (progress === 100) return false;
+    return true;
+  }
+
+  incrementProgress() {
+    const _len = this.unroll(this.plots).filter(e => e.type !== "text").length;
+    this.progressValue += 100 / _len;
   }
 }

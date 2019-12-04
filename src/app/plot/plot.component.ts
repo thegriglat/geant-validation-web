@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, Input, ChangeDetectionStrategy, Output, EventEmitter } from '@angular/core';
 import { GVPAPIService } from '../services/gvpapi.service';
 import { GvpPngRequest, GvpJSON, GvpParameter } from '../classes/gvp-plot';
 import { Observable, from, forkJoin } from 'rxjs';
@@ -31,6 +31,7 @@ interface HintData {
 export class PlotComponent implements OnInit {
 
   @Input() configObs: Observable<GvpPngRequest> = null;
+  @Output() done = new EventEmitter<boolean>();
   url: string = "";
   status = false;
   inProgress = false;
@@ -67,6 +68,7 @@ export class PlotComponent implements OnInit {
       if (res.status) {
         this.status = res.status;
         this.url = res.filename;
+        this.done.emit(true);
       };
       this.inProgress = !res.status;
     })
