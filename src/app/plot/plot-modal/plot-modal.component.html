@@ -1,74 +1,70 @@
-<sui-modal [isFullScreen]="true" [isClosable]="true" [transition]="" [isInverted]="true" (dismissed)="emit();"
-  size="normal">
-  <div class="image content">
-    <div class="ui active inverted dimmer" *ngIf="inProgress">
-      <div class="ui loader"></div>
-    </div>
-    <img id="rootimg" class="ui rounded centered big image" [src]="url" *ngIf="modalRoot">
-    <div id="jsrootimg" class="ui centered image" *ngIf="!modalRoot"></div>
+<div class="image content">
+  <div class="ui active inverted dimmer" *ngIf="inProgress">
+    <div class="ui loader"></div>
   </div>
-  <div class="content">
-    <div class="ui buttons">
-      <button class="ui primary button" [ngClass]="{'disabled': modalRoot}" (click)="switchModalRoot()">ROOT</button>
-      <div class="or"></div>
-      <button class="ui positive button" [ngClass]="{'disabled': !modalRoot}"
-        (click)="switchModalRoot()">JSROOT</button>
-    </div>
-    &nbsp;
-    <!-- reference menu -->
-    <div class="ui primary bottom pointing dropdown button" suiDropdown *ngIf="config.data.length > 1">
-      <div class="text" *ngIf="!selectedRef">Reference</div>
-      <div class="text" *ngIf="selectedRef">{{getName(selectedRef)}}</div>
-      <i class="dropdown icon"></i>
-      <div class="menu" suiDropdownMenu>
-        <div class="item" *ngFor="let p of config.data" (click)="selectRef(p)" [ngClass]="{'bold': selectedRef === p}">
-          {{getName(p)}}
-        </div>
-        <div class="item" *ngIf="selectedRef" (click)="selectRef(null)">
-          No reference
-        </div>
+  <img id="rootimg" class="ui rounded centered big image" [src]="url" *ngIf="modalRoot">
+  <div id="jsrootimg" class="ui centered image" *ngIf="!modalRoot"></div>
+</div>
+<div class="center content">
+  <div class="ui buttons">
+    <button class="ui primary button" [ngClass]="{'disabled': modalRoot}" (click)="switchModalRoot()">ROOT</button>
+    <div class="or"></div>
+    <button class="ui positive button" [ngClass]="{'disabled': !modalRoot}" (click)="switchModalRoot()">JSROOT</button>
+  </div>
+  &nbsp;
+  <!-- reference menu -->
+  <div class="ui primary bottom pointing dropdown button" suiDropdown *ngIf="config.data.length > 1">
+    <div class="text" *ngIf="!selectedRef">Reference</div>
+    <div class="text" *ngIf="selectedRef">{{getName(selectedRef)}}</div>
+    <i class="dropdown icon"></i>
+    <div class="menu" suiDropdownMenu>
+      <div class="item" *ngFor="let p of config.data" (click)="selectRef(p)" [ngClass]="{'bold': selectedRef === p}">
+        {{getName(p)}}
       </div>
+      <div class="item" *ngIf="selectedRef" (click)="selectRef(null)">
+        No reference
+      </div>
+    </div>
 
-    </div>
-    <!-- download menu  -->
-    <div class="ui primary bottom pointing dropdown button" suiDropdown>
-      <div class="text">Download</div>
-      <i class="dropdown icon"></i>
-      <div class="menu" suiDropdownMenu>
-        <div class="item">
-          <a [href]="url" target="_blank">PNG</a>
-        </div>
-        <div class="item">
-          <a [href]="url.replace('.png', '.root')" target="_blank">ROOT</a>
-        </div>
-        <div class="item">
-          <a [href]="url.replace('.png', '.eps')" target="_blank">EPS</a>
-        </div>
-        <div class="item">
-          <a [href]="url.replace('.png', '.c')" target="_blank">C</a>
-        </div>
-        <div class="item" suiDropdown>
-          <i class="dropdown icon"></i>
-          JSON
-          <div class="menu" suiDropdownMenu>
-            <div class="item" *ngFor="let e of config.data">
-              <a [href]="'/api/get/' + e.id" target="_blank">{{e.mctool.version}}, {{e.mctool.model}}</a>
-            </div>
+  </div>
+  <!-- download menu  -->
+  <div class="ui primary bottom pointing dropdown button" suiDropdown>
+    <div class="text">Download</div>
+    <i class="dropdown icon"></i>
+    <div class="menu" suiDropdownMenu>
+      <div class="item">
+        <a [href]="url" target="_blank">PNG</a>
+      </div>
+      <div class="item">
+        <a [href]="url.replace('.png', '.root')" target="_blank">ROOT</a>
+      </div>
+      <div class="item">
+        <a [href]="url.replace('.png', '.eps')" target="_blank">EPS</a>
+      </div>
+      <div class="item">
+        <a [href]="url.replace('.png', '.c')" target="_blank">C</a>
+      </div>
+      <div class="item" suiDropdown>
+        <i class="dropdown icon"></i>
+        JSON
+        <div class="menu" suiDropdownMenu>
+          <div class="item" *ngFor="let e of config.data">
+            <a [href]="'/api/get/' + e.id" target="_blank">{{e.mctool.version}}, {{e.mctool.model}}</a>
           </div>
         </div>
-        <div class="item" suiDropdown>
-          <i class="dropdown icon"></i>
-          GnuPlot
-          <div class="menu" suiDropdownMenu>
-            <div class="item" *ngFor="let e of config.data">
-              <a [href]="'/api/getRaw/' + e.id" target="_blank">{{e.mctool.version}},
-                {{e.mctool.model}}</a>
-            </div>
+      </div>
+      <div class="item" suiDropdown>
+        <i class="dropdown icon"></i>
+        GnuPlot
+        <div class="menu" suiDropdownMenu>
+          <div class="item" *ngFor="let e of config.data">
+            <a [href]="'/api/getRaw/' + e.id" target="_blank">{{e.mctool.version}},
+              {{e.mctool.model}}</a>
           </div>
         </div>
       </div>
     </div>
-    <sui-checkbox class="toggle" [(ngModel)]="useMarkers" (ngModelChange)="selectRef(selectedRef)">Use markers
-    </sui-checkbox>
   </div>
-</sui-modal>
+  <sui-checkbox class="toggle" [(ngModel)]="useMarkers" (ngModelChange)="selectRef(selectedRef)">Use markers
+  </sui-checkbox>
+</div>

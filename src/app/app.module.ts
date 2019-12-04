@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { KatexModule } from 'ng-katex';
-import {SuiModule} from 'ng2-semantic-ui';
+import { SuiModule } from 'ng2-semantic-ui';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -44,6 +44,7 @@ import { PermalinkComponent } from './permalink/permalink.component';
   ],
   providers: [
   ],
+  entryComponents: [PlotModalComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

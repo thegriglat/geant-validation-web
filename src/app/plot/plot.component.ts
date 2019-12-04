@@ -3,6 +3,8 @@ import { GVPAPIService } from '../services/gvpapi.service';
 import { GvpPngRequest, GvpJSON, GvpParameter } from '../classes/gvp-plot';
 import { Observable, from, forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { SuiModalService } from 'ng2-semantic-ui';
+import { PlotModal } from './plot-modal/plot-modal.component';
 
 interface HintData {
   observable: string,
@@ -36,13 +38,12 @@ export class PlotComponent implements OnInit {
   status = false;
   inProgress = false;
   showHint = false;
-  modalShow = false;
   modalRoot = true;
   config: GvpPngRequest = null;
   private hintData: HintData = null;
   private mousePos: { x: number, y: number } = { x: 0, y: 0 };
 
-  constructor(private api: GVPAPIService) {
+  constructor(private api: GVPAPIService, private modalService: SuiModalService) {
   }
 
   ngOnInit() {
@@ -143,5 +144,12 @@ export class PlotComponent implements OnInit {
       width: w.innerWidth || e.clientWidth || g.clientWidth,
       height: w.innerHeight || e.clientHeight || g.clientHeight
     };
+  }
+
+  showModal(url: string, config: GvpPngRequest) {
+    console.log([url, config]);
+    this.modalService.open(
+      new PlotModal(url, config)
+    )
   }
 }

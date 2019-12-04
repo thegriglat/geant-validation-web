@@ -3,7 +3,7 @@
 </div>
 <app-permalink class="permalink" [config]="config" *ngIf="config"></app-permalink>
 <img class="ui rounded centered image" [src]="url" *ngIf="!inProgress" (mousemove)="hint($event)"
-    (mouseout)="hideHint()" (click)="modalShow = true;">
+    (mouseout)="hideHint()" (click)="showModal(url, config)">
 <div class="hint" *ngIf="showHint && getHintData()" [style.left]="getMousePos().x" [style.top]="getMousePos().y">
     <b>Observable</b>: {{getHintData().observable}}<br>
     <b>Beam particle</b>: {{getHintData().beam}}<br>
@@ -23,4 +23,4 @@
         </li>
     </ul>
 </div>
-<app-plot-modal [config]="config" [url]="url" *ngIf="modalShow" (out)="modalShow = $event;"></app-plot-modal>
+<!-- <app-plot-modal [config]="config" [url]="url" *ngIf="modalShow" (out)="modalShow = $event;"></app-plot-modal> -->

@@ -3,8 +3,27 @@ import { GvpPngRequest, GvpJSON } from 'src/app/classes/gvp-plot';
 import { GVPAPIService } from 'src/app/services/gvpapi.service';
 import { from, forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { SuiModal, ComponentModalConfig, ModalSize } from 'ng2-semantic-ui';
 
 declare var JSROOT: any;
+
+interface IConfirmModalContext {
+  url: string;
+  config: GvpPngRequest;
+}
+
+export class PlotModal extends ComponentModalConfig<IConfirmModalContext, void, void> {
+  constructor(url: string, config: GvpPngRequest, size = ModalSize.Small) {
+    super(PlotModalComponent, { url, config });
+    this.isFullScreen = true;
+    this.isClosable = true;
+    this.transitionDuration = 200;
+    this.size = size;
+    this.isInverted = true;
+    this.isBasic = true;
+  }
+}
+
 
 @Component({
   selector: 'app-plot-modal',
@@ -13,9 +32,8 @@ declare var JSROOT: any;
 })
 export class PlotModalComponent implements OnInit {
 
-  @Input() url: string;
-  @Input() config: GvpPngRequest;
-  @Output() out = new EventEmitter<boolean>();
+  url: string = "";
+  config: GvpPngRequest;
   modalRoot = true;
 
   selectedRef: GvpJSON = null;
@@ -23,7 +41,10 @@ export class PlotModalComponent implements OnInit {
   useMarkers = true;
   private _names = new Map<GvpJSON, string>();
 
-  constructor(private api: GVPAPIService) { }
+  constructor(public modal: SuiModal<IConfirmModalContext, void, void>, private api: GVPAPIService) {
+    this.config = modal.context.config;
+    this.url = modal.context.url;
+  }
 
   ngOnInit() {
     if (this.config.markerSize !== undefined)
@@ -41,10 +62,6 @@ export class PlotModalComponent implements OnInit {
       for (const e of list)
         this._names.set(e.json, e.name);
     })
-  }
-
-  emit() {
-    this.out.emit(false);
   }
 
   getName(p: GvpJSON) {
