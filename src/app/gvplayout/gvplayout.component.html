@@ -84,15 +84,13 @@
         *ngIf="magicPressed">
         <div class="ui stackable grid">
             <div class="ui centered row" *ngFor="let row of plots">
-                <ng-container *ngFor="let plot of row">
-                    <div class="ui" [style.width]="columnWidth(row.length)">
-                        <ng-container *ngIf="plot.type !== 'text'">
-                            <app-plot [configObs]="getPlotConfig(plot)" (done)="incrementProgress()"></app-plot>
-                            <ng-katex class="center" *ngIf="plot.title !== ''" [equation]="plot.title"></ng-katex>
-                        </ng-container>
-                        <ng-katex [equation]="plot.text" *ngIf="plot.type === 'text'"></ng-katex>
-                    </div>
-                </ng-container>
+                <div class="ui aligned column" [style.width]="columnWidth(row.length)" *ngFor="let plot of row">
+                    <ng-container *ngIf="plot.type !== 'text'">
+                        <app-plot [configObs]="getPlotConfig(plot)" (done)="incrementProgress()"></app-plot>
+                        <ng-katex class="center" *ngIf="plot.title !== ''" [equation]="plot.title"></ng-katex>
+                    </ng-container>
+                    <ng-katex [equation]="plot.text" *ngIf="plot.type === 'text'"></ng-katex>
+                </div>
             </div>
         </div>
     </div>
