@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, from } from 'rxjs';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { environment } from '../../environments/environment';
 import { GvpJSON, GvpTest, GvpMctoolNameVersion, GvpMctoolName, GvpParameter, GvpInspire, GvpPngRequest, GvpPngResponse, GvpPlotIdRequest, EXPERIMENT_TEST_ID, EXPERIMENT_VERSION_ID } from '../classes/gvp-plot';
 import { flatMap, map } from 'rxjs/operators';
 
@@ -15,23 +14,21 @@ export class GVPAPIService {
 
   public _get<T>(url: string, params?: any): Observable<T> {
     while (url[0] === '/') { url = url.substr(1); }
-    const fullurl = `${environment.APIEndpoint}${url}`;
     if (params !== undefined) {
-      return this.http.get<T>(fullurl, { params });
+      return this.http.get<T>(url, { params });
     } else {
-      return this.http.get<T>(fullurl);
+      return this.http.get<T>(url);
     }
   }
 
   public _post<T>(url: string, body: any): Observable<T> {
     while (url[0] === '/') { url = url.substr(1); }
-    const fullurl = `${environment.APIEndpoint}${url}`;
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json'
       })
     };
-    return this.http.post<T>(fullurl, body as any, httpOptions);
+    return this.http.post<T>(url, body as any, httpOptions);
   }
 
   public get(id: number) {
