@@ -4,12 +4,18 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { GvpJSON, GvpTest, GvpMctoolNameVersion, GvpMctoolName, GvpParameter, GvpInspire, GvpPngRequest, GvpPngResponse, GvpPlotIdRequest, EXPERIMENT_TEST_ID, EXPERIMENT_VERSION_ID } from '../classes/gvp-plot';
 import { flatMap, map } from 'rxjs/operators';
 
+import { CustomEncoder } from './../classes/urlencoder';
+
 @Injectable({
   providedIn: 'root'
 })
 export class GVPAPIService {
 
   constructor(protected http: HttpClient) {
+  }
+
+  private getParams() {
+    return new HttpParams({ encoder: new CustomEncoder() });
   }
 
   public _get<T>(url: string, params?: any): Observable<T> {
@@ -40,29 +46,29 @@ export class GVPAPIService {
     if (ids.length === 0) {
       return from([[] as GvpJSON[]]);
     }
-    let params = new HttpParams().set("ids_json", JSON.stringify(ids));
+    let params = this.getParams().set("ids_json", JSON.stringify(ids));
     return this._get<GvpJSON[]>("api/multiget", params);
   }
 
   public getPlotsByTestVersion(test: string, version: string) {
-    let params = new HttpParams().set("test", test).set("version", version);
+    let params = this.getParams().set("test", test).set("version", version);
     return this._get<GvpJSON[]>("api/getPlotsByTestVersion", params);
   }
 
   public getExpPlotsByInspireId(inspireId: number) {
-    let params = new HttpParams().set("inspire_id", String(inspireId));
+    let params = this.getParams().set("inspire_id", String(inspireId));
     return this._get<GvpJSON[]>("api/getExpPlotsByInspireId", params);
   }
 
   public test(id?: number) {
-    let params = new HttpParams();
+    let params = this.getParams();
     if (id !== undefined)
       params.set("id", String(id));
     return this._get<GvpTest[]>("/api/test", params);
   }
 
   public inspireById(id: number) {
-    const params = new HttpParams().set("id", String(id));
+    const params = this.getParams().set("id", String(id));
     return this._get<GvpInspire[]>("/api/inspire", params).pipe(
       // inspireId is unique
       // TODO: fallback if bad id???
@@ -75,21 +81,21 @@ export class GVPAPIService {
   }
 
   public mctool_name_version(id?: number) {
-    let params = new HttpParams();
+    let params = new HttpParams({ encoder: new CustomEncoder() });
     if (id !== undefined)
       params.set("id", String(id));
     return this._get<GvpMctoolNameVersion[]>("/api/mctool_name_version", params);
   }
 
   public mctool_name(id?: number) {
-    let params = new HttpParams();
+    let params = this.getParams();
     if (id !== undefined)
       params.set("id", String(id));
     return this._get<GvpMctoolName[]>("/api/mctool_name", params);
   }
 
   private uniqlookup<T>(test_id: number, JSONAttr: string) {
-    let params = new HttpParams().set("test_id", String(test_id)).set("JSONAttr", JSONAttr);
+    let params = this.getParams().set("test_id", String(test_id)).set("JSONAttr", JSONAttr);
     return this._get<T>("/api/uniqlookup", params);
   }
 
@@ -119,7 +125,7 @@ export class GVPAPIService {
   }
 
   public getExperimentsInspireForTest(test_id: number) {
-    let params = new HttpParams().set("test_id", String(test_id));
+    let params = this.getParams().set("test_id", String(test_id));
     return this._get<GvpInspire[]>("/api/getexperimentsinspirefortest", params);
   }
 
@@ -128,8 +134,8 @@ export class GVPAPIService {
   }
 
   public getPlotId(query: GvpPlotIdRequest) {
-    let s = JSON.stringify(query);
-    let params = new HttpParams().set("json_encoded", s);
+    const s = JSON.stringify(query);
+    const params = this.getParams().set("json_encoded", s);
     return this._get<number[]>("/api/getPlotId", params);
   }
 
