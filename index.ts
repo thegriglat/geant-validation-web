@@ -1041,9 +1041,11 @@ router.route('/permalink/:hash').get((req: api.APIPermalinkRequest, res) => {
     let pngrequest: GvpPngRequest = pr;
     getPNG(pngrequest).then(pres => {
       const data = fs.readFileSync("dist/gvp-template/" + pres.filename);
-      const b64 = (new Buffer(data)).toString('base64');
-      const template = `<img src="data:image/png;base64,${b64}">`;
-      res.status(200).send(template);
+      res.writeHead(200, {
+        'Content-Type': 'image/png',
+        'Content-Length': data.length
+      });
+      res.status(200).end(data);
     })
   })
 });
