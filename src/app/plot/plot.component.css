@@ -8,3 +8,8 @@
     padding: 5px;
     z-index: 999;
 }
+
+.permalink {
+    float: right;
+    margin-right: 2%;
+}

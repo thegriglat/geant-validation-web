@@ -1,7 +1,7 @@
 <div class="ui active inverted dimmer" *ngIf="inProgress">
     <div class="ui loader"></div>
 </div>
-<app-permalink [config]="config" *ngIf="config"></app-permalink>
+<app-permalink class="permalink" [config]="config" *ngIf="config"></app-permalink>
 <img class="ui rounded centered image" [src]="url" *ngIf="!inProgress" (mousemove)="hint($event)"
     (mouseout)="hideHint()" (click)="modalShow = true;">
 <div class="hint" *ngIf="showHint && getHintData()" [style.left]="getMousePos().x" [style.top]="getMousePos().y">
