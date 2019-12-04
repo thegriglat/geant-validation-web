@@ -15,4 +15,9 @@ h1 {
 #root_ctx_menu {
 	z-index: 2147483647;
 	/* top level on the page */
-  }
+}
+
+/* fix ui modal resize bug */
+.ui.modal {
+    margin-top: 0px !important;
+}
