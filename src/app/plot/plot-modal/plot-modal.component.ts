@@ -42,7 +42,7 @@ export class PlotModalComponent implements OnInit {
   private _names = new Map<GvpJSON, string>();
 
   constructor(public modal: SuiModal<IConfirmModalContext, void, void>, private api: GVPAPIService) {
-    this.config = modal.context.config;
+    this.config = Object.assign({}, modal.context.config);
     this.url = modal.context.url;
   }
 
