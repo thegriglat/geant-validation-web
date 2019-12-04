@@ -26,6 +26,10 @@ export class PlotModalComponent implements OnInit {
   constructor(private api: GVPAPIService) { }
 
   ngOnInit() {
+    if (this.config.markerSize !== undefined)
+      this.useMarkers = (this.config.markerSize === 0) ? false : true;
+    if (this.config.refid !== undefined)
+      this.selectedRef = this.config.data[this.config.refid];
     // fill _names
     forkJoin(
       this.config.data.map(j => this._getName(j).pipe(
