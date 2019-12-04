@@ -63,7 +63,7 @@ RUN npm install --only=production && rm -fv package.json package-lock.json
 
 COPY --from=plotter --chown=gvalweb:gvalweb /var/www/plotter /var/www/
 COPY --from=angular7 --chown=gvalweb:gvalweb /var/www/index.js /var/www/
-COPY --chown=gvalweb:gvalweb src/app/classes/ /var/www/src/app/classes/
+COPY --from=angular7 --chown=gvalweb:gvalweb /var/www/src/app/classes/ /var/www/src/app/classes/
 COPY --chown=gvalweb:gvalweb queries.json /var/www/queries.json
 COPY --from=angular7 --chown=gvalweb:gvalweb /var/www/dist/ /var/www/dist/
 
