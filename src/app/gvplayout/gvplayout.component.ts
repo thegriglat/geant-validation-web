@@ -477,12 +477,15 @@ export class GvplayoutComponent implements OnInit {
   }
 
   isProgressValueShown(progress: number): boolean {
-    if (progress === 100) return false;
+    if (progress === this.getProgressMax()) return false;
     return true;
   }
 
+  getProgressMax(): number {
+    return this.unroll(this.plots).filter(e => e.type !== "text").length;
+  }
+
   incrementProgress() {
-    const _len = this.unroll(this.plots).filter(e => e.type !== "text").length;
-    this.progressValue += 100 / _len;
+    this.progressValue += 1;
   }
 }

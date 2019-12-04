@@ -5,7 +5,7 @@
     <ng-container *ngIf="!currentLayout">
         User layouts
     </ng-container>
-    <sui-progress class="bottom attached indicating active" [value]="progressValue"
+    <sui-progress class="bottom attached indicating active" [value]="progressValue" [maximum]="getProgressMax()"
         *ngIf="magicPressed && isProgressValueShown(progressValue)"></sui-progress>
 </h1>
 <div class="ui stackable grid">
