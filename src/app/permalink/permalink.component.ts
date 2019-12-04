@@ -18,7 +18,7 @@ export class PermalinkComponent implements OnInit {
       let json: any = Object.assign({}, this.config);
       json.ids = json.data.map(e => e.id);
       delete json.data;
-      const b64 = (new Buffer(JSON.stringify(json)).toString('base64'));
+      const b64 = btoa(JSON.stringify(json));
       this._url = encodeURIComponent(b64);
     }
   }
