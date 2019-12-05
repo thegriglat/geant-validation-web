@@ -505,4 +505,8 @@ export class GvplayoutComponent implements OnInit {
       return `${arr[cols]} column grid`;
     return "grid";
   }
+
+  isTextColumn(p: GvpPlot): boolean {
+    return p.type === "text";
+  }
 }
