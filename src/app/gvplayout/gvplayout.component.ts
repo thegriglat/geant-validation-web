@@ -74,6 +74,7 @@ export class GvplayoutComponent implements OnInit {
   isMenuCollapsed = false;
   // progress of plotting
   progressValue: number = 0;
+  showUnstableVersions = false;
 
   ngOnInit() {
     this.layoutService.getAllLayouts().subscribe((data) => {
@@ -224,6 +225,18 @@ export class GvplayoutComponent implements OnInit {
         this.versionsSel = this.menuVersions.slice();
       }
     });
+  }
+
+  unstableFilter(v: GvpMctoolNameVersion[]): GvpMctoolNameVersion[] {
+    if (this.showUnstableVersions)
+      return v;
+    const filtF = (e: GvpMctoolNameVersion) => e.version.indexOf("ref") === -1 && e.version.indexOf("cand") === -1;
+    return v.filter(filtF);
+  }
+
+  filterVersionSel() {
+    if (!this.showUnstableVersions) return;
+    this.versionsSel = this.versionsSel.filter(e => e.version.indexOf("ref") === -1 && e.version.indexOf("cand") === -1)
   }
 
   versionSelectFilter(items: GvpMctoolNameVersion[], query: string): GvpMctoolNameVersion[] {
