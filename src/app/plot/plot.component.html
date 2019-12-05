@@ -2,9 +2,9 @@
     <div class="ui loader"></div>
 </div>
 <app-permalink class="permalink" [config]="config" *ngIf="config"></app-permalink>
-<img class="ui rounded centered image" [src]="url" *ngIf="!inProgress" (mousemove)="hint($event)"
-    (mouseout)="hideHint()" (click)="showModal(url, config)">
-<div class="hint" *ngIf="showHint && getHintData()" [style.left]="getMousePos().x" [style.top]="getMousePos().y">
+<img class="ui rounded centered image" [src]="url" *ngIf="!inProgress" (click)="showModal(url, config)" suiPopup
+    [popupTemplate]="popupTemplate" [popupPlacement]="bottom">
+<ng-template let-popup #popupTemplate>
     <b>Observable</b>: {{getHintData().observable}}<br>
     <b>Beam particle</b>: {{getHintData().beam}}<br>
     <b>Beam energy</b>: {{getHintData().beam_energy}}<br>
@@ -22,5 +22,4 @@
             </ng-container>
         </li>
     </ul>
-</div>
-<!-- <app-plot-modal [config]="config" [url]="url" *ngIf="modalShow" (out)="modalShow = $event;"></app-plot-modal> -->
+</ng-template>

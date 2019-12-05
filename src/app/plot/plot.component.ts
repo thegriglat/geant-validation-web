@@ -37,11 +37,9 @@ export class PlotComponent implements OnInit {
   url: string = "";
   status = false;
   inProgress = false;
-  showHint = false;
   modalRoot = true;
   config: GvpPngRequest = null;
   private hintData: HintData = null;
-  private mousePos: { x: number, y: number } = { x: 0, y: 0 };
 
   constructor(private api: GVPAPIService, private modalService: SuiModalService) {
   }
@@ -73,29 +71,6 @@ export class PlotComponent implements OnInit {
       };
       this.inProgress = !res.status;
     })
-  }
-
-  hint(mouse: MouseEvent) {
-    // check CSS for block width and height!!!
-    this.showHint = true;
-    const wsize = this.getWindowSize();
-    const left =
-      mouse.clientX < wsize.width / 2 ? mouse.offsetX + 35 : mouse.offsetX - 400 - 15 + 5 * 2;
-    const top =
-      mouse.clientY <= wsize.height / 2 ? mouse.offsetY + 35 : mouse.offsetY - 150 - 15 - 5 * 2;
-    this.mousePos.x = left;
-    this.mousePos.y = top;
-  }
-
-  hideHint() {
-    this.showHint = false;
-  }
-
-  getMousePos(): { x: string, y: string } {
-    return {
-      x: `${this.mousePos.x}px`,
-      y: `${this.mousePos.y}px`
-    }
   }
 
   private setHintData(p: GvpJSON[]) {
@@ -133,17 +108,6 @@ export class PlotComponent implements OnInit {
 
   getHintData(): HintData {
     return this.hintData;
-  }
-
-  private getWindowSize() {
-    const w = window;
-    const d = document;
-    const e = d.documentElement;
-    const g = d.getElementsByTagName('body')[0];
-    return {
-      width: w.innerWidth || e.clientWidth || g.clientWidth,
-      height: w.innerHeight || e.clientHeight || g.clientHeight
-    };
   }
 
   showModal(url: string, config: GvpPngRequest) {
