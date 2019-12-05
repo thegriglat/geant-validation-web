@@ -485,4 +485,24 @@ export class GvplayoutComponent implements OnInit {
   incrementProgress() {
     this.progressValue += 1;
   }
+
+  isCenteredRow(row: GvpPlot[]): boolean {
+    return row.filter(e => e.type === 'plot' || e.type === 'ratio').length === 0;
+  }
+
+  getMaxColumns(plots: GvpPlot[][]): number {
+    return Math.max(...plots.map(e => e.length));
+  }
+
+  getSUIGridClass(cols: number): string {
+    const arr = [null,
+      "one", "two", "three", "four", "five",
+      "six", "seven", "eight", "nine", "ten",
+      "eleven", "twelve", "thirteen", "fourteen",
+      "fifteen", "sixteen"
+    ];
+    if (cols > 0 && cols <= 16)
+      return `${arr[cols]} column grid`;
+    return "grid";
+  }
 }
