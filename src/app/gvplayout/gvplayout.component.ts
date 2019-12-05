@@ -4,6 +4,7 @@ import { GvpPlot, GvpTest, GvpMctoolNameVersion, GvpLayout, GvpInspire, GvpPngRe
 import { GVPAPIService } from '../services/gvpapi.service';
 import { map } from 'rxjs/operators';
 import { forkJoin } from 'rxjs';
+import { unroll } from './../utils';
 
 /**
  * Shows [plots]{@link PlotComponent} for a given version(s) and model(s) using a predefined or custom template
@@ -426,10 +427,6 @@ export class GvplayoutComponent implements OnInit {
     this.plots = plots;
   }
 
-  private unroll<T>(arr: T[][]): T[] {
-    return arr.reduce((res, e) => (res = res.concat(...e)));
-  }
-
   getPlotConfig(p: GvpPlot) {
     let r: GvpPngRequest = new GvpPngRequest();
     r.data = [];
@@ -469,7 +466,7 @@ export class GvplayoutComponent implements OnInit {
 
     let all = forkJoin([plots, ...exps]).pipe(
       map(e => {
-        r.data = this.unroll(e);
+        r.data = unroll(e);
         return r;
       })
     )
@@ -482,7 +479,7 @@ export class GvplayoutComponent implements OnInit {
   }
 
   getProgressMax(): number {
-    return this.unroll(this.plots).filter(e => e.type !== "text").length;
+    return unroll(this.plots).filter(e => e.type !== "text").length;
   }
 
   incrementProgress() {
