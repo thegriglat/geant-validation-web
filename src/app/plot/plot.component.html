@@ -17,8 +17,7 @@
             <ng-container *ngIf="e.isExp">
                 <b>{{e.expname}}</b>
             </ng-container>
-            <ng-container *ngFor="let ep of e.parameters">
-                , {{ep.names}} = {{ep.values}}
+            <ng-container *ngFor="let ep of e.parameters">, {{ep.names}} = {{ep.values}}
             </ng-container>
         </li>
     </ul>
