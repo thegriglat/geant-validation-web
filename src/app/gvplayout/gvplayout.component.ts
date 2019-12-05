@@ -4,7 +4,7 @@ import { GvpPlot, GvpTest, GvpMctoolNameVersion, GvpLayout, GvpInspire, GvpPngRe
 import { GVPAPIService } from '../services/gvpapi.service';
 import { map } from 'rxjs/operators';
 import { forkJoin } from 'rxjs';
-import { unroll } from './../utils';
+import { unroll, versionSorter } from './../utils';
 
 /**
  * Shows [plots]{@link PlotComponent} for a given version(s) and model(s) using a predefined or custom template
@@ -219,7 +219,7 @@ export class GvplayoutComponent implements OnInit {
           );
         }
       }
-
+      this.menuVersions.sort(versionSorter).reverse();
       if (this.menuVersions.length === 1) {
         this.versionsSel = this.menuVersions.slice();
       }
