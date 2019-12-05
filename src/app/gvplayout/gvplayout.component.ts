@@ -4,7 +4,7 @@ import { GvpPlot, GvpTest, GvpMctoolNameVersion, GvpLayout, GvpInspire, GvpPngRe
 import { GVPAPIService } from '../services/gvpapi.service';
 import { map } from 'rxjs/operators';
 import { forkJoin } from 'rxjs';
-import { unroll, versionSorter } from './../utils';
+import { unroll, versionSorter, unstableVersionFilter } from './../utils';
 
 /**
  * Shows [plots]{@link PlotComponent} for a given version(s) and model(s) using a predefined or custom template
@@ -230,13 +230,12 @@ export class GvplayoutComponent implements OnInit {
   unstableFilter(v: GvpMctoolNameVersion[]): GvpMctoolNameVersion[] {
     if (this.showUnstableVersions)
       return v;
-    const filtF = (e: GvpMctoolNameVersion) => e.version.indexOf("ref") === -1 && e.version.indexOf("cand") === -1;
-    return v.filter(filtF);
+    return v.filter(unstableVersionFilter);
   }
 
   filterVersionSel() {
     if (!this.showUnstableVersions) return;
-    this.versionsSel = this.versionsSel.filter(e => e.version.indexOf("ref") === -1 && e.version.indexOf("cand") === -1)
+    this.versionsSel = this.versionsSel.filter(unstableVersionFilter)
   }
 
   versionSelectFilter(items: GvpMctoolNameVersion[], query: string): GvpMctoolNameVersion[] {

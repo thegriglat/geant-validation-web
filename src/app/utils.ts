@@ -1,3 +1,5 @@
+import { GvpMctoolNameVersion } from './classes/gvp-plot';
+
 export function unroll<T>(arr: T[][]): T[] {
     return arr.reduce((res, e) => (res = res.concat(...e)));
 }
@@ -41,4 +43,10 @@ function _versionSorterComparator(a: string, b: string): number {
 
 export function versionSorter<T extends hasVersionField>(v1: T, v2: T): number {
     return _versionSorterComparator(v1.version, v2.version);
+}
+
+export function unstableVersionFilter(e: GvpMctoolNameVersion): boolean {
+    return e.version.indexOf("ref") === -1
+        && e.version.indexOf("cand") === -1
+        && e.version.indexOf("test") === -1;
 }
