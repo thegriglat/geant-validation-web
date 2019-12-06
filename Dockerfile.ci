@@ -1,0 +1,8 @@
+FROM cern/cc7-base
+
+RUN curl --silent --location https://rpm.nodesource.com/setup_8.x | bash - \
+  && rpm -qa | grep epel | xargs rpm -e --nodeps \
+  && rpm -i https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm \
+  && yum install -y nodejs make gcc-c++ \
+  && yum clean all \
+  && rm -rfv /var/cache/yum
