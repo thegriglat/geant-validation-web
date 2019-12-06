@@ -88,11 +88,12 @@
         <div class="ui stackable" [ngClass]="getSUIGridClass(getMaxColumns(plots))">
             <div class="ui row" *ngFor="let row of plots" [ngClass]="{'centered': isCenteredRow(row)}">
                 <div class="ui aligned wide column" [ngClass]="{'enlarge': row.length === 1}" *ngFor="let plot of row">
-                    <ng-container *ngIf="plot.type !== 'text'">
+                    <ng-container *ngIf="!plot.isText()">
                         <app-plot [configObs]="getPlotConfig(plot)" (done)="incrementProgress()"></app-plot>
-                        <ng-katex class="center" *ngIf="plot.title !== ''" [equation]="plot.title"></ng-katex>
+                        <ng-katex class="center" *ngIf="plot.title !== ''" [equation]="plot.title">
+                        </ng-katex>
                     </ng-container>
-                    <ng-katex [equation]="plot.text" *ngIf="plot.type === 'text'"></ng-katex>
+                    <ng-katex [equation]="plot.text" *ngIf="plot.isText()"></ng-katex>
                 </div>
             </div>
         </div>

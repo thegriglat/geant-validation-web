@@ -136,14 +136,32 @@ export class GvpPlotIdRequest {
 }
 
 /** Plot with additional properties used for displaying it */
+export enum GvpPlotType {
+  Text,
+  Plot,
+  Ratio
+};
+
 export class GvpPlot extends GvpPlotXML {
   empty: boolean;
-  type: string;
+  type: GvpPlotType;
   colspan?: number;
   isModelCanChange: boolean;
   /* tslint:disable:variable-name */
   beam_energy?: string;
   /* tslint:enable:variable-name */
+
+  isText(): boolean {
+    return this.type === GvpPlotType.Text;
+  }
+
+  isPlot(): boolean {
+    return this.type === GvpPlotType.Plot;
+  }
+
+  isRatio(): boolean {
+    return this.type === GvpPlotType.Ratio;
+  }
 }
 
 /** Parameters of `/api/getPNG` method */

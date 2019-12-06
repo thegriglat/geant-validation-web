@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { LayoutService } from '../services/layout.service';
-import { GvpPlot, GvpTest, GvpMctoolNameVersion, GvpLayout, GvpInspire, GvpPngRequest, GvpPlotIdRequest } from '../classes/gvp-plot';
+import { GvpPlot, GvpTest, GvpMctoolNameVersion, GvpLayout, GvpInspire, GvpPngRequest, GvpPlotIdRequest, GvpPlotType } from '../classes/gvp-plot';
 import { GVPAPIService } from '../services/gvpapi.service';
 import { map } from 'rxjs/operators';
 import { forkJoin } from 'rxjs';
@@ -121,11 +121,10 @@ export class GvplayoutComponent implements OnInit {
   private convertXMLPlot2Object(plot: Element): GvpPlot {
     let obj: GvpPlot;
     if (plot.nodeName === 'plot') {
-      obj = {
-        type: 'plot',
-        isModelCanChange: false,
-        empty: true
-      } as GvpPlot;
+      obj = new GvpPlot();
+      obj.type = GvpPlotType.Plot;
+      obj.isModelCanChange = false;
+      obj.empty = true;
       for (const i of Array.from(plot.attributes)) {
         obj[i.name] = i.value;
         obj.empty = false;
@@ -141,14 +140,13 @@ export class GvplayoutComponent implements OnInit {
       const refplot = plot.children[1];
       obj = this.convertXMLPlot2Object(dataplot);
       obj.reference = this.convertXMLPlot2Object(refplot);
-      obj.type = 'ratio';
+      obj.type = GvpPlotType.Ratio;
       obj.empty = false;
     }
     if (plot.nodeName === 'label') {
-      obj = {
-        type: 'text',
-        empty: true
-      } as GvpPlot;
+      obj = new GvpPlot();
+      obj.type = GvpPlotType.Text;
+      obj.empty = true;
       for (const i of Array.from(plot.attributes)) {
         obj[i.name] = i.value;
         obj.empty = false;
@@ -319,23 +317,23 @@ export class GvplayoutComponent implements OnInit {
       const plotsLast = plots[plots.length - 1];
 
       for (const j of Array.from(row.children)) {
-        const obj: GvpPlot = this.convertXMLPlot2Object(j) as GvpPlot;
-        if (obj.type === 'plot' && (!obj.model || obj.model.length === 0)) {
+        const obj = this.convertXMLPlot2Object(j);
+        if (obj.isPlot() && (!obj.model || obj.model.length === 0)) {
           obj.isModelCanChange = true;
         }
-        if (obj.type === 'ratio' && (!obj.model || obj.model.length === 0)) {
+        if (obj.isRatio() && (!obj.model || obj.model.length === 0)) {
           obj.isModelCanChange = true;
           obj.reference.isModelCanChange = true;
         }
         plotsLast.push(obj);
-        if (obj.type === 'plot' && obj.test) {
+        if (obj.isPlot() && obj.test) {
           this.tests.push(obj.test);
         }
-        if (obj.type === 'ratio') {
+        if (obj.isRatio()) {
           if (obj.test) {
             this.tests.push(obj.test);
           }
-          if (obj.reference.type === 'plot' && obj.reference.test) {
+          if (obj.reference.isPlot() && obj.reference.test) {
             this.tests.push(obj.reference.test);
           }
         }
@@ -491,7 +489,7 @@ export class GvplayoutComponent implements OnInit {
   }
 
   getProgressMax(): number {
-    return unroll(this.plots).filter(e => e.type !== "text").length;
+    return unroll(this.plots).filter(e => !e.isText()).length;
   }
 
   incrementProgress() {
@@ -499,7 +497,7 @@ export class GvplayoutComponent implements OnInit {
   }
 
   isCenteredRow(row: GvpPlot[]): boolean {
-    return row.filter(e => e.type === 'plot' || e.type === 'ratio').length === 0;
+    return row.filter(e => e.isPlot() || e.isRatio()).length === 0;
   }
 
   getMaxColumns(plots: GvpPlot[][]): number {
@@ -510,7 +508,7 @@ export class GvplayoutComponent implements OnInit {
     return `${getColumnWide(cols)} column grid`;
   }
 
-  isTextColumn(p: GvpPlot): boolean {
-    return p.type === "text";
+  isText(p: GvpPlot): boolean {
+    return p.isText();
   }
 }
