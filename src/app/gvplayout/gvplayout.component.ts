@@ -4,7 +4,7 @@ import { GvpPlot, GvpTest, GvpMctoolNameVersion, GvpLayout, GvpInspire, GvpPngRe
 import { GVPAPIService } from '../services/gvpapi.service';
 import { map } from 'rxjs/operators';
 import { forkJoin } from 'rxjs';
-import { unroll, versionSorter, unstableVersionFilter } from './../utils';
+import { unroll, versionSorter, unstableVersionFilter, getColumnWide } from './../utils';
 
 /**
  * Shows [plots]{@link PlotComponent} for a given version(s) and model(s) using a predefined or custom template
@@ -507,15 +507,7 @@ export class GvplayoutComponent implements OnInit {
   }
 
   getSUIGridClass(cols: number): string {
-    const arr = [null,
-      "one", "two", "three", "four", "five",
-      "six", "seven", "eight", "nine", "ten",
-      "eleven", "twelve", "thirteen", "fourteen",
-      "fifteen", "sixteen"
-    ];
-    if (cols > 0 && cols <= 16)
-      return `${arr[cols]} column grid`;
-    return "grid";
+    return `${getColumnWide(cols)} column grid`;
   }
 
   isTextColumn(p: GvpPlot): boolean {

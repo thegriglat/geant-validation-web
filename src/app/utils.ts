@@ -50,3 +50,15 @@ export function unstableVersionFilter(e: GvpMctoolNameVersion): boolean {
         && e.version.indexOf("cand") === -1
         && e.version.indexOf("test") === -1;
 }
+
+export function getColumnWide(cols: number): string {
+    const arr = [null,
+        "one", "two", "three", "four", "five",
+        "six", "seven", "eight", "nine", "ten",
+        "eleven", "twelve", "thirteen", "fourteen",
+        "fifteen", "sixteen"
+    ];
+    if (cols > 0 && cols <= 16)
+        return arr[cols];
+    return "";
+}
