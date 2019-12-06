@@ -2,7 +2,7 @@ image: gitlab-registry.cern.ch/geantvalidation/gvp2:ci
 before_script:
   - node -v
   - npm -v
-  - npm install
+  - npm ci
 test:
   script: 
   - npm run compile
