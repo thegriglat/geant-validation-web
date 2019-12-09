@@ -1,4 +1,4 @@
-<h1 class="pageheader">
+<h1 class="pageheader" id="headerblk">
     <ng-container *ngIf="currentLayout">
         {{currentLayout[1].title}}
     </ng-container>
@@ -83,9 +83,8 @@
             Submit
         </button>
     </div>
-    <div [ngClass]="{'sixteen wide column': isMenuCollapsed, 'twelve wide column': !isMenuCollapsed}"
-        *ngIf="magicPressed">
-        <div class="ui stackable" [ngClass]="getSUIGridClass(getMaxColumns(plots))">
+    <div [ngClass]="{'sixteen wide column': isMenuCollapsed, 'twelve wide column': !isMenuCollapsed}">
+        <div class="ui stackable" [ngClass]="getSUIGridClass(getMaxColumns(plots))" *ngIf="magicPressed">
             <div class="ui row" *ngFor="let row of plots" [ngClass]="{'centered': isCenteredRow(row)}">
                 <div class="ui aligned wide column" [ngClass]="{'enlarge': row.length === 1}" *ngFor="let plot of row">
                     <ng-container *ngIf="!plot.isText()">

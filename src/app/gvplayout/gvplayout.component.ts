@@ -435,6 +435,7 @@ export class GvplayoutComponent implements OnInit {
     for (let p of this.plots)
       plots.push(p.slice());
     this.plots = plots;
+    document.getElementById("headerblk").scrollIntoView();
   }
 
   getPlotConfig(p: GvpPlot) {
