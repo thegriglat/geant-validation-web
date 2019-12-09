@@ -425,6 +425,7 @@ export class GvplayoutComponent implements OnInit {
 
   /** Event handler: 'Plot' button clicked */
   magic() {
+    document.getElementById("headerblk").scrollIntoView();
     this.magicPressed = true;
     this.progressValue = 0;
     // dirty hack to update plots
@@ -435,7 +436,6 @@ export class GvplayoutComponent implements OnInit {
     for (let p of this.plots)
       plots.push(p.slice());
     this.plots = plots;
-    document.getElementById("headerblk").scrollIntoView();
   }
 
   getPlotConfig(p: GvpPlot) {
