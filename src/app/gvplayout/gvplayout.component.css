@@ -4,9 +4,14 @@
 }
 
 .bpad {
-    margin-bottom: 1rem;
-    margin-top: 1rem;
-    margin-left: 1rem !important;
+    position: fixed;
+    left: 0px;
+    top: calc(50% - 75px);
+    height:150px;
+    width: 30px;
+    z-index: 9999;
+    margin-left: 0px;
+    border-radius: 0px 75px 75px 0px !important;
 }
 
 .enlarge {
