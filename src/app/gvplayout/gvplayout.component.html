@@ -83,7 +83,7 @@
             Submit
         </button>
     </div>
-    <div [ngClass]="{'sixteen wide column': isMenuCollapsed, 'twelve wide column': !isMenuCollapsed}">
+    <div [ngClass]="getSUIGridSize(isMenuCollapsed)">
         <div class="ui stackable" [ngClass]="getSUIGridClass(getMaxColumns(plots))" *ngIf="magicPressed">
             <div class="ui row" *ngFor="let row of plots" [ngClass]="{'centered': isCenteredRow(row)}">
                 <div class="ui aligned wide column" [ngClass]="{'enlarge': row.length === 1}" *ngFor="let plot of row">

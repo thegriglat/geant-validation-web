@@ -509,6 +509,10 @@ export class GvplayoutComponent implements OnInit {
     return `${getColumnWide(cols)} column grid`;
   }
 
+  getSUIGridSize(state: boolean) {
+    return (state) ? "sixteen wide column" : "twelve wide column";
+  }
+
   isText(p: GvpPlot): boolean {
     return p.isText();
   }
