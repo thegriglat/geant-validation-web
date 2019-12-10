@@ -1,5 +1,7 @@
 // Data types used by GVP API
 
+export type Nullable<T> = T | null;
+
 /** Plot parameter (e.g. angle); used by backend */
 export class GvpParameter {
   names: string;
@@ -164,6 +166,7 @@ export class GvpPlotXML extends GvpPlotterArgs {
 }
 
 /** Parameters of `/api/getPlotId` method */
+export type ParametersList = [string, string[]][];
 export class GvpPlotIdRequest {
   test_id: number[];
   target: string;
@@ -172,12 +175,12 @@ export class GvpPlotIdRequest {
   secondary: string[];
   beamparticle: string[];
   observable: string[];
-  parameters: [string, string[]][];
+  parameters: ParametersList;
   beam_energy?: string[];
 
   constructor(test_ids: number[], target: string, version_ids: number[],
     models: string[], secondaries: string[], beam_particles: string[],
-    observables: string[], parameters: [string, string[]][], beam_energies?: string[]) {
+    observables: string[], parameters: ParametersList, beam_energies?: string[]) {
     this.test_id = test_ids;
     this.target = target;
     this.version_id = version_ids;
@@ -241,16 +244,15 @@ export interface GvpPngResponse {
  * key: layout file name
  * value: GvpLayout object (title and list of tags) 
  */
-export type GvpLayout = { title: string; tags: Array<string> };
+export type GvpLayout = { title: string; tags: string[] };
 export type GvpLayouts = { [key: string]: GvpLayout };
-export type Nullable<T> = T | null;
 
 /** Test information returned by API */
 export interface GvpTest {
   description: string;
-  keywords?: Array<string>;
+  keywords?: string[];
   project: string;
-  responsible?: Array<string>;
+  responsible?: string[];
   /* tslint:disable:variable-name */
   mctool_name_id: number;
   test_id: number;
