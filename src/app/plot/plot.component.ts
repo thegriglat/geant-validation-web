@@ -38,7 +38,7 @@ export class PlotComponent implements OnInit {
   status = false;
   inProgress = false;
   modalRoot = true;
-  private config: Nullable<GvpPngRequest> = null;
+  config: Nullable<GvpPngRequest> = null;
   private hintData: Nullable<HintData> = null;
 
   constructor(private api: GVPAPIService, private modalService: SuiModalService) {
@@ -47,8 +47,8 @@ export class PlotComponent implements OnInit {
   ngOnInit() {
     this.configObs.subscribe(e => {
       if (e && e.data.length !== 0) {
-        this.doStuff(e);
         this.config = e;
+        this.doStuff(e);
         this.setHintData(e.data).subscribe(e => {
           this.hintData = e;
         });
@@ -68,15 +68,6 @@ export class PlotComponent implements OnInit {
       };
       this.inProgress = !res.status;
     })
-  }
-
-  hasConfig(): boolean {
-    return !!!this.config;
-  }
-
-  getConfig(): GvpPngRequest {
-    if (this.config) return this.config;
-    throw new TypeError("config is null");
   }
 
   private setHintData(p: GvpJSON[]) {
