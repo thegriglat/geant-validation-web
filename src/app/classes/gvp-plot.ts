@@ -88,11 +88,11 @@ export interface GvpJSON {
   histogram?: GvpHistogram;
 }
 
-type GvpAxis = { type: string, min?: number, max?: number };
+export type GvpAxis = "auto" | "lin" | "log";
 
 export class GvpPlotterArgs {
-  xaxis: string = "auto";
-  yaxis: string = "auto";
+  xaxis: GvpAxis = "auto";
+  yaxis: GvpAxis = "auto";
   xmax?: number = undefined;
   xmin?: number = undefined;
   ymax?: number = undefined;
@@ -100,19 +100,6 @@ export class GvpPlotterArgs {
   onlyratio: boolean = false;
   markerSize: number = 1;
   plotStyle: string = "";
-
-  // constructor(xaxis: GvpAxis, yaxis: GvpAxis, markerSize: number, plotStyle: string, onlyratio: boolean) {
-  //   this.xaxis = xaxis.type;
-  //   this.yaxis = yaxis.type;
-  //   this.xmax = xaxis.max;
-  //   this.xmin = xaxis.min;
-  //   this.ymax = yaxis.max;
-  //   this.ymin = yaxis.min;
-  //   this.onlyratio = onlyratio;
-  //   this.markerSize = markerSize;
-  //   this.plotStyle = plotStyle;
-  // };
-
 }
 
 /** Plot information for loading from XML file */
