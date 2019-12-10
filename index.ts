@@ -335,7 +335,7 @@ function apigetJSON(id: number): Promise<GvpJSON> {
     'INNER JOIN plot_type ON plot.plot_type_id=plot_type.plot_type_id ' +
     'INNER JOIN reaction ON plot.reaction_id=reaction.reaction_id ' +
     'WHERE plot.plot_id=$1';
-  return execSQL([id], sqlPrint).then((resultlist: any[]) => {
+  return execSQL([id], sqlPrint).then((resultlist) => {
     if (resultlist.length === 0) {
       logger.warn(`No data for id ${id} found`);
       return null;
@@ -1589,7 +1589,7 @@ app.get('/api/getExceptionText', (req, res) => {
 
   const sql = queries.exception_text_by_id;
 
-  execSQL([exception_id], sql).then((resultlist: any[]) => {
+  execSQL([exception_id], sql).then((resultlist) => {
     if (resultlist.length === 0) {
       res.status(400).json({ status: 'Error', description: 'No required exception found' });
       return;
