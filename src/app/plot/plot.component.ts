@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, ChangeDetectionStrategy, Output, EventEmitter } from '@angular/core';
 import { GVPAPIService } from '../services/gvpapi.service';
-import { GvpPngRequest, GvpJSON, GvpParameter } from '../classes/gvp-plot';
+import { GvpPngRequest, GvpJSON, GvpParameter, Nullable } from '../classes/gvp-plot';
 import { Observable, from, forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { SuiModalService } from 'ng2-semantic-ui';
@@ -25,39 +25,36 @@ interface HintData {
  * Container for a single plot. WIP.
  */
 @Component({
-  selector: 'app-plot',
+  selector: 'app-plot[configObs]',
   templateUrl: './plot.component.html',
   styleUrls: ['./plot.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PlotComponent implements OnInit {
 
-  @Input() configObs: Observable<GvpPngRequest> = null;
+  @Input() configObs!: Observable<GvpPngRequest>;
   @Output() done = new EventEmitter<boolean>();
   url: string = "";
   status = false;
   inProgress = false;
   modalRoot = true;
-  config: GvpPngRequest = null;
-  private hintData: HintData = null;
+  config: Nullable<GvpPngRequest> = null;
+  private hintData: Nullable<HintData> = null;
 
   constructor(private api: GVPAPIService, private modalService: SuiModalService) {
   }
 
   ngOnInit() {
-    if (this.configObs) {
-      this.configObs.subscribe(e => {
+    this.configObs.subscribe(e => {
+      if (e && e.data.length !== 0) {
+        this.config = e;
+        this.doStuff(e);
+        this.setHintData(e.data).subscribe(e => {
+          this.hintData = e;
+        });
+      }
+    });
 
-        if (e && e.data.length !== 0) {
-          this.doStuff(e);
-          this.config = e;
-          this.setHintData(e.data).subscribe(e => {
-            this.hintData = e;
-          });
-        }
-      });
-
-    }
   }
 
   doStuff(config: GvpPngRequest): void {
@@ -86,7 +83,7 @@ export class PlotComponent implements OnInit {
           version: e.mctool.version,
           model: e.mctool.model,
           parameters: e.metadata.parameters,
-          expname: null
+          expname: ""
         }
       })
     }
@@ -107,7 +104,8 @@ export class PlotComponent implements OnInit {
   }
 
   getHintData(): HintData {
-    return this.hintData;
+    if (this.hintData) return this.hintData;
+    throw new TypeError("HintData is null");
   }
 
   showModal(url: string, config: GvpPngRequest) {

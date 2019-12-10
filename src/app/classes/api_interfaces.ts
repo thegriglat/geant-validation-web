@@ -1,5 +1,5 @@
 import * as express from 'express';
-import { GvpJSON, GvpTest, GvpMctoolNameVersion, GvpMctoolName, GvpParameter, GvpInspire, GvpPngRequest } from './gvp-plot';
+import { GvpTest, GvpJSON, GvpMctoolNameVersion, GvpMctoolName, GvpParameter, GvpInspire, GvpPngRequest } from './gvp-plot';
 
 export interface APILoggedIn extends express.Request {
     user: string;
@@ -23,7 +23,7 @@ export interface APIPermalinkRequest extends express.Request {
 }
 
 export interface APIGetResponse extends express.Response {
-    json(body: GvpJSON);
+    json(body: GvpJSON): this;
 }
 
 export interface APIMultigetRequest extends express.Request {
@@ -33,7 +33,7 @@ export interface APIMultigetRequest extends express.Request {
 }
 
 export interface APIMultigetResponse extends express.Response {
-    json(body: GvpJSON[]);
+    json(body: GvpJSON[]): this;
 }
 
 export interface APIGetRawResponse extends express.Response {
@@ -47,7 +47,7 @@ export interface APIGetPlotsByTestVersionRequest extends express.Request {
 }
 
 export interface APIGetPlotsByTestVersionResponse extends express.Response {
-    json(body: GvpJSON[]);
+    json(body: GvpJSON[]): this;
 }
 
 export interface APIInspireRequest extends express.Request {
@@ -57,7 +57,7 @@ export interface APIInspireRequest extends express.Request {
 }
 
 export interface APIInspireResponse extends express.Response {
-    json(body: GvpInspire[]);
+    json(body: GvpInspire[]): this;
 }
 
 export interface APIgetExpPlotsByInspireIdRequest extends express.Request {
@@ -67,7 +67,7 @@ export interface APIgetExpPlotsByInspireIdRequest extends express.Request {
 }
 
 export interface APIgetExpPlotsByInspireIdResponse extends express.Response {
-    json(body: GvpJSON[]);
+    json(body: GvpJSON[]): this;
 }
 
 export interface APIcheckMCToolRequest extends express.Request {
@@ -79,7 +79,7 @@ export interface APIcheckMCToolRequest extends express.Request {
 }
 
 export interface APIcheckMCToolResponse extends express.Response {
-    json(body: boolean);
+    json(body: boolean): this;
 }
 
 export interface APIuniqlookupRequest extends express.Request {
@@ -90,7 +90,7 @@ export interface APIuniqlookupRequest extends express.Request {
 }
 
 export interface APIuniqlookupResponse extends express.Response {
-    json(body: [number | string | GvpParameter][]);
+    json(body: [number | string | GvpParameter][]): this;
 }
 
 export interface APITestRequest extends express.Request {
@@ -100,15 +100,15 @@ export interface APITestRequest extends express.Request {
 }
 
 export interface APITestResponse extends express.Response {
-    json(body: GvpTest[]);
+    json(body: GvpTest[]): this;
 }
 
 export interface APIMCtoolNameVersionResponse extends express.Response {
-    json(body: GvpMctoolNameVersion[]);
+    json(body: GvpMctoolNameVersion[]): this;
 }
 
 export interface APIMCtoolNameResponse extends express.Response {
-    json(body: GvpMctoolName[]);
+    json(body: GvpMctoolName[]): this;
 }
 
 export interface APIgetExpretimentsInspireForTestRequest extends express.Request {
@@ -118,7 +118,7 @@ export interface APIgetExpretimentsInspireForTestRequest extends express.Request
 }
 
 export interface APIgetExpretimentsInspireForTestResponse extends express.Response {
-    json(body: GvpInspire[]);
+    json(body: GvpInspire[]): this;
 }
 
 export interface APIgetPNGRequest extends express.Request {
@@ -133,5 +133,5 @@ export interface APIgetPlotIdRequest extends express.Request {
 }
 
 export interface APIgetPlotIdResponse extends express.Response {
-    json(body: number[]);
+    json(body: number[]): this;
 }

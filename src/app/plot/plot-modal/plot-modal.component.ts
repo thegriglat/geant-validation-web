@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { GvpPngRequest, GvpJSON } from 'src/app/classes/gvp-plot';
+import { GvpPngRequest, GvpJSON, Nullable } from 'src/app/classes/gvp-plot';
 import { GVPAPIService } from 'src/app/services/gvpapi.service';
 import { from, forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -36,7 +36,7 @@ export class PlotModalComponent implements OnInit {
   config: GvpPngRequest;
   modalRoot = true;
 
-  selectedRef: GvpJSON = null;
+  selectedRef: Nullable<GvpJSON> = null;
   inProgress = false;
   useMarkers = true;
   private _names = new Map<GvpJSON, string>();
@@ -75,24 +75,32 @@ export class PlotModalComponent implements OnInit {
     if (this.modalRoot) {
       // save height, width
       const d = document.getElementById('rootimg');
-      h = d.clientHeight;
-      w = d.clientWidth;
+      if (d) {
+        h = d.clientHeight;
+        w = d.clientWidth;
+      }
     }
     this.modalRoot = !this.modalRoot;
     if (!this.modalRoot) {
       // JSROOT paint
       const filename = `/${this.url.replace(".png", ".json")}`;
-      JSROOT.NewHttpRequest(filename, 'object', obj => {
+      JSROOT.NewHttpRequest(filename, 'object', (obj: any) => {
         let div = document.getElementById("jsrootimg");
-        div.style.height = `${h}px`;
-        div.style.width = `${w}px`;
-        JSROOT.draw(div, obj, 'hist');
+        if (div) {
+          div.style.height = `${h}px`;
+          div.style.width = `${w}px`;
+          JSROOT.draw(div, obj, 'hist');
+        }
       }).send();
     }
   }
 
-  selectRef(p: GvpJSON) {
-    this.config.refid = this.config.data.indexOf(p);
+  selectRef(p: Nullable<GvpJSON>) {
+    if (p) {
+      this.config.refid = this.config.data.indexOf(p);
+    } else {
+      this.config.refid = -1;
+    };
     this.config.markerSize = (this.useMarkers) ? 1 : 0;
     this.modalRoot = true;
     this.selectedRef = p;

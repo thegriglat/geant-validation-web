@@ -1,46 +1,52 @@
 // Data types used by GVP API
 
+export type Nullable<T> = T | null;
+
 /** Plot parameter (e.g. angle); used by backend */
 export class GvpParameter {
   names: string;
   values: string;
+  constructor(name: string, value: string) {
+    this.names = name;
+    this.values = value;
+  }
 }
 
 /** Container for chart (scatterplot) data */
 export class GvpChart {
-  nPoints: number;
-  title: string;
-  xAxisName: string;
-  yAxisName: string;
-  xValues: Array<number>;
-  yValues: Array<number>;
-  xStatErrorsPlus: Array<number>;
-  xStatErrorsMinus: Array<number>;
-  yStatErrorsPlus: Array<number>;
-  yStatErrorsMinus: Array<number>;
-  xSysErrorsPlus: Array<number>;
-  xSysErrorsMinus: Array<number>;
-  ySysErrorsPlus: Array<number>;
-  ySysErrorsMinus: Array<number>;
+  nPoints: number = 0;
+  title: string = "";
+  xAxisName: string = "";
+  yAxisName: string = "";
+  xValues: number[] = [];
+  yValues: number[] = [];
+  xStatErrorsPlus: number[] = [];
+  xStatErrorsMinus: number[] = [];
+  yStatErrorsPlus: number[] = [];
+  yStatErrorsMinus: number[] = [];
+  xSysErrorsPlus: number[] = [];
+  xSysErrorsMinus: number[] = [];
+  ySysErrorsPlus: number[] = [];
+  ySysErrorsMinus: number[] = [];
 }
 
 /** Container for histogram data */
 export class GvpHistogram {
-  nBins: Array<number>;
-  title: string;
-  xAxisName: string;
-  yAxisName: string;
-  binEdgeLow: Array<number>;
-  binEdgeHigh: Array<number>;
-  binContent: Array<number>;
-  yStatErrorsPlus: Array<number>;
-  yStatErrorsMinus: Array<number>;
-  ySysErrorsPlus: Array<number>;
-  ySysErrorsMinus: Array<number>;
-  binLabel?: Array<string>;
+  nBins: number[] = [];
+  title: string = "";
+  xAxisName: string = "";
+  yAxisName: string = "";
+  binEdgeLow: number[] = [];
+  binEdgeHigh: number[] = [];
+  binContent: number[] = [];
+  yStatErrorsPlus: number[] = [];
+  yStatErrorsMinus: number[] = [];
+  ySysErrorsPlus: number[] = [];
+  ySysErrorsMinus: number[] = [];
+  binLabel?: string[] = [];
 }
 
-export class GvpInspire {
+export interface GvpInspire {
   inspire_id: number;
   authors: string[];
   title: string;
@@ -56,7 +62,7 @@ export class GvpInspire {
 }
 
 /** Container for Plot data (as returned by `/api/getPlotData`) */
-export class GvpJSON {
+export interface GvpJSON {
   id: number;
   article: {
     inspireId: number;
@@ -82,36 +88,72 @@ export class GvpJSON {
   histogram?: GvpHistogram;
 }
 
+export type GvpAxis = "auto" | "lin" | "log";
+
 export class GvpPlotterArgs {
-  xaxis?: string;
-  yaxis?: string;
-  xmax?: number;
-  xmin?: number;
-  ymax?: number;
-  ymin?: number;
-  onlyratio?: boolean;
-  markerSize?: number;
-  plotStyle?: string;
+  xaxis: GvpAxis = "auto";
+  yaxis: GvpAxis = "auto";
+  xmax?: number = undefined;
+  xmin?: number = undefined;
+  ymax?: number = undefined;
+  ymin?: number = undefined;
+  onlyratio: boolean = false;
+  markerSize: number = 1;
+  plotStyle: string = "";
 }
 
 /** Plot information for loading from XML file */
+type getset = { get: { (): string }, set: { (v: string): void } };
 export class GvpPlotXML extends GvpPlotterArgs {
-  test: string;
-  observable: string;
-  beam: string;
-  energy: string;
-  model: string;
-  target: string;
-  secondary: string;
+  test: string = "";
+  observable: string = "";
+  beam: string = "";
+  energy: string = "";
+  model: string = "";
+  target: string = "";
+  secondary: string = "";
   /*plot?: GvpPlot;*/
-  reference?: GvpPlot;
-  text?: string;
-  title?: string;
-  parname?: string;
-  parvalue?: string;
+  reference?: GvpPlot = undefined;
+  text?: string = "";
+  title?: string = "";
+  parname?: string = "";
+  parvalue?: string = "";
+  colspan?: number = 1;
+
+  private _keys = new Map<string, getset>();
+
+  constructor() {
+    super();
+    this._keys.set('test', { get: () => this.test, set: (v: string) => { this.test = v } });
+    this._keys.set('observable', { get: () => this.observable, set: (v: string) => { this.observable = v } });
+    this._keys.set('beam', { get: () => this.beam, set: (v: string) => { this.beam = v } });
+    this._keys.set('energy', { get: () => this.energy, set: (v: string) => { this.energy = v } });
+    this._keys.set('model', { get: () => this.model, set: (v: string) => { this.model = v } });
+    this._keys.set('target', { get: () => this.target, set: (v: string) => { this.target = v } });
+    this._keys.set('secondary', { get: () => this.secondary, set: (v: string) => { this.secondary = v } });
+    this._keys.set('text', { get: () => String(this.text), set: (v: string) => { this.text = v } });
+    this._keys.set('title', { get: () => String(this.title), set: (v: string) => { this.title = v } });
+    this._keys.set('parname', { get: () => String(this.parname), set: (v: string) => { this.parname = v } });
+    this._keys.set('parvalue', { get: () => String(this.parvalue), set: (v: string) => { this.parvalue = v } });
+    this._keys.set('colspan', { get: () => String(this.colspan), set: (v: string) => { this.colspan = Number(v) } });
+  };
+
+  set(key: string, value: string) {
+    if (this.has(key)) this._keys.get(key)!.set(value);
+  }
+
+  has(key: string): boolean {
+    return this._keys.has(key);
+  }
+
+  get(key: string): string {
+    if (this.has(key)) return this._keys.get(key)!.get();
+    return "undefined";
+  }
 }
 
 /** Parameters of `/api/getPlotId` method */
+export type ParametersList = [string, string[]][];
 export class GvpPlotIdRequest {
   test_id: number[];
   target: string;
@@ -120,19 +162,22 @@ export class GvpPlotIdRequest {
   secondary: string[];
   beamparticle: string[];
   observable: string[];
-  parameters: [string, string[]][];
+  parameters: ParametersList;
   beam_energy?: string[];
 
-  // constructor(plot: GvpPlotXML, testId: number, versionId: number, parameters?: {}) {
-  //   this.test_id = testId;
-  //   this.version_id = versionId;
-  //   this.observable = plot.observable;
-  //   this.beamparticle = plot.beam;
-  //   this.model = plot.model;
-  //   this.target = plot.target;
-  //   this.secondary = plot.secondary;
-  //   this.parameters = JSON.stringify(parameters);
-  // }
+  constructor(test_ids: number[], target: string, version_ids: number[],
+    models: string[], secondaries: string[], beam_particles: string[],
+    observables: string[], parameters: ParametersList, beam_energies?: string[]) {
+    this.test_id = test_ids;
+    this.target = target;
+    this.version_id = version_ids;
+    this.model = models;
+    this.secondary = secondaries;
+    this.beamparticle = beam_particles;
+    this.observable = observables;
+    this.beam_energy = beam_energies;
+    this.parameters = parameters;
+  }
 }
 
 /** Plot with additional properties used for displaying it */
@@ -143,13 +188,8 @@ export enum GvpPlotType {
 };
 
 export class GvpPlot extends GvpPlotXML {
-  empty: boolean;
-  type: GvpPlotType;
-  colspan?: number;
-  isModelCanChange: boolean;
-  /* tslint:disable:variable-name */
-  beam_energy?: string;
-  /* tslint:enable:variable-name */
+  type: GvpPlotType = GvpPlotType.Plot;
+  isModelCanChange: boolean = false;
 
   isText(): boolean {
     return this.type === GvpPlotType.Text;
@@ -168,62 +208,44 @@ export class GvpPlot extends GvpPlotXML {
 export class GvpPngRequest extends GvpPlotterArgs {
   data: GvpJSON[];
   refid?: number;
+  constructor(data: GvpJSON[], refid?: number) {
+    super();
+    this.data = data;
+    this.refid = refid;
+  }
 }
 
-export class GvpPermalinkRequest extends GvpPlotterArgs {
+export interface GvpPermalinkRequest extends GvpPlotterArgs {
   ids: number[];
   refid?: number;
 }
 
-export class GvpPngResponse {
+export interface GvpPngResponse {
   status: boolean;
   filename: string;
   description?: string;
 }
 
-/** Not used? */
-export class GvpStaticPlot extends GvpPlot {
-  status: string;
-  filename: string;
-  data: GvpJSON;
-}
-
 /** Information about available layouts
  * (obtained from https://gitlab.com/thegriglat/geant-val-layouts/blob/master/tags.json)
  * key: layout file name
- * value: GvpLayout object (title and list of tags)
+ * value: GvpLayout object (title and list of tags) 
  */
-export type GvpLayout = { title: string; tags: Array<string> };
-export type GvpLayouts = Map<string, GvpLayout>;
+export type GvpLayout = { title: string; tags: string[] };
+export type GvpLayouts = { [key: string]: GvpLayout };
 
 /** Test information returned by API */
-export class GvpTest {
+export interface GvpTest {
   description: string;
-  keywords?: Array<string>;
+  keywords?: string[];
   project: string;
-  responsible?: Array<string>;
+  responsible?: string[];
   /* tslint:disable:variable-name */
   mctool_name_id: number;
   test_id: number;
   test_name: string;
   workinggroup_id?: number;
   /* tslint:enable:variable-name */
-}
-
-/** Parameters for requesting Test information */
-export class GvpTestRequest {
-  id: string;
-  versiontag: string;
-  model: string;
-  calorimeter: string;
-  pname: string;
-  oname: string;
-}
-
-/** Parameters for /api/uniq method */
-export class GvpUniq<T> {
-  JSONAttr: string;
-  values: Array<T>;
 }
 
 /** Information about a single MC Tool Verison (as returned by API) */
@@ -235,6 +257,12 @@ export class GvpMctoolNameVersion {
   mctool_name_id: number;
   // tslint:disable-next-line: variable-name
   release_date: string;
+  constructor(id: number, version: string, project_id: number, release_date: string) {
+    this.mctool_name_version_id = id;
+    this.version = version;
+    this.mctool_name_id = project_id;
+    this.release_date = release_date;
+  }
 }
 
 /** Information about a single MC Tool (as returned by API) */
@@ -243,6 +271,10 @@ export class GvpMctoolName {
   mctool_name_name: string;
   // tslint:disable-next-line: variable-name
   mctool_name_id: number;
+  constructor(id: number, name: string) {
+    this.mctool_name_id = id;
+    this.mctool_name_name = name;
+  }
 }
 
 export const EXPERIMENT_VERSION_ID = -1;
