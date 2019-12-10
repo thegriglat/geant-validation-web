@@ -1,6 +1,3 @@
-import { stringify } from 'querystring';
-import { constructDependencies } from '@angular/core/src/di/reflective_provider';
-
 // Data types used by GVP API
 
 /** Plot parameter (e.g. angle); used by backend */
@@ -242,10 +239,10 @@ export interface GvpPngResponse {
 /** Information about available layouts
  * (obtained from https://gitlab.com/thegriglat/geant-val-layouts/blob/master/tags.json)
  * key: layout file name
- * value: GvpLayout object (title and list of tags)
+ * value: GvpLayout object (title and list of tags) 
  */
 export type GvpLayout = { title: string; tags: Array<string> };
-export type GvpLayouts = Map<string, GvpLayout>;
+export type GvpLayouts = { [key: string]: GvpLayout };
 export type Nullable<T> = T | null;
 
 /** Test information returned by API */

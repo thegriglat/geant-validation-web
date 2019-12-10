@@ -68,9 +68,7 @@ export function distinct<T>(value: T, index: number, arr: T[]) {
     return arr.indexOf(value) === index;
 }
 
-export class MapDefault<K, V> extends Map<K, V> {
-    getDefault(key: K, def: V): V {
-        const v = this.get(key);
-        return (v !== undefined) ? v : def;
-    }
+export function getDefault<K, V>(map: Map<K, V>, key: K, def: V): V {
+    const v = map.get(key);
+    return (v !== undefined) ? v : def;
 }

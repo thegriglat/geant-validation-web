@@ -3,7 +3,7 @@
 </div>
 <img class="ui rounded centered image" [src]="url" *ngIf="!inProgress" (click)="showModal(url, config)" suiPopup
     [popupTemplate]="popupTemplate" [popupPlacement]="bottom">
-<app-permalink class="permalink" [config]="getConfig()" *ngIf="config"></app-permalink>
+<app-permalink class="permalink" [config]="getConfig()" *ngIf="hasConfig()"></app-permalink>
 <ng-template let-popup #popupTemplate>
     <b>Observable</b>: {{getHintData().observable}}<br>
     <b>Beam particle</b>: {{getHintData().beam}}<br>

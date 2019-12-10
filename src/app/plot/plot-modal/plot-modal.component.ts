@@ -95,8 +95,12 @@ export class PlotModalComponent implements OnInit {
     }
   }
 
-  selectRef(p: GvpJSON) {
-    this.config.refid = this.config.data.indexOf(p);
+  selectRef(p: Nullable<GvpJSON>) {
+    if (p) {
+      this.config.refid = this.config.data.indexOf(p);
+    } else {
+      this.config.refid = -1;
+    };
     this.config.markerSize = (this.useMarkers) ? 1 : 0;
     this.modalRoot = true;
     this.selectedRef = p;

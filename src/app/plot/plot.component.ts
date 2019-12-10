@@ -70,6 +70,10 @@ export class PlotComponent implements OnInit {
     })
   }
 
+  hasConfig(): boolean {
+    return !!!this.config;
+  }
+
   getConfig(): GvpPngRequest {
     if (this.config) return this.config;
     throw new TypeError("config is null");

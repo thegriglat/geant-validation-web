@@ -4,7 +4,7 @@ import { GvpTest, GvpPlot, GvpMctoolNameVersion, GvpLayout, GvpInspire, GvpPngRe
 import { GVPAPIService } from '../services/gvpapi.service';
 import { map } from 'rxjs/operators';
 import { forkJoin } from 'rxjs';
-import { unroll, versionSorter, unstableVersionFilter, getColumnWide, distinct, MapDefault } from './../utils';
+import { unroll, versionSorter, unstableVersionFilter, getColumnWide, distinct, getDefault } from './../utils';
 
 /**
  * Shows [plots]{@link PlotComponent} for a given version(s) and model(s) using a predefined or custom template
@@ -48,7 +48,7 @@ export class GvplayoutComponent implements OnInit {
   /** Binding: can display layout */
   magicPressed = false;
   /** Default options for constructing [GvpPlotXML]{@link GvpPlotXML} */
-  DefaultBlock = new MapDefault<string, string>();
+  DefaultBlock = new Map<string, string>();
   /** List of available tests */
   ALLTESTS: GvpTest[] = [];
   /** Maps test name to test information; TODO: remove ALLTESTS in favour of this? */
@@ -79,8 +79,8 @@ export class GvplayoutComponent implements OnInit {
   ngOnInit() {
     this.layoutService.getAllLayouts().subscribe((data) => {
       this.pTemplates = [];
-      data.forEach((value, key) => {
-        this.pTemplates.push([key, value]);
+      Object.keys(data).forEach((key, idx) => {
+        this.pTemplates.push([key, data[key]]);
       })
       this.pTemplates.sort((a, b) => {
         const s1 = a[1].title.toUpperCase();
@@ -132,7 +132,7 @@ export class GvplayoutComponent implements OnInit {
       obj.colspan = obj.colspan || 1;
 
       for (const key of Object.keys(this.DefaultBlock)) {
-        obj.set(key, obj.has(key) ? obj.get(key) : this.DefaultBlock.getDefault(key, ""));
+        obj.set(key, obj.has(key) ? obj.get(key) : getDefault(this.DefaultBlock, key, ""));
       }
     }
     if (plot.nodeName === 'ratio') {
@@ -263,7 +263,7 @@ export class GvplayoutComponent implements OnInit {
       // check default values
       if (this.DefaultBlock.has('model')) {
         this.modelsSel = this.modelsSel.slice();
-        for (const i of this.DefaultBlock.getDefault('model', "").split('|')) {
+        for (const i of getDefault(this.DefaultBlock, 'model', "").split('|')) {
           if (
             this.models.indexOf(i) !== -1 &&
             this.modelsSel.indexOf(i) === -1
