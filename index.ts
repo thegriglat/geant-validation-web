@@ -1,4 +1,4 @@
-import { GvpJSON, GvpParameter, GvpHistogram, GvpChart, GvpTest, GvpMctoolNameVersion, GvpMctoolName, EXPERIMENT_TEST_ID, GvpInspire, GvpPngRequest, GvpPngResponse, GvpPlotIdRequest, GvpPermalinkRequest } from "./src/app/classes/gvp-plot";
+import { GvpTest, GvpJSON, GvpParameter, GvpHistogram, GvpChart, GvpMctoolNameVersion, GvpMctoolName, EXPERIMENT_TEST_ID, GvpInspire, GvpPngRequest, GvpPngResponse, GvpPlotIdRequest, GvpPermalinkRequest } from "./src/app/classes/gvp-plot";
 import * as api from './src/app/classes/api_interfaces';
 
 /* globals require, process */
@@ -1277,7 +1277,7 @@ app.post('/api/getPDF', (req, res) => {
   const filelistp = [];
   for (const pair of ids) {
     const p = apimultiget(pair).then(jsons => {
-      const params = { data: jsons, refid: jsons[0].id };
+      const params = new GvpPngRequest(jsons, jsons[0].id);
       return getPNG(params).then((res: any) => {
         console.log('getPNG');
         return res.filename;

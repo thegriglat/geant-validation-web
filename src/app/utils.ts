@@ -52,13 +52,25 @@ export function unstableVersionFilter(e: GvpMctoolNameVersion): boolean {
 }
 
 export function getColumnWide(cols: number): string {
-    const arr = [null,
+    const arr = ["",
         "one", "two", "three", "four", "five",
         "six", "seven", "eight", "nine", "ten",
         "eleven", "twelve", "thirteen", "fourteen",
         "fifteen", "sixteen"
     ];
-    if (cols > 0 && cols <= 16)
+    if (cols < arr.length && cols > 0)
         return arr[cols];
     return "";
+}
+
+/** Operator for Array.filter returning only unique items */
+export function distinct<T>(value: T, index: number, arr: T[]) {
+    return arr.indexOf(value) === index;
+}
+
+export class MapDefault<K, V> extends Map<K, V> {
+    getDefault(key: K, def: V): V {
+        const v = this.get(key);
+        return (v !== undefined) ? v : def;
+    }
 }

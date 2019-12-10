@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { LayoutService } from '../services/layout.service';
-import { GvpPlot, GvpTest, GvpMctoolNameVersion, GvpLayout, GvpInspire, GvpPngRequest, GvpPlotIdRequest, GvpPlotType } from '../classes/gvp-plot';
+import { GvpTest, GvpPlot, GvpMctoolNameVersion, GvpLayout, GvpInspire, GvpPngRequest, GvpPlotIdRequest, GvpPlotType, Nullable } from '../classes/gvp-plot';
 import { GVPAPIService } from '../services/gvpapi.service';
 import { map } from 'rxjs/operators';
 import { forkJoin } from 'rxjs';
-import { unroll, versionSorter, unstableVersionFilter, getColumnWide } from './../utils';
+import { unroll, versionSorter, unstableVersionFilter, getColumnWide, distinct, MapDefault } from './../utils';
 
 /**
  * Shows [plots]{@link PlotComponent} for a given version(s) and model(s) using a predefined or custom template
@@ -34,7 +34,7 @@ export class GvplayoutComponent implements OnInit {
   plots: GvpPlot[][] = [];
   /** Binding: contents of Layout dropdown; also used for creating tag filter */
   pTemplates: [string, GvpLayout][] = [];
-  currentLayout: GvpLayout;
+  currentLayout: Nullable<GvpLayout> = null;
   /** Binding: "Use Markers" checkbox */
   useMarkers = true;
   /** Binding: selected tags (used for filtering layouts list) */
@@ -48,7 +48,7 @@ export class GvplayoutComponent implements OnInit {
   /** Binding: can display layout */
   magicPressed = false;
   /** Default options for constructing [GvpPlotXML]{@link GvpPlotXML} */
-  DefaultBlock = new Map<string, any>();
+  DefaultBlock = new MapDefault<string, string>();
   /** List of available tests */
   ALLTESTS: GvpTest[] = [];
   /** Maps test name to test information; TODO: remove ALLTESTS in favour of this? */
@@ -79,7 +79,9 @@ export class GvplayoutComponent implements OnInit {
   ngOnInit() {
     this.layoutService.getAllLayouts().subscribe((data) => {
       this.pTemplates = [];
-      Object.keys(data).map((e) => this.pTemplates.push([e, data[e]]));
+      data.forEach((value, key) => {
+        this.pTemplates.push([key, value]);
+      })
       this.pTemplates.sort((a, b) => {
         const s1 = a[1].title.toUpperCase();
         const s2 = b[1].title.toUpperCase();
@@ -118,40 +120,38 @@ export class GvplayoutComponent implements OnInit {
   }
 
   /** Create [GvpPlot]{@link GvpPlot} object from XML node */
-  private convertXMLPlot2Object(plot: Element): GvpPlot {
-    let obj: GvpPlot;
+  private convertXMLPlot2Object(plot: Element): Nullable<GvpPlot> {
+    let obj: Nullable<GvpPlot> = null;
     if (plot.nodeName === 'plot') {
       obj = new GvpPlot();
       obj.type = GvpPlotType.Plot;
-      obj.isModelCanChange = false;
-      obj.empty = true;
       for (const i of Array.from(plot.attributes)) {
-        obj[i.name] = i.value;
-        obj.empty = false;
+        // TODO: set()
+        if (obj.has(i.name)) obj.set(i.name, i.value);
       }
       obj.colspan = obj.colspan || 1;
 
       for (const key of Object.keys(this.DefaultBlock)) {
-        obj[key] = obj[key] || this.DefaultBlock[key];
+        obj.set(key, obj.has(key) ? obj.get(key) : this.DefaultBlock.getDefault(key, ""));
       }
     }
     if (plot.nodeName === 'ratio') {
       const dataplot = plot.children[0];
       const refplot = plot.children[1];
       obj = this.convertXMLPlot2Object(dataplot);
-      obj.reference = this.convertXMLPlot2Object(refplot);
-      obj.type = GvpPlotType.Ratio;
-      obj.empty = false;
+      if (obj) {
+        obj.reference = this.convertXMLPlot2Object(refplot) || undefined;
+        obj.type = GvpPlotType.Ratio;
+      }
     }
     if (plot.nodeName === 'label') {
       obj = new GvpPlot();
       obj.type = GvpPlotType.Text;
-      obj.empty = true;
       for (const i of Array.from(plot.attributes)) {
-        obj[i.name] = i.value;
-        obj.empty = false;
+        obj.set(i.name, i.value);
       }
-      obj.text = '\\mathrm{' + obj.text.replace(/ /g, ' \\space ') + '}';
+      if (obj.text)
+        obj.text = '\\mathrm{' + obj.text.replace(/ /g, ' \\space ') + '}';
     }
     return obj;
   }
@@ -263,7 +263,7 @@ export class GvplayoutComponent implements OnInit {
       // check default values
       if (this.DefaultBlock.has('model')) {
         this.modelsSel = this.modelsSel.slice();
-        for (const i of this.DefaultBlock.get('model').split('|')) {
+        for (const i of this.DefaultBlock.getDefault('model', "").split('|')) {
           if (
             this.models.indexOf(i) !== -1 &&
             this.modelsSel.indexOf(i) === -1
@@ -273,11 +273,6 @@ export class GvplayoutComponent implements OnInit {
         }
       }
     });
-  }
-
-  /** Operator for Array.filter returning only unique items */
-  private distinct(value, index: number, arr: any[]) {
-    return arr.indexOf(value) === index;
   }
 
   collapseMenu() {
@@ -318,12 +313,14 @@ export class GvplayoutComponent implements OnInit {
 
       for (const j of Array.from(row.children)) {
         const obj = this.convertXMLPlot2Object(j);
+        if (!obj) continue;
         if (obj.isPlot() && (!obj.model || obj.model.length === 0)) {
           obj.isModelCanChange = true;
         }
         if (obj.isRatio() && (!obj.model || obj.model.length === 0)) {
           obj.isModelCanChange = true;
-          obj.reference.isModelCanChange = true;
+          if (obj.reference)
+            obj.reference.isModelCanChange = true;
         }
         plotsLast.push(obj);
         if (obj.isPlot() && obj.test) {
@@ -333,14 +330,14 @@ export class GvplayoutComponent implements OnInit {
           if (obj.test) {
             this.tests.push(obj.test);
           }
-          if (obj.reference.isPlot() && obj.reference.test) {
+          if (obj.reference && obj.reference.isPlot() && obj.reference.test) {
             this.tests.push(obj.reference.test);
           }
         }
       }
     }
 
-    this.tests = this.tests.filter(this.distinct);
+    this.tests = this.tests.filter(distinct);
 
     this.waitForTest().then(() => {
       for (const testname of this.tests) {
@@ -354,7 +351,7 @@ export class GvplayoutComponent implements OnInit {
 
   /** Binding: Creates a list of unique tags for tag filter */
   uniqueTags(list: [string, GvpLayout][]): string[] {
-    return list.map(t => t[1].tags).reduce((p, c) => p.concat(c), []).filter(this.distinct);
+    return list.map(t => t[1].tags).reduce((p, c) => p.concat(c), []).filter(distinct);
   }
 
   updateExp(e: GvpInspire) {
@@ -425,7 +422,8 @@ export class GvplayoutComponent implements OnInit {
 
   /** Event handler: 'Plot' button clicked */
   magic() {
-    document.getElementById("headerblk").scrollIntoView();
+    const div = document.getElementById("headerblk");
+    if (div) div.scrollIntoView();
     this.magicPressed = true;
     this.progressValue = 0;
     // dirty hack to update plots
@@ -439,10 +437,9 @@ export class GvplayoutComponent implements OnInit {
   }
 
   getPlotConfig(p: GvpPlot) {
-    let r: GvpPngRequest = new GvpPngRequest();
-    r.data = [];
+    // request
+    let r: GvpPngRequest = new GvpPngRequest([]);
     r.markerSize = p.markerSize;
-    if (!this.useMarkers) r.markerSize = 0;
     r.onlyratio = p.onlyratio;
     r.xaxis = p.xaxis;
     r.yaxis = p.yaxis;
@@ -452,14 +449,9 @@ export class GvplayoutComponent implements OnInit {
     r.ymax = p.ymax;
     r.plotStyle = p.plotStyle;
 
-    let query: GvpPlotIdRequest = new GvpPlotIdRequest();
-    query.beam_energy = [p.energy];
-    query.beamparticle = [p.beam];
-    query.model = this.modelsSel;
-    query.observable = [p.observable];
-    query.secondary = [p.secondary];
-    query.target = p.target;
-    query.version_id = this.versionsSel.map(e => e.mctool_name_version_id);
+    // query
+    const tests = this.ALLTESTS.filter(e => e.test_name === p.test);
+    const test_ids = tests.map(e => e.test_id);
     // convert parameters
     let par: [string, string[]][] = [];
     if (p.parname && p.parvalue) {
@@ -469,9 +461,17 @@ export class GvplayoutComponent implements OnInit {
         par.push([i, [pval[pname.indexOf(i)]]]);
       }
     }
-    query.parameters = par;
-    const tests = this.ALLTESTS.filter(e => e.test_name === p.test);
-    query.test_id = tests.map(e => e.test_id);
+    let query: GvpPlotIdRequest = new GvpPlotIdRequest(
+      test_ids,
+      p.target,
+      this.versionsSel.map(e => e.mctool_name_version_id),
+      this.modelsSel,
+      [p.secondary],
+      [p.beam],
+      [p.observable],
+      par,
+      [p.energy]
+    );
     const plots = this.api.getPlotJSON(query)
     const exps = this.checkedExp.map(exp => this.api.getExpMatchPlotInspire(query, exp.inspire_id));
 
