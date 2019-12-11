@@ -464,19 +464,9 @@ export class GvplayoutComponent implements OnInit {
     const tests = this.ALLTESTS.filter(e => e.test_name === p.test);
     const test_ids = tests.map(e => e.test_id);
     // convert parameters
-    const getPar = (p: GvpPlot): [string, string[]][] => {
-      let par: [string, string[]][] = []
-      if (p.parname && p.parvalue) {
-        const pname = p.parname.split(',');
-        const pval = p.parvalue.split(',');
-        for (let i of pname) {
-          par.push([i, [pval[pname.indexOf(i)]]]);
-        }
-      }
-      return par;
-    }
-    let par: [string, string[]][] = getPar(p);
-    let query: GvpPlotIdRequest = new GvpPlotIdRequest(
+
+    const par = p.getParametersList();
+    const query: GvpPlotIdRequest = new GvpPlotIdRequest(
       test_ids,
       p.target,
       this.versionsSel.map(e => e.mctool_name_version_id),
@@ -492,8 +482,8 @@ export class GvplayoutComponent implements OnInit {
 
     let listHttp = [plots, ...exps];
     if (p.reference) {
-      let par_ref = getPar(p.reference);
-      let query_ref: GvpPlotIdRequest = new GvpPlotIdRequest(
+      const par_ref = p.reference.getParametersList();
+      const query_ref: GvpPlotIdRequest = new GvpPlotIdRequest(
         test_ids,
         p.reference.target,
         this.versionsSel.map(e => e.mctool_name_version_id),

@@ -1,4 +1,4 @@
-import { GvpMctoolNameVersion, GvpPlotXML, GvpJSON } from './classes/gvp-plot';
+import { GvpMctoolNameVersion, GvpPlotXML, GvpJSON, GvpHistogram, ParametersList, GvpParameter } from './classes/gvp-plot';
 
 export function unroll<T>(arr: T[][]): T[] {
     return arr.reduce((res, e) => (res = res.concat(...e)));
@@ -77,6 +77,34 @@ export function getDefault<K, V>(map: Map<K, V>, key: K, def: V): V {
     return (v !== undefined) ? v : def;
 }
 
+export function getParametersList(parameters: GvpParameter[]): ParametersList {
+    let p: ParametersList = [];
+    for (const i of parameters) {
+        const idx = p.map(e => e[0]).indexOf(i.names);
+        if (idx === -1) {
+            // add
+            p.push([i.names, [i.values]]);
+        } else {
+            // append
+            p[idx][1].push(i.values);
+        }
+    }
+    return p;
+}
+
+function _ParametersListEq(p1: ParametersList, p2: ParametersList): boolean {
+    for (const i of p1) {
+        const idx = p2.map(e => e[0]).indexOf(i[0]);
+        if (idx === -1) return false;
+        const p3 = p2[idx];
+        // check values
+        for (const v1 of i[1]) {
+            if (p3[1].indexOf(v1) === -1) return false;
+        }
+    }
+    return true;
+}
+
 export function filterData(data: GvpJSON[], q: GvpPlotXML): GvpJSON[] {
     return data.filter(j => {
         if (j.metadata.beamParticle === q.beam &&
@@ -85,7 +113,10 @@ export function filterData(data: GvpJSON[], q: GvpPlotXML): GvpJSON[] {
             j.metadata.secondaryParticle === q.secondary &&
             j.metadata.targetName === q.target &&
             j.metadata.beam_energy_str === q.energy
-        ) return true;
+        ) {
+            // check params
+            return _ParametersListEq(getParametersList(j.metadata.parameters), q.getParametersList());
+        }
         return false;
     })
 }

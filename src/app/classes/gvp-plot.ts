@@ -171,6 +171,18 @@ export class GvpPlotXML extends GvpPlotterArgs {
     if (this.has(key)) return this._keys.get(key)!.get();
     return "undefined";
   }
+
+  getParametersList(): ParametersList {
+    let par: ParametersList = []
+    if (this.parname && this.parvalue) {
+      const pname = this.parname.split(',');
+      const pval = this.parvalue.split(',');
+      for (let i of pname) {
+        par.push([i, [pval[pname.indexOf(i)]]]);
+      }
+    }
+    return par;
+  }
 }
 
 /** Parameters of `/api/getPlotId` method */
