@@ -90,6 +90,18 @@ export interface GvpJSON {
 
 export type GvpAxis = "auto" | "lin" | "log";
 
+function s2GvpAxis(s: string): GvpAxis {
+  switch (s) {
+    case "lin": return "lin";
+    case "log": return "log";
+  }
+  return "auto";
+}
+
+function GvpAxis2s(s: GvpAxis): string {
+  return s;
+}
+
 export class GvpPlotterArgs {
   xaxis: GvpAxis = "auto";
   yaxis: GvpAxis = "auto";
@@ -136,6 +148,15 @@ export class GvpPlotXML extends GvpPlotterArgs {
     this._keys.set('parname', { get: () => String(this.parname), set: (v: string) => { this.parname = v } });
     this._keys.set('parvalue', { get: () => String(this.parvalue), set: (v: string) => { this.parvalue = v } });
     this._keys.set('colspan', { get: () => String(this.colspan), set: (v: string) => { this.colspan = Number(v) } });
+    this._keys.set('xaxis', { get: () => GvpAxis2s(this.xaxis), set: (v: string) => { this.xaxis = s2GvpAxis(v) } });
+    this._keys.set('yaxis', { get: () => GvpAxis2s(this.yaxis), set: (v: string) => { this.yaxis = s2GvpAxis(v) } });
+    this._keys.set('xmax', { get: () => String(this.xmax), set: (v: string) => { this.xmax = Number(v) } });
+    this._keys.set('xmin', { get: () => String(this.xmin), set: (v: string) => { this.xmin = Number(v) } });
+    this._keys.set('ymax', { get: () => String(this.ymax), set: (v: string) => { this.ymax = Number(v) } });
+    this._keys.set('ymin', { get: () => String(this.ymin), set: (v: string) => { this.ymin = Number(v) } });
+    this._keys.set('markerSize', { get: () => String(this.markerSize), set: (v: string) => { this.markerSize = Number(v) } });
+    this._keys.set('plotStyle', { get: () => this.plotStyle, set: (v: string) => { this.plotStyle = v } });
+    this._keys.set('onlyratio', { get: () => String(this.onlyratio), set: (v: string) => { this.onlyratio = Boolean(v) } });
   };
 
   set(key: string, value: string) {
