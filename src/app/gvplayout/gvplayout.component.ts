@@ -439,7 +439,7 @@ export class GvplayoutComponent implements OnInit {
   getPlotConfig(p: GvpPlot) {
     // request
     let r: GvpPngRequest = new GvpPngRequest([]);
-    r.markerSize = p.markerSize;
+    r.markerSize = this.useMarkers ? p.markerSize : 0;
     r.onlyratio = p.onlyratio;
     r.xaxis = p.xaxis;
     r.yaxis = p.yaxis;
