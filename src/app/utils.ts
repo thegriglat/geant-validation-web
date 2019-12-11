@@ -64,8 +64,12 @@ export function getColumnWide(cols: number): string {
 }
 
 /** Operator for Array.filter returning only unique items */
-export function distinct<T>(value: T, index: number, arr: T[]) {
+export function distinct<T>(value: T, index: number, arr: T[]): boolean {
     return arr.indexOf(value) === index;
+}
+export function distinctJSON(value: GvpJSON, index: number, arr: GvpJSON[]): boolean {
+    const unq_ids = arr.map(e => e.id);
+    return unq_ids.indexOf(value.id) === index;
 }
 
 export function getDefault<K, V>(map: Map<K, V>, key: K, def: V): V {

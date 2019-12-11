@@ -4,7 +4,7 @@ import { GvpTest, GvpPlot, GvpMctoolNameVersion, GvpLayout, GvpInspire, GvpPngRe
 import { GVPAPIService } from '../services/gvpapi.service';
 import { map } from 'rxjs/operators';
 import { forkJoin } from 'rxjs';
-import { unroll, versionSorter, unstableVersionFilter, getColumnWide, distinct, getDefault, filterData } from './../utils';
+import { unroll, versionSorter, unstableVersionFilter, getColumnWide, distinct, getDefault, filterData, distinctJSON } from './../utils';
 
 /**
  * Shows [plots]{@link PlotComponent} for a given version(s) and model(s) using a predefined or custom template
@@ -509,7 +509,7 @@ export class GvplayoutComponent implements OnInit {
     }
     let all = forkJoin(listHttp).pipe(
       map(e => {
-        r.data = unroll(e);
+        r.data = unroll(e).filter(distinctJSON);
         if (p.reference) {
           const rp = filterData(r.data, p.reference);
           if (rp.length !== 0) {
