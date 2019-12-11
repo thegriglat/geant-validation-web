@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { LayoutService } from '../services/layout.service';
-import { GvpTest, GvpPlot, GvpMctoolNameVersion, GvpLayout, GvpInspire, GvpPngRequest, GvpPlotIdRequest, GvpPlotType, Nullable } from '../classes/gvp-plot';
+import { GvpTest, GvpPlot, GvpMctoolNameVersion, GvpLayout, GvpInspire, GvpPngRequest, GvpPlotIdRequest, GvpPlotType, Nullable, GvpJSON } from '../classes/gvp-plot';
 import { GVPAPIService } from '../services/gvpapi.service';
 import { map } from 'rxjs/operators';
 import { forkJoin } from 'rxjs';
-import { unroll, versionSorter, unstableVersionFilter, getColumnWide, distinct, getDefault } from './../utils';
+import { unroll, versionSorter, unstableVersionFilter, getColumnWide, distinct, getDefault, filterData } from './../utils';
 
 /**
  * Shows [plots]{@link PlotComponent} for a given version(s) and model(s) using a predefined or custom template
@@ -119,6 +119,16 @@ export class GvplayoutComponent implements OnInit {
     }
   }
 
+  private updateElementAttributes(main: Element, ref: Element): void {
+    const ref_attr = Array.from(ref.attributes).map(e => e.name);
+    for (const i of Array.from(main.attributes)) {
+      if (ref_attr.indexOf(i.name) !== -1) continue;
+      ref.setAttribute(i.name, i.value);
+    };
+    // TODO: dirty hack )
+    if (ref.getAttribute('test') === "experiment") ref.setAttribute('model', 'experiment');
+  }
+
   /** Create [GvpPlot]{@link GvpPlot} object from XML node */
   private convertXMLPlot2Object(plot: Element): Nullable<GvpPlot> {
     let obj: Nullable<GvpPlot> = null;
@@ -139,6 +149,7 @@ export class GvplayoutComponent implements OnInit {
       const dataplot = plot.children[0];
       const refplot = plot.children[1];
       obj = this.convertXMLPlot2Object(dataplot);
+      this.updateElementAttributes(dataplot, refplot);
       if (obj) {
         obj.reference = this.convertXMLPlot2Object(refplot) || undefined;
         obj.type = GvpPlotType.Ratio;
@@ -453,14 +464,18 @@ export class GvplayoutComponent implements OnInit {
     const tests = this.ALLTESTS.filter(e => e.test_name === p.test);
     const test_ids = tests.map(e => e.test_id);
     // convert parameters
-    let par: [string, string[]][] = [];
-    if (p.parname && p.parvalue) {
-      const pname = p.parname.split(',');
-      const pval = p.parvalue.split(',');
-      for (let i of pname) {
-        par.push([i, [pval[pname.indexOf(i)]]]);
+    const getPar = (p: GvpPlot): [string, string[]][] => {
+      let par: [string, string[]][] = []
+      if (p.parname && p.parvalue) {
+        const pname = p.parname.split(',');
+        const pval = p.parvalue.split(',');
+        for (let i of pname) {
+          par.push([i, [pval[pname.indexOf(i)]]]);
+        }
       }
+      return par;
     }
+    let par: [string, string[]][] = getPar(p);
     let query: GvpPlotIdRequest = new GvpPlotIdRequest(
       test_ids,
       p.target,
@@ -472,12 +487,35 @@ export class GvplayoutComponent implements OnInit {
       par,
       [p.energy]
     );
-    const plots = this.api.getPlotJSON(query)
+    const plots = this.api.getPlotJSON(query);
     const exps = this.checkedExp.map(exp => this.api.getExpMatchPlotInspire(query, exp.inspire_id));
 
-    let all = forkJoin([plots, ...exps]).pipe(
+    let listHttp = [plots, ...exps];
+    if (p.reference) {
+      let par_ref = getPar(p.reference);
+      let query_ref: GvpPlotIdRequest = new GvpPlotIdRequest(
+        test_ids,
+        p.reference.target,
+        this.versionsSel.map(e => e.mctool_name_version_id),
+        this.modelsSel,
+        [p.reference.secondary],
+        [p.reference.beam],
+        [p.reference.observable],
+        par_ref,
+        [p.reference.energy]
+      );
+      const refs = this.api.getPlotJSON(query_ref);
+      listHttp.unshift(refs);
+    }
+    let all = forkJoin(listHttp).pipe(
       map(e => {
         r.data = unroll(e);
+        if (p.reference) {
+          const rp = filterData(r.data, p.reference);
+          if (rp.length !== 0) {
+            r.refid = r.data.indexOf(rp[0]);
+          }
+        }
         return r;
       })
     )

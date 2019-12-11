@@ -1,4 +1,4 @@
-import { GvpMctoolNameVersion } from './classes/gvp-plot';
+import { GvpMctoolNameVersion, GvpPlotXML, GvpJSON } from './classes/gvp-plot';
 
 export function unroll<T>(arr: T[][]): T[] {
     return arr.reduce((res, e) => (res = res.concat(...e)));
@@ -71,4 +71,17 @@ export function distinct<T>(value: T, index: number, arr: T[]) {
 export function getDefault<K, V>(map: Map<K, V>, key: K, def: V): V {
     const v = map.get(key);
     return (v !== undefined) ? v : def;
+}
+
+export function filterData(data: GvpJSON[], q: GvpPlotXML): GvpJSON[] {
+    return data.filter(j => {
+        if (j.metadata.beamParticle === q.beam &&
+            j.metadata.observableName === q.observable &&
+            j.testName === q.test &&
+            j.metadata.secondaryParticle === q.secondary &&
+            j.metadata.targetName === q.target &&
+            j.metadata.beam_energy_str === q.energy
+        ) return true;
+        return false;
+    })
 }
