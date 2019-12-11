@@ -222,7 +222,6 @@ export enum GvpPlotType {
 
 export class GvpPlot extends GvpPlotXML {
   type: GvpPlotType = GvpPlotType.Plot;
-  isModelCanChange: boolean = false;
 
   isText(): boolean {
     return this.type === GvpPlotType.Text;

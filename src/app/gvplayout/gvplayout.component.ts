@@ -325,14 +325,6 @@ export class GvplayoutComponent implements OnInit {
       for (const j of Array.from(row.children)) {
         const obj = this.convertXMLPlot2Object(j);
         if (!obj) continue;
-        if (obj.isPlot() && (!obj.model || obj.model.length === 0)) {
-          obj.isModelCanChange = true;
-        }
-        if (obj.isRatio() && (!obj.model || obj.model.length === 0)) {
-          obj.isModelCanChange = true;
-          if (obj.reference)
-            obj.reference.isModelCanChange = true;
-        }
         plotsLast.push(obj);
         if (obj.isPlot() && obj.test) {
           this.tests.push(obj.test);
