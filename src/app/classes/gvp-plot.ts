@@ -156,7 +156,7 @@ export class GvpPlotXML extends GvpPlotterArgs {
     this._keys.set('ymin', { get: () => String(this.ymin), set: (v: string) => { this.ymin = Number(v) } });
     this._keys.set('markerSize', { get: () => String(this.markerSize), set: (v: string) => { this.markerSize = Number(v) } });
     this._keys.set('plotStyle', { get: () => this.plotStyle, set: (v: string) => { this.plotStyle = v } });
-    this._keys.set('onlyratio', { get: () => String(this.onlyratio), set: (v: string) => { this.onlyratio = Boolean(v) } });
+    this._keys.set('onlyratio', { get: () => String(this.onlyratio), set: (v: string) => { this.onlyratio = ["true", "1", "y", "yes"].indexOf(v) !== -1 } });
   };
 
   set(key: string, value: string) {
