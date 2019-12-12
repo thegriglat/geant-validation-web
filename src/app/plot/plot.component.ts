@@ -104,7 +104,6 @@ export class PlotComponent implements OnInit {
   }
 
   showModal(url: string, config: GvpPngRequest) {
-    console.log([url, config]);
     this.modalService.open(
       new PlotModal(url, config)
     )
