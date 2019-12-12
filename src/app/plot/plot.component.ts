@@ -39,7 +39,7 @@ export class PlotComponent implements OnInit {
   inProgress = false;
   modalRoot = true;
   config: Nullable<GvpPngRequest> = null;
-  private hintData: Nullable<HintData> = null;
+  hintData: Nullable<HintData> = null;
 
   constructor(private api: GVPAPIService, private modalService: SuiModalService) {
   }
@@ -101,11 +101,6 @@ export class PlotComponent implements OnInit {
         return r
       })
     )
-  }
-
-  getHintData(): HintData {
-    if (this.hintData) return this.hintData;
-    throw new TypeError("HintData is null");
   }
 
   showModal(url: string, config: GvpPngRequest) {

@@ -4,13 +4,13 @@
 <img class="ui rounded centered image" [src]="url" *ngIf="!inProgress" (click)="showModal(url, config)" suiPopup
     [popupTemplate]="popupTemplate" [popupPlacement]="bottom">
 <app-permalink class="permalink" [config]="config" *ngIf="config"></app-permalink>
-<ng-template let-popup #popupTemplate>
-    <b>Observable</b>: {{getHintData().observable}}<br>
-    <b>Beam particle</b>: {{getHintData().beam}}<br>
-    <b>Beam energy</b>: {{getHintData().beam_energy}}<br>
-    <b>Target</b>: {{getHintData().target}}<br>
+<ng-template let-popup #popupTemplate *ngIf="hintData">
+    <b>Observable</b>: {{hintData.observable}}<br>
+    <b>Beam particle</b>: {{hintData.beam}}<br>
+    <b>Beam energy</b>: {{hintData.beam_energy}}<br>
+    <b>Target</b>: {{hintData.target}}<br>
     <ul>
-        <li *ngFor="let e of getHintData().items">
+        <li *ngFor="let e of hintData.items">
             <ng-container *ngIf="!e.isExp">
                 <b>{{e.version}}</b>, <b>{{e.model}}</b>
             </ng-container>
