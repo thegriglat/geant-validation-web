@@ -1,4 +1,4 @@
-import { GvpTest, GvpJSON, GvpParameter, GvpHistogram, GvpChart, GvpMctoolNameVersion, GvpMctoolName, EXPERIMENT_TEST_ID, GvpInspire, GvpPngRequest, GvpPngResponse, GvpPlotIdRequest, GvpPermalinkRequest } from "./src/app/classes/gvp-plot";
+import { GvpTest, GvpJSON, GvpParameter, GvpHistogram, GvpChart, GvpMctoolNameVersion, GvpMctoolName, EXPERIMENT_TEST_ID, GvpInspire, GvpPngRequest, GvpPngResponse, GvpPlotIdRequest, GvpPermalinkRequest, Nullable } from "./src/app/classes/gvp-plot";
 import * as api from './src/app/classes/api_interfaces';
 
 /* globals require, process */
@@ -319,7 +319,7 @@ function PGJoin(arr: any[]): string {
  * @param {number} id record id
  * @returns JSON
  */
-function apigetJSON(id: number): Promise<GvpJSON> {
+function apigetJSON(id: number): Promise<Nullable<GvpJSON>> {
   const sqlPrint =
     'SELECT inspire.*, target.*, mctool_model.*, mctool_name.*, mctool_name_version.*, observable.*, ' +
     'particle_beam.particle_name as particle_beam, particle_sec.particle_name as particle_sec, plot.*, plot_type.*, reaction.*, test.* ' +
@@ -373,7 +373,7 @@ function apigetJSON(id: number): Promise<GvpJSON> {
     };
     if (result.plot_npoints === null) {
       // histogram
-      r.chart = null;
+      r.chart = undefined;
       let h: GvpHistogram = new GvpHistogram();
       h.nBins = result.plot_nbins.length !== 0 ? result.plot_nbins : [result.plot_val.length];
       h.binEdgeLow = result.plot_bin_min || [];
@@ -399,7 +399,7 @@ function apigetJSON(id: number): Promise<GvpJSON> {
       r.histogram = h;
     } else {
       // chart
-      r.histogram = null;
+      r.histogram = undefined;
       let h: GvpChart = new GvpChart();
       h.nPoints = result.plot_npoints;
       h.xValues = result.plot_val.slice(0, result.plot_val.length / 2);
@@ -440,9 +440,11 @@ function apigetJSON(id: number): Promise<GvpJSON> {
       r.chart = h;
     }
     let h = (r.chart) ? r.chart : r.histogram;
-    h.title = result.plot_title;
-    h.xAxisName = result.plot_axis_title[0];
-    h.yAxisName = result.plot_axis_title[1];
+    if (h) {
+      h.title = result.plot_title;
+      h.xAxisName = result.plot_axis_title[0];
+      h.yAxisName = result.plot_axis_title[1];
+    }
     return r;
   });
 }
@@ -454,14 +456,14 @@ function apigetJSON(id: number): Promise<GvpJSON> {
  * @returns Promise
  */
 function apimultiget(ids: number[]): Promise<GvpJSON[]> {
-  const promises: Promise<GvpJSON>[] = [];
-  for (let i = 0; i < ids.length; i++) {
-    promises.push(apigetJSON(ids[i]));
-  }
-  return Promise.all(promises);
+  const promises = ids.map(e => apigetJSON(e));
+  return Promise.all(promises).then(list => {
+    return list.filter(e => e !== null) as GvpJSON[];
+  });
 }
 
 // isLoggedIn is "function" like pipe which controls is user authenticated or not
+/*
 app.post('/uploadException', isLoggedIn, (req, res) => {
   const json = req.body;
   const errtypes = json.types;
@@ -478,7 +480,7 @@ app.post('/uploadException', isLoggedIn, (req, res) => {
   const mctool_name = json.mctool_name;
   const mctool_version = json.mctool_version;
   const testName = json.testName;
-  const typenames = [];
+  const typenames: string[] = [];
   const typevalues = [];
   const typeerrors = [];
   for (let i = 0; i < typekeys.length; i++) {
@@ -606,7 +608,7 @@ app.post('/uploadException', isLoggedIn, (req, res) => {
         });
     });
 });
-
+*/
 // Function to receive file content in the request body
 app.post('/upload', isLoggedIn, (req, res) => {
   logger.info('upload requested');
@@ -615,16 +617,16 @@ app.post('/upload', isLoggedIn, (req, res) => {
   // https://inspirehep.net/info/hep/api?ln=ru
   //
   const inspireparams = '?of=recjson&ot=recid,title,publication_info,abstract';
-  const inspireid = json.article.inspireId || -1;
+  const inspireid: number = Number(json.article.inspireId) || -1;
   let inspireinfo: any;
   const mctool = json.mctool;
   let mctool_name_version_id = -1;
   // let mctool_name_id = -1;
   let mctool_model_id = -1;
-  const beamParticleName = json.metadata.beamParticle;
+  const beamParticleName: string = json.metadata.beamParticle;
   let beamParticle_pdgid = -1;
-  const parnames = [];
-  const parvalues = [];
+  const parnames: string[] = [];
+  const parvalues: string[] = [];
 
   let plot_type_id = -1;
   let plot_id = -1;
@@ -1020,12 +1022,12 @@ app.post('/upload', isLoggedIn, (req, res) => {
 // Route to retrieve data via command-line
 router.route('/get/:id').get((req: api.APIGetRequest, res: api.APIGetResponse) => {
   const id = Number(req.params.id);
-  apigetJSON(id).then(
+  apimultiget([id]).then(
     result => {
-      res.status(200).json(result);
+      res.status(200).json(result[0]);
     },
     () => {
-      res.status(400).json(null);
+      res.status(400);
     }
   );
 });
@@ -1054,7 +1056,11 @@ router.route('/permalink/:hash').get((req: api.APIPermalinkRequest, res) => {
 router.route('/getRaw/:id').get((req: api.APIGetRequest, res) => {
   const id = Number(req.params.id);
   apigetJSON(id).then(
-    (result: any) => {
+    (result) => {
+      if (!result) {
+        res.status(200).send();
+        return;
+      }
       let parameters = '';
 
       for (const p of result.metadata.parameters) {
@@ -1154,7 +1160,7 @@ router.route('/getRaw/:id').get((req: api.APIGetRequest, res) => {
         gPlot += `set term png\n${`set xlabel "${result.chart.xAxisName}"\n`}${`set ylabel "${
           result.chart.yAxisName
           }"\n`}${`set bars small\n`}${`set grid\n`}plot '-' using 1:2:($1-sqrt($3**2+$7**2)):($1+sqrt($4**2+$8**2)):($2-sqrt($5**2+$9**2)):($2+sqrt($6**2+$10**2)) notitle with xyerrorlines linecolor rgb "blue"`;
-      } else {
+      } else if (result.histogram !== undefined) {
         rows = [];
 
         for (let i = 0; i < result.histogram.binEdgeLow.length; i++) {
@@ -1268,7 +1274,7 @@ const updateObj = (src, dest) => {
 };
 
 const PDFReportTemplate = fs.readFileSync('dist/gvp-template/assets/report.tex', 'utf8');
-
+/*
 app.post('/api/getPDF', (req, res) => {
   const params = req.body;
   const ids = params.data.map(e => [e.r0, e.r1]);
@@ -1352,7 +1358,7 @@ app.post('/api/getPDF', (req, res) => {
     });
   });
 });
-
+*/
 app.post('/api/getPNG', (req: api.APIgetPNGRequest, res) => {
   getPNG(req.body).then(data => {
     res.json(data);
@@ -1416,10 +1422,10 @@ async function getPNG(body: GvpPngRequest): Promise<GvpPngResponse> {
     );
   }
   const refid_option = refid !== undefined ? ` -r ${refid}` : '';
-  const xmin_option = !isNaN(xmin) ? `--xmin ${xmin}` : '';
-  const xmax_option = !isNaN(xmax) ? `--xmax ${xmax}` : '';
-  const ymin_option = !isNaN(ymin) ? `--ymin ${ymin}` : '';
-  const ymax_option = !isNaN(ymax) ? `--ymax ${ymax}` : '';
+  const xmin_option = (xmin && !isNaN(xmin)) ? `--xmin ${xmin}` : '';
+  const xmax_option = (xmax && !isNaN(xmax)) ? `--xmax ${xmax}` : '';
+  const ymin_option = (ymin && !isNaN(ymin)) ? `--ymin ${ymin}` : '';
+  const ymax_option = (ymax && !isNaN(ymax)) ? `--ymax ${ymax}` : '';
   const ratio_option = (onlyratio) ? "--only-ratio 1" : "";
   const plotStyle_option = (plotStyle) ? `--style "${plotStyle}"` : "";
 
@@ -1502,7 +1508,7 @@ app.get('/api/uniqlookup', (req: api.APIuniqlookupRequest, res: api.APIuniqlooku
   };
   const sql = getSQL[JSONAttr];
   execSQL([test_id], sql).then((result) => {
-    const r = [];
+    const r: any[] = [];
     for (const i of result) {
       if (JSONAttr !== 'metadata.parameters') r.push(i.out);
       else r.push({ names: i['parnames'][0], values: i['parvalues'][0] } as GvpParameter);
@@ -1612,7 +1618,7 @@ app.get('/api/getIdHint', (req, res) => {
   const id = req.query.id;
   const sql = queries.get_id_hint;
   execSQL([`${id}%`], sql).then((result) => {
-    const r = { hint: [] };
+    const r: { hint: number[] } = { hint: [] };
     for (let i = 0; i < result.length; i++) r.hint.push(result[i].plot_id);
     res.status(200).json(r);
   });
@@ -1642,6 +1648,7 @@ app.get('/api/getIdHint', (req, res) => {
  * @param type
  * @param testid id of the test that the user has selected
  */
+/*
 app.get('/api/onlineMenuFilter', (req, res) => {
   const q = req.query;
 
@@ -1916,7 +1923,8 @@ app.get('/api/onlineMenuFilter', (req, res) => {
     });
   });
 });
-
+*/
+/*
 app.get('/api/exceptionMenuFilter', (req, res) => {
   const q = req.query;
   q.beams = q.beams.split('|');
@@ -2005,7 +2013,7 @@ app.get('/api/exceptionMenuFilter', (req, res) => {
     }
   });
 });
-
+*/
 app.get('/api/getAvailableTestsForExceptions', (req, res) => {
   const sqlTests = queries.all_exception_tests;
 
@@ -2090,7 +2098,7 @@ app.get('/api/setLoggingStatus', (req, res) => {
 app.get('/api/test', (req: api.APITestRequest, res: api.APITestResponse) => {
   const id = req.query.id;
   let query: string = queries.all_tests;
-  const sqlparams = [];
+  const sqlparams: number[] = [];
   if (id !== undefined) {
     sqlparams.push(id);
     query = queries.test_by_id;
@@ -2108,7 +2116,7 @@ app.get('/api/test', (req: api.APITestRequest, res: api.APITestResponse) => {
 app.get('/api/mctool_name_version', (req: api.APITestRequest, res: api.APIMCtoolNameVersionResponse) => {
   const id = req.query.id;
   let query: string = queries.all_mctool_name_version;
-  const sqlparams = [];
+  const sqlparams: number[] = [];
   if (id !== undefined) {
     sqlparams.push(id);
     query = queries.mctool_name_version_by_id;
@@ -2126,7 +2134,7 @@ app.get('/api/mctool_name_version', (req: api.APITestRequest, res: api.APIMCtool
 app.get('/api/mctool_name', (req: api.APITestRequest, res: api.APIMCtoolNameResponse) => {
   const id = req.query.id;
   let query = queries.all_mctool_name;
-  const sqlparams = [];
+  const sqlparams: number[] = [];
   if (id !== undefined) {
     sqlparams.push(id);
     query = queries.mctool_name_by_id;
@@ -2144,7 +2152,7 @@ app.get('/api/mctool_name', (req: api.APITestRequest, res: api.APIMCtoolNameResp
 app.get('/api/inspire', (req: api.APIInspireRequest, res: api.APIInspireResponse) => {
   const id = req.query.id;
   let query = queries.all_inspire;
-  const sqlparams = [];
+  const sqlparams: string[] = [];
   if (id !== undefined) {
     sqlparams.push(id);
     query = queries.inspire_by_id;
@@ -2162,7 +2170,7 @@ app.get('/api/inspire', (req: api.APIInspireRequest, res: api.APIInspireResponse
 app.get('/api/observable', (req, res) => {
   const id = req.query.id;
   let query = queries.all_observable;
-  const sqlparams = [];
+  const sqlparams: string[] = [];
   if (id !== undefined) {
     sqlparams.push(id);
     query = queries.observable_by_id;
@@ -2180,7 +2188,7 @@ app.get('/api/observable', (req, res) => {
 app.get('/api/mctool_model', (req, res) => {
   const id = req.query.id;
   let query = queries.all_mctool_model;
-  const sqlparams = [];
+  const sqlparams: any[] = [];
   if (id !== undefined) {
     sqlparams.push(id);
     query = queries.mctool_model_by_id;
@@ -2198,7 +2206,7 @@ app.get('/api/mctool_model', (req, res) => {
 app.get('/api/particle', (req, res) => {
   const id = req.query.id;
   let query = queries.all_particle;
-  const sqlparams = [];
+  const sqlparams: any[] = [];
   if (id !== undefined) {
     sqlparams.push(id);
     query = queries.particle_by_id;
@@ -2216,7 +2224,7 @@ app.get('/api/particle', (req, res) => {
 app.get('/api/plot_type', (req, res) => {
   const id = req.query.id;
   let query = queries.all_plot_type;
-  const sqlparams = [];
+  const sqlparams: any[] = [];
   if (id !== undefined) {
     sqlparams.push(id);
     query = queries.plot_type_by_id;
@@ -2234,7 +2242,7 @@ app.get('/api/plot_type', (req, res) => {
 app.get('/api/reaction', (req, res) => {
   const id = req.query.id;
   let query = queries.all_reaction;
-  const sqlparams = [];
+  const sqlparams: any[] = [];
   if (id !== undefined) {
     sqlparams.push(id);
     query = queries.reaction_by_id;
@@ -2252,7 +2260,7 @@ app.get('/api/reaction', (req, res) => {
 app.get('/api/target', (req, res) => {
   const id = req.query.id;
   let query = queries.all_target;
-  const sqlparams = [];
+  const sqlparams: any[] = [];
   if (id !== undefined) {
     sqlparams.push(id);
     query = queries.target_by_id;

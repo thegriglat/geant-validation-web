@@ -4,7 +4,7 @@
   "scripts": {
     "tsc": "node_modules/.bin/tsc",
     "ng": "node_modules/.bin/ng",
-    "compile": "tsc --lib es2017 index.ts src/app/classes/gvp-plot.ts",
+    "compile": "tsc --strictNullChecks --lib es2017 index.ts src/app/classes/gvp-plot.ts",
     "start": "ng serve",
     "build": "ng build --prod",
     "test": "ng test",
