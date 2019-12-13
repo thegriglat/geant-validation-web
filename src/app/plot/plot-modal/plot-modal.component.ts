@@ -39,6 +39,7 @@ export class PlotModalComponent implements OnInit {
   selectedRef: Nullable<GvpJSON> = null;
   inProgress = false;
   useMarkers = true;
+  useOnlyRatio = false;
   private _names = new Map<GvpJSON, string>();
 
   constructor(public modal: SuiModal<IConfirmModalContext, void, void>, private api: GVPAPIService) {
@@ -98,8 +99,10 @@ export class PlotModalComponent implements OnInit {
   selectRef(p: Nullable<GvpJSON>) {
     if (p) {
       this.config.refid = this.config.data.indexOf(p);
+      this.config.onlyratio = this.useOnlyRatio;
     } else {
       this.config.refid = -1;
+      this.useOnlyRatio = false;
     };
     this.config.markerSize = (this.useMarkers) ? 1 : 0;
     this.modalRoot = true;
