@@ -5,3 +5,7 @@
 .center {
     text-align: center;
 }
+
+.ui.button {
+    margin-top: 5px;
+}
