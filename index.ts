@@ -8,6 +8,7 @@ const forceSSL = require('express-force-ssl');
 const session = require('express-session');
 const fs = require('fs');
 import * as http from 'http';
+import { isString, isUndefined, isNull } from 'util';
 const https = require('https');
 const bodyParser = require('body-parser');
 const pg = require('pg');
@@ -300,10 +301,11 @@ function execSQL(params: any[], sql: string): Promise<SQLRow[]> {
  * @param {list} arr array of items (string || number)
  * @returns string
  */
+
 function PGJoin(arr: any[]): string {
   let s = '{';
   for (let i = 0; i < arr.length; i++) {
-    if (typeof arr[i] === 'string') {
+    if (isString(arr[i])) {
       s += `"${arr[i]}",`;
     } else {
       s += `${arr[i]},`;
@@ -371,7 +373,7 @@ function apigetJSON(id: number): Promise<Nullable<GvpJSON>> {
       plotType: result.plot_type_name,
 
     };
-    if (result.plot_npoints === null) {
+    if (isNull(result.plot_npoints)) {
       // histogram
       r.chart = undefined;
       let h: GvpHistogram = new GvpHistogram();
@@ -458,7 +460,7 @@ function apigetJSON(id: number): Promise<Nullable<GvpJSON>> {
 function apimultiget(ids: number[]): Promise<GvpJSON[]> {
   const promises = ids.map(e => apigetJSON(e));
   return Promise.all(promises).then(list => {
-    return list.filter(e => e !== null) as GvpJSON[];
+    return list.filter(e => !isNull(e)) as GvpJSON[];
   });
 }
 
@@ -889,7 +891,7 @@ app.post('/upload', isLoggedIn, (req, res) => {
               'xSysErrorsMinus'
             ];
             for (let i = 0; i < keys.length; i++) {
-              if (json.chart[keys[i]] !== undefined && json.chart[keys[i]].length === 0) {
+              if (!isUndefined(json.chart[keys[i]]) && json.chart[keys[i]].length === 0) {
                 json.chart[keys[i]] = null;
               }
             }
@@ -1126,7 +1128,7 @@ router.route('/getRaw/:id').get((req: api.APIGetRequest, res) => {
       const metadataFormatted = columnify(metadata, { showHeaders: false });
       let table = '';
       let rows;
-      if (result.chart !== undefined) {
+      if (!isUndefined(result.chart)) {
         rows = [];
 
         for (let i = 0; i < result.chart.nPoints; i++) {
@@ -1135,21 +1137,21 @@ router.route('/getRaw/:id').get((req: api.APIGetRequest, res) => {
             xValue: result.chart.xValues[i],
             yValue: result.chart.yValues[i],
             xStatErrorMinus:
-              result.chart.xStatErrorsMinus[i] === undefined ? 0 : result.chart.xStatErrorsMinus[i],
+              isUndefined(result.chart.xStatErrorsMinus[i]) ? 0 : result.chart.xStatErrorsMinus[i],
             xStatErrorPlus:
-              result.chart.xStatErrorsPlus[i] === undefined ? 0 : result.chart.xStatErrorsPlus[i],
+              isUndefined(result.chart.xStatErrorsPlus[i]) ? 0 : result.chart.xStatErrorsPlus[i],
             yStatErrorMinus:
-              result.chart.yStatErrorsMinus[i] === undefined ? 0 : result.chart.yStatErrorsMinus[i],
+              isUndefined(result.chart.yStatErrorsMinus[i]) ? 0 : result.chart.yStatErrorsMinus[i],
             yStatErrorPlus:
-              result.chart.yStatErrorsPlus[i] === undefined ? 0 : result.chart.yStatErrorsPlus[i],
+              isUndefined(result.chart.yStatErrorsPlus[i]) ? 0 : result.chart.yStatErrorsPlus[i],
             xSysErrorMinus:
-              result.chart.xSysErrorsMinus[i] === undefined ? 0 : result.chart.xSysErrorsMinus[i],
+              isUndefined(result.chart.xSysErrorsMinus[i]) ? 0 : result.chart.xSysErrorsMinus[i],
             xSysErrorPlus:
-              result.chart.xSysErrorsMinus[i] === undefined ? 0 : result.chart.xSysErrorsMinus[i],
+              isUndefined(result.chart.xSysErrorsMinus[i]) ? 0 : result.chart.xSysErrorsMinus[i],
             ySysErrorMinus:
-              result.chart.ySysErrorsMinus[i] === undefined ? 0 : result.chart.ySysErrorsMinus[i],
+              isUndefined(result.chart.ySysErrorsMinus[i]) ? 0 : result.chart.ySysErrorsMinus[i],
             ySysErrorPlus:
-              result.chart.ySysErrorsPlus[i] === undefined ? 0 : result.chart.ySysErrorsPlus[i]
+              isUndefined(result.chart.ySysErrorsPlus[i]) ? 0 : result.chart.ySysErrorsPlus[i]
           };
           clean(row);
           rows.push(row);
@@ -1160,7 +1162,7 @@ router.route('/getRaw/:id').get((req: api.APIGetRequest, res) => {
         gPlot += `set term png\n${`set xlabel "${result.chart.xAxisName}"\n`}${`set ylabel "${
           result.chart.yAxisName
           }"\n`}${`set bars small\n`}${`set grid\n`}plot '-' using 1:2:($1-sqrt($3**2+$7**2)):($1+sqrt($4**2+$8**2)):($2-sqrt($5**2+$9**2)):($2+sqrt($6**2+$10**2)) notitle with xyerrorlines linecolor rgb "blue"`;
-      } else if (result.histogram !== undefined) {
+      } else if (!isUndefined(result.histogram)) {
         rows = [];
 
         for (let i = 0; i < result.histogram.binEdgeLow.length; i++) {
@@ -1169,19 +1171,19 @@ router.route('/getRaw/:id').get((req: api.APIGetRequest, res) => {
             binEdgeHigh: result.histogram.binEdgeHigh[i],
             binContent: result.histogram.binContent[i],
             yStatErrorMinus:
-              result.histogram.yStatErrorsMinus[i] === undefined
+              isUndefined(result.histogram.yStatErrorsMinus[i])
                 ? 0
                 : result.histogram.yStatErrorsMinus[i],
             yStatErrorPlus:
-              result.histogram.yStatErrorsPlus[i] === undefined
+              isUndefined(result.histogram.yStatErrorsPlus[i])
                 ? 0
                 : result.histogram.yStatErrorsPlus[i],
             ySysErrorMinus:
-              result.histogram.ySysErrorsMinus[i] === undefined
+              isUndefined(result.histogram.ySysErrorsMinus[i])
                 ? 0
                 : result.histogram.ySysErrorsMinus[i],
             ySysErrorPlus:
-              result.histogram.ySysErrorsPlus[i] === undefined
+              isUndefined(result.histogram.ySysErrorsPlus[i])
                 ? 0
                 : result.histogram.ySysErrorsPlus[i]
           };
@@ -1211,7 +1213,7 @@ router.route('/getRaw/:id').get((req: api.APIGetRequest, res) => {
  */
 function clean(obj) {
   for (const propName in obj) {
-    if (obj[propName] === null || obj[propName] === undefined) {
+    if (isNull(obj[propName]) || isUndefined(obj[propName])) {
       delete obj[propName];
     }
   }
@@ -1390,12 +1392,12 @@ async function getPNG(body: GvpPngRequest): Promise<GvpPngResponse> {
   if (xaxis !== 'auto' && xaxis !== 'lin' && xaxis !== 'log') xaxis = 'auto';
   if (yaxis !== 'auto' && yaxis !== 'lin' && yaxis !== 'log') yaxis = 'auto';
 
-  if (data === undefined || data.length === 0) {
+  if (isUndefined(data) || data.length === 0) {
     return new Promise((resolve, reject) =>
       reject({ status: false, description: 'Ids not introduced', filename: null })
     );
   }
-  if (refid !== undefined && isNaN(refid)) {
+  if (!isUndefined(refid) && isNaN(refid)) {
     return new Promise((resolve, reject) => {
       reject({ status: false, description: 'Reference id is not a number', filename: null });
     });
@@ -1421,7 +1423,7 @@ async function getPNG(body: GvpPngRequest): Promise<GvpPngResponse> {
       resolve({ status: true, filename: `${fname.replace('dist/gvp-template/', '')}.png` })
     );
   }
-  const refid_option = refid !== undefined ? ` -r ${refid}` : '';
+  const refid_option = !isUndefined(refid) ? ` -r ${refid}` : '';
   const xmin_option = (xmin && !isNaN(xmin)) ? `--xmin ${xmin}` : '';
   const xmax_option = (xmax && !isNaN(xmax)) ? `--xmax ${xmax}` : '';
   const ymin_option = (ymin && !isNaN(ymin)) ? `--ymin ${ymin}` : '';
@@ -2099,7 +2101,7 @@ app.get('/api/test', (req: api.APITestRequest, res: api.APITestResponse) => {
   const id = req.query.id;
   let query: string = queries.all_tests;
   const sqlparams: number[] = [];
-  if (id !== undefined) {
+  if (!isUndefined(id)) {
     sqlparams.push(id);
     query = queries.test_by_id;
   }
@@ -2117,7 +2119,7 @@ app.get('/api/mctool_name_version', (req: api.APITestRequest, res: api.APIMCtool
   const id = req.query.id;
   let query: string = queries.all_mctool_name_version;
   const sqlparams: number[] = [];
-  if (id !== undefined) {
+  if (!isUndefined(id)) {
     sqlparams.push(id);
     query = queries.mctool_name_version_by_id;
   }
@@ -2135,7 +2137,7 @@ app.get('/api/mctool_name', (req: api.APITestRequest, res: api.APIMCtoolNameResp
   const id = req.query.id;
   let query = queries.all_mctool_name;
   const sqlparams: number[] = [];
-  if (id !== undefined) {
+  if (!isUndefined(id)) {
     sqlparams.push(id);
     query = queries.mctool_name_by_id;
   }
@@ -2153,7 +2155,7 @@ app.get('/api/inspire', (req: api.APIInspireRequest, res: api.APIInspireResponse
   const id = req.query.id;
   let query = queries.all_inspire;
   const sqlparams: string[] = [];
-  if (id !== undefined) {
+  if (!isUndefined(id)) {
     sqlparams.push(id);
     query = queries.inspire_by_id;
   }
@@ -2171,7 +2173,7 @@ app.get('/api/observable', (req, res) => {
   const id = req.query.id;
   let query = queries.all_observable;
   const sqlparams: string[] = [];
-  if (id !== undefined) {
+  if (!isUndefined(id)) {
     sqlparams.push(id);
     query = queries.observable_by_id;
   }
@@ -2189,7 +2191,7 @@ app.get('/api/mctool_model', (req, res) => {
   const id = req.query.id;
   let query = queries.all_mctool_model;
   const sqlparams: any[] = [];
-  if (id !== undefined) {
+  if (!isUndefined(id)) {
     sqlparams.push(id);
     query = queries.mctool_model_by_id;
   }
@@ -2207,7 +2209,7 @@ app.get('/api/particle', (req, res) => {
   const id = req.query.id;
   let query = queries.all_particle;
   const sqlparams: any[] = [];
-  if (id !== undefined) {
+  if (!isUndefined(id)) {
     sqlparams.push(id);
     query = queries.particle_by_id;
   }
@@ -2225,7 +2227,7 @@ app.get('/api/plot_type', (req, res) => {
   const id = req.query.id;
   let query = queries.all_plot_type;
   const sqlparams: any[] = [];
-  if (id !== undefined) {
+  if (!isUndefined(id)) {
     sqlparams.push(id);
     query = queries.plot_type_by_id;
   }
@@ -2243,7 +2245,7 @@ app.get('/api/reaction', (req, res) => {
   const id = req.query.id;
   let query = queries.all_reaction;
   const sqlparams: any[] = [];
-  if (id !== undefined) {
+  if (!isUndefined(id)) {
     sqlparams.push(id);
     query = queries.reaction_by_id;
   }
@@ -2261,7 +2263,7 @@ app.get('/api/target', (req, res) => {
   const id = req.query.id;
   let query = queries.all_target;
   const sqlparams: any[] = [];
-  if (id !== undefined) {
+  if (!isUndefined(id)) {
     sqlparams.push(id);
     query = queries.target_by_id;
   }
