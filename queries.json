@@ -1,8 +1,6 @@
 {
   "all_tests": "select test.*, mctool_name_name as project from test inner join mctool_name on test.mctool_name_id = mctool_name.mctool_name_id",
   "test_by_id": "select test.*, mctool_name_name as project from test inner join mctool_name on test.mctool_name_id = mctool_name.mctool_name_id where test.test_id = $1",
-  "all_mctool_name_version": "select * from mctool_name_version",
-  "mctool_name_version_by_id": "select * from mctool_name_version where mctool_name_version_id = $1",
   "all_mctool_name": "select * from mctool_name",
   "mctool_name_by_id": "select * from mctool_name where mctool_name_id = $1",
   "all_inspire": "select * from inspire",

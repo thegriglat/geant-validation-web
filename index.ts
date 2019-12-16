@@ -2117,11 +2117,12 @@ app.get('/api/test', (req: api.APITestRequest, res: api.APITestResponse) => {
  */
 app.get('/api/mctool_name_version', (req: api.APITestRequest, res: api.APIMCtoolNameVersionResponse) => {
   const id = req.query.id;
-  let query: string = queries.all_mctool_name_version;
-  const sqlparams: number[] = [];
+  const project = req.query.project;
+  let query: string = "select * from mctool_name_version inner join mctool_name on mctool_name_version.mctool_name_id = mctool_name.mctool_name_id where mctool_name.mctool_name_name = $1";
+  const sqlparams: any[] = [project];
   if (!isUndefined(id)) {
     sqlparams.push(id);
-    query = queries.mctool_name_version_by_id;
+    query = "select * from mctool_name_version inner join mctool_name on mctool_name_version.mctool_name_id = mctool_name.mctool_name_id where mctool_name.mctool_name_name = $1 and mctool_name_version_id = $2";
   }
   execSQL(sqlparams, query).then(result => {
     res.status(200).json(result as GvpMctoolNameVersion[]);

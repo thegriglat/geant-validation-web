@@ -96,6 +96,7 @@ export interface APIuniqlookupResponse extends express.Response {
 export interface APITestRequest extends express.Request {
     query: {
         id?: number;
+        project: string;
     }
 }
 

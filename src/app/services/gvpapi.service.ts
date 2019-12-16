@@ -80,10 +80,10 @@ export class GVPAPIService {
     return this._get<GvpInspire[]>("/api/inspire", {});
   }
 
-  public mctool_name_version(id?: number) {
-    let params = this.getParams();
+  public mctool_name_version(id?: number, project = "GEANT4") {
+    let params = this.getParams().set("project", project);
     if (id !== undefined)
-      params.set("id", String(id));
+      params = params.set("id", String(id));
     return this._get<GvpMctoolNameVersion[]>("/api/mctool_name_version", params);
   }
 
