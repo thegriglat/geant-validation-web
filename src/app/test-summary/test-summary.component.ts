@@ -15,7 +15,6 @@ export class TestSummaryComponent implements OnInit {
 
   // testname,version -> existence
   public data = new Map<[string, number], boolean>();
-  public showRef = false;
   private _versionCache: GvpMctoolNameVersion[] = [];
 
   ngOnInit() {
@@ -49,7 +48,7 @@ export class TestSummaryComponent implements OnInit {
   versions(): number[] {
     const r = Array.from(this.data.keys()).map(e => e[1]).filter(distinct).filter(e => e > 0);
     let r0 = r.map(e => this.getVersionC(e)).sort(versionSorter).reverse();
-    if (!this.showRef) r0 = r0.filter(unstableVersionFilter);
+    r0 = r0.filter(unstableVersionFilter);
     return r0.map(e => e.mctool_name_version_id);
   }
 
@@ -60,6 +59,6 @@ export class TestSummaryComponent implements OnInit {
   getVersion(v: number): string {
     const r = this.getVersionC(v);
     if (!isNull(r)) return r.version;
-    return "updating ...";
+    return "";
   }
 }

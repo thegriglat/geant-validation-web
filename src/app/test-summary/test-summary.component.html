@@ -1,17 +1,18 @@
 <h1>Tests summary</h1>
 
-<sui-checkbox class="toggle" [(ngModel)]="showRef">Show reference releases</sui-checkbox>
 <table class="ui compact celled table">
   <thead>
     <tr>
       <th>Test/Version</th>
-      <th *ngFor="let test of tests()">{{test}}</th>
+      <th *ngFor="let version of versions()" class="center">
+        <span class="verticaltext">{{getVersion(version)}}</span>
+      </th>
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let version of versions()">
-      <td>{{getVersion(version)}}</td>
-      <td *ngFor="let test of tests()" class="center aligned">
+    <tr *ngFor="let test of tests()">
+      <td>{{test}}</td>
+      <td *ngFor="let version of versions()" class="center aligned">
         <i class="check icon" *ngIf="hasV(test, version)"></i>
       </td>
     </tr>
