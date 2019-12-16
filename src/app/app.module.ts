@@ -18,6 +18,7 @@ import { LookupViewComponent } from './lookup-view/lookup-view.component';
 import { MenuHeaderComponent } from './menu-header/menu-header.component';
 import { PlotModalComponent } from './plot/plot-modal/plot-modal.component';
 import { PermalinkComponent } from './permalink/permalink.component';
+import { TestSummaryComponent } from './test-summary/test-summary.component';
 
 @NgModule({
   declarations: [
@@ -32,6 +33,7 @@ import { PermalinkComponent } from './permalink/permalink.component';
     MenuHeaderComponent,
     PlotModalComponent,
     PermalinkComponent,
+    TestSummaryComponent,
   ],
   imports: [
     SuiModule,
