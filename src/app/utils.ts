@@ -49,7 +49,9 @@ export function unstableVersionFilter(e: GvpMctoolNameVersion): boolean {
     return e.version.indexOf("ref") === -1
         && e.version.indexOf("cand") === -1
         && e.version.indexOf("test") === -1
-        && e.version.indexOf("beta") === -1;
+        && e.version.indexOf("beta") === -1
+        && e.version.indexOf("_") === -1
+        && e.version.indexOf("branch") === -1;
 }
 
 export function getColumnWide(cols: number): string {
