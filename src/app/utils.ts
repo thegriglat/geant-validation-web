@@ -48,7 +48,8 @@ export function versionSorter<T extends hasVersionField>(v1: T, v2: T): number {
 export function unstableVersionFilter(e: GvpMctoolNameVersion): boolean {
     return e.version.indexOf("ref") === -1
         && e.version.indexOf("cand") === -1
-        && e.version.indexOf("test") === -1;
+        && e.version.indexOf("test") === -1
+        && e.version.indexOf("beta") === -1;
 }
 
 export function getColumnWide(cols: number): string {
