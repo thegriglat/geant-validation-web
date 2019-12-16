@@ -81,7 +81,7 @@ export class GVPAPIService {
   }
 
   public mctool_name_version(id?: number) {
-    let params = new HttpParams({ encoder: new CustomEncoder() });
+    let params = this.getParams();
     if (id !== undefined)
       params.set("id", String(id));
     return this._get<GvpMctoolNameVersion[]>("/api/mctool_name_version", params);
