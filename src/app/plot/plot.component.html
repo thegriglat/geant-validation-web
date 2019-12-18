@@ -1,7 +1,7 @@
 <div class="ui active inverted dimmer" *ngIf="inProgress">
     <div class="ui loader"></div>
 </div>
-<img class="ui rounded centered image" [src]="url" *ngIf="!inProgress" (click)="showModal(url, config)" suiPopup
+<img class="ui rounded centered image pointer" [src]="url" *ngIf="!inProgress" (click)="showModal(url, config)" suiPopup
     [popupTemplate]="popupTemplate" [popupPlacement]="bottom">
 <ng-template let-popup #popupTemplate>
     <b>Observable</b>: {{getHintData().observable}}<br>
