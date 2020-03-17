@@ -15,7 +15,9 @@
   </thead>
   <tbody>
     <tr *ngFor="let t of tests">
-      <td  class="center aligned">{{t.test_name}}</td>
+      <td class="center aligned">
+        <a [routerLink]="['/statcmp', t.test_id]">{{t.test_name}}</a>
+      </td>
       <td class="center aligned">{{t.project}}</td>
       <td class="center aligned">{{t.responsible?.join(",")}}</td>
       <td>{{t.description}}</td>
