@@ -3,7 +3,7 @@
 </h1>
 
 <div class="ui stackable grid">
-  <div class="four wide column" *ngIf="!isMenuCollapsed">
+  <div class="four wide column">
     <div class="ui segment">
       <h3>Version</h3>
       <div class="ui active inverted dimmer" *ngIf="menuVersions.length === 0">
@@ -34,7 +34,7 @@
         <sui-checkbox (click)="updateExp(e)">{{e.expname}}</sui-checkbox>
       </div>
     </div>
-    <button class="enlarge ui primary button" (click)="magic()">
+    <button class="enlarge ui primary button">
       Submit
     </button>
   </div>
