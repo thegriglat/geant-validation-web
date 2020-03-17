@@ -6,6 +6,18 @@
   <div class="four wide column" *ngIf="!isMenuCollapsed">
     <div class="ui segment">
       <h3>Version</h3>
+      <div class="ui active inverted dimmer" *ngIf="menuVersions.length === 0">
+        <div class="ui loader"></div>
+      </div>
+      <sui-multi-select class="selection enlarge" [(ngModel)]="versionsSel" [options]="unstableFilter(menuVersions)"
+        [isSearchable]="true" [isDisabled]="false" [optionFormatter]="versionFormatter"
+        [optionsFilter]="versionSelectFilter" #multiSelect>
+        <sui-select-option *ngFor="let obj of multiSelect.filteredOptions" [value]="obj">
+        </sui-select-option>
+      </sui-multi-select>
+      <div class="ui divider"></div>
+      <sui-checkbox class="toggle" [(ngModel)]="showUnstableVersions" (checkChange)="filterVersionSel()">Show
+        unstable releases</sui-checkbox>
     </div>
     <div class="ui segment">
       <h3>Beam</h3>
