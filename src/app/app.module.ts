@@ -19,6 +19,7 @@ import { MenuHeaderComponent } from './menu-header/menu-header.component';
 import { PlotModalComponent } from './plot/plot-modal/plot-modal.component';
 import { PermalinkComponent } from './permalink/permalink.component';
 import { TestSummaryComponent } from './test-summary/test-summary.component';
+import { StatTestListComponent } from './stat-test-list/stat-test-list.component';
 
 @NgModule({
   declarations: [
@@ -34,6 +35,7 @@ import { TestSummaryComponent } from './test-summary/test-summary.component';
     PlotModalComponent,
     PermalinkComponent,
     TestSummaryComponent,
+    StatTestListComponent,
   ],
   imports: [
     SuiModule,

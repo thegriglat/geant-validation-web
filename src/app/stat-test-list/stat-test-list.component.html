@@ -1,0 +1,24 @@
+<h1 class="pageheader" id="headerblk">
+  Available tests
+</h1>
+
+<!-- Table with test's desc -->
+
+<table class="ui celled table">
+  <thead>
+    <tr>
+      <th class="center aligned">Test</th>
+      <th class="center aligned">Project</th>
+      <th class="center aligned">Author</th>
+      <th class="center aligned">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let t of tests">
+      <td  class="center aligned">{{t.test_name}}</td>
+      <td class="center aligned">{{t.project}}</td>
+      <td class="center aligned">{{t.responsible?.join(",")}}</td>
+      <td>{{t.description}}</td>
+    </tr>
+  </tbody>
+</table>
