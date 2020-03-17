@@ -28,7 +28,7 @@
     <div class="ui segment">
       <h3>Additional parameters</h3>
     </div>
-    <div class="ui segment">
+    <div class="ui segment" *ngIf="availableExpDataforTest.length !== 0">
       <h3>Reference data</h3>
       <div *ngFor="let e of availableExpDataforTest">
         <sui-checkbox (click)="updateExp(e)">{{e.expname}}</sui-checkbox>
