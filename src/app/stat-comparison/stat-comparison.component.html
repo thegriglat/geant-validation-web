@@ -1,3 +1,29 @@
 <h1 class="pageheader" id="headerblk">
   {{(test  |async)?.test_name}}
 </h1>
+
+<div class="ui stackable grid">
+  <div class="four wide column" *ngIf="!isMenuCollapsed">
+    <div class="ui segment">
+      <h3>Version</h3>
+    </div>
+    <div class="ui segment">
+      <h3>Beam</h3>
+    </div>
+    <div class="ui segment">
+      <h3>Observable</h3>
+    </div>
+    <div class="ui segment">
+      <h3>Additional parameters</h3>
+    </div>
+    <div class="ui segment">
+      <h3>Reference data</h3>
+    </div>
+    <button class="enlarge ui primary button" (click)="magic()">
+      Submit
+    </button>
+  </div>
+  <div class="twelve wide column">
+    data
+  </div>
+</div>
