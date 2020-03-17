@@ -12,7 +12,7 @@ import { StatTestListComponent } from './stat-test-list/stat-test-list.component
 const routes: Routes = [
 	{ path: '', component: HomeComponent },
 	{ path: 'layouts', component: GvplayoutComponent },
-	{ path: 'statcmp', component: StatComparisonComponent },
+	{ path: 'statcmp/:id', component: StatComparisonComponent },
 	{ path: 'stat', component: StatTestListComponent },
 	{ path: 'records', component: RecordViewerComponent },
 	{ path: 'exp', component: ExpViewerComponent },
