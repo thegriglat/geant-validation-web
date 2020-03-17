@@ -30,6 +30,9 @@
     </div>
     <div class="ui segment">
       <h3>Reference data</h3>
+      <div *ngFor="let e of availableExpDataforTest">
+        <sui-checkbox (click)="updateExp(e)">{{e.expname}}</sui-checkbox>
+      </div>
     </div>
     <button class="enlarge ui primary button" (click)="magic()">
       Submit

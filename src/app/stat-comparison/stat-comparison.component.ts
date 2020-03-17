@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { switchMap, map } from 'rxjs/operators';
-import { Nullable, GvpTest, GvpMctoolNameVersion } from '../classes/gvp-plot';
+import { Nullable, GvpTest, GvpMctoolNameVersion, GvpInspire } from '../classes/gvp-plot';
 import { GVPAPIService } from '../services/gvpapi.service';
 import { Observable } from 'rxjs';
 import { unstableVersionFilter, versionSorter } from '../utils';
@@ -17,6 +17,8 @@ export class StatComparisonComponent implements OnInit {
   public menuVersions: GvpMctoolNameVersion[] = [];
   public versionsSel: GvpMctoolNameVersion[] = [];
   public showUnstableVersions = false;
+  public availableExpDataforTest: GvpInspire[] = [];
+  checkedExp: GvpInspire[] = [];
 
   private MCToolNameCache = new Map<number, string>();
   /** Cache of MC tool versions, popuated on page load
@@ -50,6 +52,7 @@ export class StatComparisonComponent implements OnInit {
       ));
     this.test.subscribe(test => {
       this.updateVersionMenu(test);
+      this.updateExpDescription(test.test_id);
     })
   }
 
@@ -105,4 +108,28 @@ export class StatComparisonComponent implements OnInit {
     });
   }
 
+  updateExp(e: GvpInspire) {
+    if (this.checkedExp.indexOf(e) === -1) {
+      this.checkedExp.push(e);
+    } else {
+      this.checkedExp.splice(this.checkedExp.indexOf(e), 1);
+    }
+  }
+
+  private updateExpDescription(testId: number) {
+    this.availableExpDataforTest = [];
+    this.checkedExp = [];
+    this.api.getExperimentsInspireForTest(testId).subscribe((result) => {
+      const rmod = result.map(e => {
+        e.expname = e.expname ? e.expname : 'exp. data';
+        return e;
+      });
+      for (const r of rmod) {
+        if (this.availableExpDataforTest.indexOf(r) === -1 &&
+          this.availableExpDataforTest.map(e => e.inspire_id).indexOf(r.inspire_id) === -1) {
+          this.availableExpDataforTest.push(r);
+        }
+      }
+    });
+  }
 }
