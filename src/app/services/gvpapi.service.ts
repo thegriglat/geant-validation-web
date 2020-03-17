@@ -67,6 +67,12 @@ export class GVPAPIService {
     return this._get<GvpTest[]>("/api/test", params);
   }
 
+  public testById(id: number) {
+    console.log(id);
+    const params = this.getParams().set("id", String(id));
+    return this._get<GvpTest[]>("/api/test", params).pipe(map(e => e[0]));
+  }
+
   public inspireById(id: number) {
     const params = this.getParams().set("id", String(id));
     return this._get<GvpInspire[]>("/api/inspire", params).pipe(
