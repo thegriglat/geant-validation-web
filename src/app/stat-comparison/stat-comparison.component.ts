@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { switchMap, map } from 'rxjs/operators';
-import { Nullable, GvpTest, GvpMctoolNameVersion, GvpInspire, ParametersList } from '../classes/gvp-plot';
+import { GvpTest, GvpMctoolNameVersion, GvpInspire, ParametersList, Nullable } from '../classes/gvp-plot';
 import { GVPAPIService } from '../services/gvpapi.service';
 import { Observable } from 'rxjs';
 import { unstableVersionFilter, versionSorter, s2KaTeX } from '../utils';
@@ -13,7 +13,7 @@ import { unstableVersionFilter, versionSorter, s2KaTeX } from '../utils';
 })
 export class StatComparisonComponent implements OnInit {
 
-  public test: Observable<GvpTest> = new Observable<GvpTest>();
+  public test: Nullable<GvpTest> = null;
   public menuVersions: GvpMctoolNameVersion[] = [];
   public versionsSel: GvpMctoolNameVersion[] = [];
   public showUnstableVersions = false;
@@ -26,6 +26,7 @@ export class StatComparisonComponent implements OnInit {
   public menuParameters: ParametersList = [];
   public parametersSel: ParametersList = [];
   public parametersUpdating = false;
+  public submitted = false;
 
   private MCToolNameCache = new Map<number, string>();
   /** Cache of MC tool versions, popuated on page load
@@ -53,17 +54,22 @@ export class StatComparisonComponent implements OnInit {
         this.MCToolNameCache.set(elem.mctool_name_id, elem.mctool_name_name);
       }
     });
-    this.test = this.route.paramMap.pipe(
+    this.route.paramMap.pipe(
       switchMap((params: ParamMap) =>
         this.api.testById(Number(params.get('id')))
-      ));
-    this.test.subscribe(test => {
-      this.updateVersionMenu(test);
-      this.updateExpDescription(test.test_id);
-      this.updateBeamMenu(test);
-      this.updateObservableMenu(test);
-      this.updateParametersMenu(test);
-    })
+      )).subscribe(test => {
+        this.test = test;
+        this.updateVersionMenu(test);
+        this.updateExpDescription(test.test_id);
+        this.updateBeamMenu(test);
+        this.updateObservableMenu(test);
+        this.updateParametersMenu(test);
+      })
+  }
+
+  submit() {
+    this.submitted = false;
+    this.submitted = true;
   }
 
   unstableFilter(v: GvpMctoolNameVersion[]): GvpMctoolNameVersion[] {

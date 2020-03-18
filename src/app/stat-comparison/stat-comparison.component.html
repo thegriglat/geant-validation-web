@@ -1,5 +1,5 @@
 <h1 class="pageheader" id="headerblk">
-  {{(test  |async)?.test_name}}
+  {{test?.test_name}}
 </h1>
 
 <div class="ui stackable grid">
@@ -60,11 +60,13 @@
         <sui-checkbox (click)="updateExp(e)">{{e.expname}}</sui-checkbox>
       </div>
     </div>
-    <button class="enlarge ui primary button">
+    <button class="enlarge ui primary button" (click)="submit()">
       Submit
     </button>
   </div>
   <div class="twelve wide column">
-    data
+    <!-- TODO: reference data -->
+    <app-stat-table *ngIf="submitted" [test]="test" [versions]="versionsSel" [observables]="observableSel"
+      [parameters]="parametersSel"></app-stat-table>
   </div>
 </div>
