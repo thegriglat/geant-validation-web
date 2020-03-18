@@ -133,7 +133,6 @@ export class StatComparisonComponent implements OnInit {
 
   updateParametersMenu(test: GvpTest): void {
     this.api.uniqlookup_parametersList(test.test_id).subscribe(parameters => {
-      console.log(parameters);
       this.menuParameters = parameters;
       for (let i of this.menuParameters) {
         this.parametersSel.push([i[0], []]);
