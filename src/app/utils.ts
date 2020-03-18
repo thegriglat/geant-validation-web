@@ -4,6 +4,11 @@ export function unroll<T>(arr: T[][]): T[] {
     return arr.reduce((res, e) => (res = res.concat(...e)));
 }
 
+//  wrap spaces to proper view in katex
+export function s2KaTeX(str: string): string {
+    return str.replace(/ /g, " \\space ");
+}
+
 interface hasVersionField {
     version: string;
 }

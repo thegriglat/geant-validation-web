@@ -32,6 +32,14 @@
     </div>
     <div class="ui segment">
       <h3>Observable</h3>
+      <div class="ui active inverted dimmer" *ngIf="menuObservable.length === 0">
+        <div class="ui loader"></div>
+      </div>
+      <div *ngFor="let o of menuObservable">
+        <sui-checkbox (click)="updateObservable(o)">
+          <ng-katex class="center" [equation]="katex(o)"></ng-katex>
+        </sui-checkbox>
+      </div>
     </div>
     <div class="ui segment">
       <h3>Additional parameters</h3>

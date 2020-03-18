@@ -4,7 +4,7 @@ import { switchMap, map } from 'rxjs/operators';
 import { Nullable, GvpTest, GvpMctoolNameVersion, GvpInspire } from '../classes/gvp-plot';
 import { GVPAPIService } from '../services/gvpapi.service';
 import { Observable } from 'rxjs';
-import { unstableVersionFilter, versionSorter } from '../utils';
+import { unstableVersionFilter, versionSorter, s2KaTeX } from '../utils';
 
 @Component({
   selector: 'app-stat-comparison',
@@ -21,6 +21,8 @@ export class StatComparisonComponent implements OnInit {
   public checkedExp: GvpInspire[] = [];
   public menuBeams: string[] = [];
   public beamsSel: string[] = [];
+  public menuObservable: string[] = [];
+  public observableSel: string[] = [];
 
   private MCToolNameCache = new Map<number, string>();
   /** Cache of MC tool versions, popuated on page load
@@ -56,6 +58,7 @@ export class StatComparisonComponent implements OnInit {
       this.updateVersionMenu(test);
       this.updateExpDescription(test.test_id);
       this.updateBeamMenu(test);
+      this.updateObservableMenu(test);
     })
   }
 
@@ -118,6 +121,13 @@ export class StatComparisonComponent implements OnInit {
     })
   }
 
+  updateObservableMenu(test: GvpTest): void {
+    this.api.uniqlookup_observableName(test.test_id).subscribe(observables => {
+      this.menuObservable = observables;
+      if (this.menuObservable.length === 1) this.observableSel = this.menuObservable.slice();
+    })
+  }
+
 
   updateExp(e: GvpInspire) {
     if (this.checkedExp.indexOf(e) === -1) {
@@ -125,6 +135,18 @@ export class StatComparisonComponent implements OnInit {
     } else {
       this.checkedExp.splice(this.checkedExp.indexOf(e), 1);
     }
+  }
+
+  updateObservable(observable: string): void {
+    if (this.observableSel.indexOf(observable) === -1) {
+      this.observableSel.push(observable);
+    } else {
+      this.observableSel.splice(this.observableSel.indexOf(observable), 1);
+    }
+  }
+
+  katex(s: string): string {
+    return s2KaTeX(s);
   }
 
   private updateExpDescription(testId: number) {
