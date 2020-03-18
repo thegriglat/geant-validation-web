@@ -41,9 +41,9 @@
         </sui-checkbox>
       </div>
     </div>
-    <div class="ui segment">
+    <div class="ui segment" *ngIf="!parametersUpdating && menuParameters.length !== 0">
       <h3>Additional parameters</h3>
-      <div class="ui active inverted dimmer" *ngIf="menuParameters.length === 0">
+      <div class="ui active inverted dimmer" *ngIf="parametersUpdating">
         <div class="ui loader"></div>
       </div>
       <div *ngFor="let paramGroup of menuParameters">

@@ -25,6 +25,7 @@ export class StatComparisonComponent implements OnInit {
   public observableSel: string[] = [];
   public menuParameters: ParametersList = [];
   public parametersSel: ParametersList = [];
+  public parametersUpdating = false;
 
   private MCToolNameCache = new Map<number, string>();
   /** Cache of MC tool versions, popuated on page load
@@ -132,11 +133,13 @@ export class StatComparisonComponent implements OnInit {
   }
 
   updateParametersMenu(test: GvpTest): void {
+    this.parametersUpdating = true;
     this.api.uniqlookup_parametersList(test.test_id).subscribe(parameters => {
       this.menuParameters = parameters;
       for (let i of this.menuParameters) {
         this.parametersSel.push([i[0], []]);
       }
+      this.parametersUpdating = false;
     })
   }
 
