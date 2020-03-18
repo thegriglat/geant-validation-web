@@ -1513,7 +1513,15 @@ app.get('/api/uniqlookup', (req: api.APIuniqlookupRequest, res: api.APIuniqlooku
     const r: any[] = [];
     for (const i of result) {
       if (JSONAttr !== 'metadata.parameters') r.push(i.out);
-      else r.push({ names: i['parnames'][0], values: i['parvalues'][0] } as GvpParameter);
+      else {
+        for (let pname of i['parnames']) {
+          const pidx: number = i['parnames'].indexOf(pname);
+          const pvalue: string = i['parvalues'][pidx];
+          if (r.filter(e => e.names === pname && e.values === pvalue).length === 0) {
+            r.push({ names: pname, values: pvalue } as GvpParameter);
+          }
+        }
+      }
     }
     res.status(200).json(r);
   });
