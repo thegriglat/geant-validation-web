@@ -134,7 +134,8 @@ export class StatComparisonComponent implements OnInit {
   updateObservableMenu(test: GvpTest): void {
     this.api.uniqlookup_observableName(test.test_id).subscribe(observables => {
       this.menuObservable = observables;
-      if (this.menuObservable.length === 1) this.observableSel = this.menuObservable.slice();
+      // TODO: fix checkbox
+      // if (this.menuObservable.length === 1) this.observableSel = this.menuObservable.slice();
     })
   }
 
