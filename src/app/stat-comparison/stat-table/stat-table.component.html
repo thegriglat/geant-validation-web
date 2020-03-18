@@ -1,5 +1,16 @@
-{{combinations.length}}
-
+Estimator:
+<div class="ui basic dropdown button" suiDropdown>
+  <div class="text">{{estimator?.name}}</div>
+  <i class="dropdown icon"></i>
+  <div class="menu" suiDropdownMenu>
+    <div class="item" (click)="setEstimator('chi2')">
+      Chi2 test
+    </div>
+    <div class="item" (click)="setEstimator('ks')">
+      Kolmogorov-Smirnov test
+    </div>
+  </div>
+</div>
 
 <table class="ui celled table">
   <thead>
@@ -11,20 +22,23 @@
       <th class="center aligned">Target</th>
       <th class="center aligned">Beam energy</th>
       <th class="center aligned">Parameters</th>
+      <th class="center aligned">Estimator's value</th>
       <th class="center aligned">Graph</th>
     </tr>
-    
+
   </thead>
   <tbody>
     <tr *ngFor="let t of combinations">
       <td class="center aligned">
-       {{t[4]}}
+        {{t[4]}}
       </td>
       <td class="center aligned">{{beam[0]}}</td>
       <td class="center aligned">{{t[1]}}</td>
       <td class="center aligned">{{t[0]}}</td>
       <td class="center aligned">{{t[3]}}</td>
       <td class="center aligned">{{ParamC2str(t)}}</td>
+      <!-- <td class="center aligned">{{estimatorCall(getPlots(t))}}</td> -->
+      <td class="center aligned">0.0</td>
       <td class="center aligned">
         <a href="#">link</a>
       </td>
