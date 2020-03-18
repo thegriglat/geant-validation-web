@@ -43,7 +43,17 @@
     </div>
     <div class="ui segment">
       <h3>Additional parameters</h3>
+      <div class="ui active inverted dimmer" *ngIf="menuParameters.length === 0">
+        <div class="ui loader"></div>
+      </div>
+      <div *ngFor="let paramGroup of menuParameters">
+        <b>{{paramGroup[0]}}</b><br>
+        <div *ngFor="let pvalue of paramGroup[1]">
+          <sui-checkbox (click)="updateParam(paramGroup[0], pvalue)">{{pvalue}}</sui-checkbox>
+        </div>
+      </div>
     </div>
+
     <div class="ui segment" *ngIf="availableExpDataforTest.length !== 0">
       <h3>Reference data</h3>
       <div *ngFor="let e of availableExpDataforTest">

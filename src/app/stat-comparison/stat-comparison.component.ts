@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { switchMap, map } from 'rxjs/operators';
-import { Nullable, GvpTest, GvpMctoolNameVersion, GvpInspire } from '../classes/gvp-plot';
+import { Nullable, GvpTest, GvpMctoolNameVersion, GvpInspire, ParametersList } from '../classes/gvp-plot';
 import { GVPAPIService } from '../services/gvpapi.service';
 import { Observable } from 'rxjs';
 import { unstableVersionFilter, versionSorter, s2KaTeX } from '../utils';
@@ -23,6 +23,8 @@ export class StatComparisonComponent implements OnInit {
   public beamsSel: string[] = [];
   public menuObservable: string[] = [];
   public observableSel: string[] = [];
+  public menuParameters: ParametersList = [];
+  public parametersSel: ParametersList = [];
 
   private MCToolNameCache = new Map<number, string>();
   /** Cache of MC tool versions, popuated on page load
@@ -59,6 +61,7 @@ export class StatComparisonComponent implements OnInit {
       this.updateExpDescription(test.test_id);
       this.updateBeamMenu(test);
       this.updateObservableMenu(test);
+      this.updateParametersMenu(test);
     })
   }
 
@@ -128,6 +131,15 @@ export class StatComparisonComponent implements OnInit {
     })
   }
 
+  updateParametersMenu(test: GvpTest): void {
+    this.api.uniqlookup_parametersList(test.test_id).subscribe(parameters => {
+      console.log(parameters);
+      this.menuParameters = parameters;
+      for (let i of this.menuParameters) {
+        this.parametersSel.push([i[0], []]);
+      }
+    })
+  }
 
   updateExp(e: GvpInspire) {
     if (this.checkedExp.indexOf(e) === -1) {
@@ -143,6 +155,14 @@ export class StatComparisonComponent implements OnInit {
     } else {
       this.observableSel.splice(this.observableSel.indexOf(observable), 1);
     }
+  }
+
+  updateParam(pgroup: string, pvalue: string): void {
+    const pelem = this.parametersSel.filter(e => e[0] === pgroup)[0];
+    if (pelem[1].indexOf(pvalue) === -1)
+      pelem[1].push(pvalue);
+    else
+      pelem[1].splice(pelem[1].indexOf(pvalue), 1);
   }
 
   katex(s: string): string {
