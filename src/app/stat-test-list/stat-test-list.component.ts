@@ -13,7 +13,11 @@ export class StatTestListComponent implements OnInit {
   constructor(private api: GVPAPIService) { }
 
   ngOnInit() {
-    this.api.test().subscribe(tests => this.tests = tests.filter(e => e.test_name !== "experiment"));
+    this.api.test().subscribe(tests => this.tests = tests.filter(e => e.test_name !== "experiment").sort((a, b) => {
+      if (a.test_name < b.test_name) return -1;
+      if (a. test_name > b.test_name) return 1;
+      return 0;
+    }));
 
   }
 }
