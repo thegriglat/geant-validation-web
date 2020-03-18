@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { GVPAPIService } from 'src/app/services/gvpapi.service';
-import { GvpTest, GvpMctoolNameVersion, ParametersList, GvpPlotIdRequest, Nullable, GvpJSON, GvpPngRequest } from 'src/app/classes/gvp-plot';
+import { GvpTest, GvpMctoolNameVersion, ParametersList, GvpPlotIdRequest, Nullable, GvpPngRequest } from 'src/app/classes/gvp-plot';
 import { forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { cartesian } from 'src/app/utils';
@@ -85,9 +85,9 @@ export class StatTableComponent implements OnInit {
     return s.join(", ");
   }
 
-  showModalPlot(combination: string[]): void {
+  private getPlotIdRequest(combination: string[]): GvpPlotIdRequest {
     if (!this.test) return;
-    const query: GvpPlotIdRequest = new GvpPlotIdRequest(
+    return new GvpPlotIdRequest(
       [this.test.test_id], // testid
       combination[0], // target
       this.versions.map(v => v.mctool_name_version_id), // versions
@@ -98,6 +98,11 @@ export class StatTableComponent implements OnInit {
       this.ParamC2ParameterList(combination), // parameters
       [combination[3]] // beamenergy
     );
+  }
+
+  showModalPlot(combination: string[]): void {
+    if (!this.test) return;
+    const query = this.getPlotIdRequest(combination);
     this.api.getPlotJSON(query).subscribe(jsons => {
       this.modalService.open(
         new PlotModal(new GvpPngRequest(jsons))
