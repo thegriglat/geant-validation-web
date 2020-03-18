@@ -37,8 +37,7 @@ Estimator:
       <td class="center aligned">{{jsonMetadata(j[0]).target}}</td>
       <td class="center aligned">{{jsonMetadata(j[0]).benergy}}</td>
       <td class="center aligned">{{ParamC2str(jsonMetadata(j[0]).parameters)}}</td>
-      <!-- <td class="center aligned">{{estimatorCall(getPlots(t))}}</td> -->
-      <td class="center aligned">0.0</td>
+      <td class="center aligned">{{estimatorCall(j)}}</td>
       <td class="center aligned">
         <a (click)="showModalPlot(j)">
           <i class="big image icon"></i>

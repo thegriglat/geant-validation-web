@@ -84,16 +84,12 @@ export class StatTableComponent implements OnInit {
       this.estimator = tmp;
     }
   }
-  /*
-    estimatorCall(plotlist: GvpJSON[]): number {
-      if (!this.estimator) return 0.;
-      return this.estimator(plotlist[0], plotlist[1]);
-    }
-    
-    getPlots(combination: string[]) {
-      // todo;
-    }
-  */
+
+  estimatorCall(plotlist: GvpJSON[]): number {
+    if (!this.estimator) return 0.;
+    return this.estimator.fn(plotlist[0], plotlist[1]);
+  }
+
 
   ParamC2str(params: ParametersList): string {
     let s: string[] = [];
