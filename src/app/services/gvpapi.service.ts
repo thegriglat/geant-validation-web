@@ -5,6 +5,7 @@ import { GvpTest, GvpJSON, GvpMctoolNameVersion, GvpMctoolName, GvpParameter, Gv
 import { flatMap, map } from 'rxjs/operators';
 
 import { CustomEncoder } from './../classes/urlencoder';
+import { getParametersList } from '../utils';
 
 @Injectable({
   providedIn: 'root'
@@ -128,6 +129,12 @@ export class GVPAPIService {
   }
   public uniqlookup_parameters(test_id: number) {
     return this.uniqlookup<GvpParameter[]>(test_id, "metadata.parameters");
+  }
+
+  public uniqlookup_parametersList(test_id: number) {
+    return this.uniqlookup<GvpParameter[]>(test_id, "metadata.parameters").pipe(
+      map(p => getParametersList(p))
+    );
   }
 
   public getExperimentsInspireForTest(test_id: number) {
