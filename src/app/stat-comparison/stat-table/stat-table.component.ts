@@ -31,12 +31,38 @@ export class StatTableComponent implements OnInit {
     const beamE_req = this.api.uniqlookup_beamEnergies(this.test.test_id);
     const fj = forkJoin([target_req, model_req, sec_req, beamE_req])
     fj.pipe(
-      map(e => cartesian(e.concat([this.observables]))
-      )
+      map(e => {
+        let parm: string[][] = [];
+        if (this.parameters) {
+          parm = this.parameters.map(e => e[1]);
+        }
+        const input = e.concat([this.observables, ...parm])
+        let cart = cartesian(input);
+        return cart;
+      })
     ).subscribe(comb => {
       this.combinations = comb;
-      console.log(this.combinations);
     })
+  }
+
+  ParamC2ParameterList(combination: string[][]): ParametersList {
+    if (!this.parameters) return [];
+    // TODO: dirty typing hack: string[] vs string
+    let res: any[] = [];
+    const startN = 5; // target model sec beam obs
+    const values = combination.slice(startN);
+    const keys = this.parameters.map(e => e[0]);
+    for (let idx = 0; idx < keys.length; idx++)
+      res.push([keys[idx], [values[idx]]]);
+    return res as ParametersList;
+  }
+
+  ParamC2str(combination: string[][]): string {
+    let s: string[] = [];
+    for (let elem of this.ParamC2ParameterList(combination)) {
+      s.push(elem[0] + "=" + elem[1][0]);
+    }
+    return s.join(", ");
   }
 
 }
