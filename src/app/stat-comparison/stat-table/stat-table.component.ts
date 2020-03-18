@@ -99,13 +99,9 @@ export class StatTableComponent implements OnInit {
       [combination[3]] // beamenergy
     );
     this.api.getPlotJSON(query).subscribe(jsons => {
-      const config: GvpPngRequest = new GvpPngRequest(jsons);
-      this.api.getPNG(config).subscribe(res => {
-        const url = res.filename;
-        this.modalService.open(
-          new PlotModal(url, config)
-        )
-      })
+      this.modalService.open(
+        new PlotModal(new GvpPngRequest(jsons))
+      )
     })
   }
 

@@ -8,13 +8,12 @@ import { SuiModal, ComponentModalConfig, ModalSize } from 'ng2-semantic-ui';
 declare var JSROOT: any;
 
 interface IConfirmModalContext {
-  url: string;
   config: GvpPngRequest;
 }
 
 export class PlotModal extends ComponentModalConfig<IConfirmModalContext, void, void> {
-  constructor(url: string, config: GvpPngRequest, size = ModalSize.Small) {
-    super(PlotModalComponent, { url, config });
+  constructor(config: GvpPngRequest, size = ModalSize.Small) {
+    super(PlotModalComponent, { config });
     this.isFullScreen = true;
     this.isClosable = true;
     this.transitionDuration = 200;
@@ -44,10 +43,15 @@ export class PlotModalComponent implements OnInit {
 
   constructor(public modal: SuiModal<IConfirmModalContext, void, void>, private api: GVPAPIService) {
     this.config = Object.assign({}, modal.context.config);
-    this.url = modal.context.url;
   }
 
   ngOnInit() {
+    this.inProgress = true;
+    this.api.getPNG(this.config).subscribe(res => {
+      this.url = res.filename;
+      this.inProgress = false;
+    })
+
     if (this.config.markerSize !== undefined)
       this.useMarkers = (this.config.markerSize === 0) ? false : true;
     if (this.config.refid !== undefined)

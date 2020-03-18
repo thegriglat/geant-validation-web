@@ -108,9 +108,9 @@ export class PlotComponent implements OnInit {
     throw new TypeError("HintData is null");
   }
 
-  showModal(url: string, config: GvpPngRequest) {
+  showModal(config: GvpPngRequest) {
     this.modalService.open(
-      new PlotModal(url, config)
+      new PlotModal(config)
     )
   }
 }
