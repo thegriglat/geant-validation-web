@@ -18,7 +18,9 @@ export class StatComparisonComponent implements OnInit {
   public versionsSel: GvpMctoolNameVersion[] = [];
   public showUnstableVersions = false;
   public availableExpDataforTest: GvpInspire[] = [];
-  checkedExp: GvpInspire[] = [];
+  public checkedExp: GvpInspire[] = [];
+  public menuBeams: string[] = [];
+  public beamsSel: string[] = [];
 
   private MCToolNameCache = new Map<number, string>();
   /** Cache of MC tool versions, popuated on page load
@@ -53,6 +55,7 @@ export class StatComparisonComponent implements OnInit {
     this.test.subscribe(test => {
       this.updateVersionMenu(test);
       this.updateExpDescription(test.test_id);
+      this.updateBeamMenu(test);
     })
   }
 
@@ -107,6 +110,14 @@ export class StatComparisonComponent implements OnInit {
       }
     });
   }
+
+  updateBeamMenu(test: GvpTest): void {
+    this.api.uniqlookup_beamParticle(test.test_id).subscribe(beams => {
+      this.menuBeams = beams;
+      if (this.menuBeams.length === 1) this.beamsSel = this.menuBeams.slice();
+    })
+  }
+
 
   updateExp(e: GvpInspire) {
     if (this.checkedExp.indexOf(e) === -1) {

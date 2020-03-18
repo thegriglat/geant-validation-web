@@ -21,6 +21,14 @@
     </div>
     <div class="ui segment">
       <h3>Beam</h3>
+      <div class="ui active inverted dimmer" *ngIf="menuBeams.length === 0">
+        <div class="ui loader"></div>
+      </div>
+      <sui-multi-select class="selection enlarge" [(ngModel)]="beamsSel" [options]="menuBeams" [isSearchable]="true"
+        [isDisabled]="false" #multiSelect>
+        <sui-select-option *ngFor="let obj of multiSelect.filteredOptions" [value]="obj">
+        </sui-select-option>
+      </sui-multi-select>
     </div>
     <div class="ui segment">
       <h3>Observable</h3>
