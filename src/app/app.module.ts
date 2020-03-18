@@ -20,6 +20,7 @@ import { PlotModalComponent } from './plot/plot-modal/plot-modal.component';
 import { PermalinkComponent } from './permalink/permalink.component';
 import { TestSummaryComponent } from './test-summary/test-summary.component';
 import { StatTestListComponent } from './stat-test-list/stat-test-list.component';
+import { StatTableComponent } from './stat-comparison/stat-table/stat-table.component';
 
 @NgModule({
   declarations: [
@@ -36,6 +37,7 @@ import { StatTestListComponent } from './stat-test-list/stat-test-list.component
     PermalinkComponent,
     TestSummaryComponent,
     StatTestListComponent,
+    StatTableComponent,
   ],
   imports: [
     SuiModule,

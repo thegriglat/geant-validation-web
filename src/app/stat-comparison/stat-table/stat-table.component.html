@@ -1,0 +1,33 @@
+{{combinations.length}}
+
+
+<table class="ui celled table">
+  <thead>
+    <tr>
+      <!-- Observable 	Beam 	Model 	Target 	Beam energy 	Parameters -->
+      <th class="center aligned">Observable</th>
+      <th class="center aligned">Beam</th>
+      <th class="center aligned">Model</th>
+      <th class="center aligned">Target</th>
+      <th class="center aligned">Beam energy</th>
+      <th class="center aligned">Parameters</th>
+      <th class="center aligned">Graph</th>
+    </tr>
+    
+  </thead>
+  <tbody>
+    <tr *ngFor="let t of combinations">
+      <td class="center aligned">
+       {{t[4]}}
+      </td>
+      <td class="center aligned">{{beam[0]}}</td>
+      <td class="center aligned">{{t[1]}}</td>
+      <td class="center aligned">{{t[0]}}</td>
+      <td class="center aligned">{{t[3]}}</td>
+      <td class="center aligned">{{parameters}}</td>
+      <td class="center aligned">
+        <a href="#">link</a>
+      </td>
+    </tr>
+  </tbody>
+</table>

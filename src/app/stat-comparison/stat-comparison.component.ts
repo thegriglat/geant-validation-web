@@ -163,6 +163,7 @@ export class StatComparisonComponent implements OnInit {
     } else {
       this.observableSel.splice(this.observableSel.indexOf(observable), 1);
     }
+    console.log(this.observableSel);
   }
 
   updateParam(pgroup: string, pvalue: string): void {
