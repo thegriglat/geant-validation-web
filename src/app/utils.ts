@@ -113,6 +113,21 @@ function _ParametersListEq(p1: ParametersList, p2: ParametersList): boolean {
     return true;
 }
 
+export function GvpJSONMetadataMatch(a: GvpJSON, b: GvpJSON): boolean {
+    if (a.metadata.beamParticle === b.metadata.beamParticle &&
+        a.metadata.observableName === b.metadata.observableName &&
+        a.testName === b.testName &&
+        a.mctool.model === b.mctool.model &&
+        a.metadata.secondaryParticle === b.metadata.secondaryParticle &&
+        a.metadata.targetName === b.metadata.targetName &&
+        a.metadata.beam_energy_str === b.metadata.beam_energy_str
+    ) {
+        // check params
+        return _ParametersListEq(getParametersList(a.metadata.parameters), getParametersList(b.metadata.parameters));
+    }
+    return false;
+}
+
 export function filterData(data: GvpJSON[], q: GvpPlotXML): GvpJSON[] {
     return data.filter(j => {
         if (j.metadata.beamParticle === q.beam &&
@@ -128,19 +143,3 @@ export function filterData(data: GvpJSON[], q: GvpPlotXML): GvpJSON[] {
         return false;
     })
 }
-
-export function cartesian<T>(arg: T[][]) : T[][] {
-    const r: T[][] = [];
-    const max = arg.length - 1;
-  
-    function helper(arr: T[], i: number) {
-      for (let j = 0, l = arg[i].length; j < l; j++) {
-        const a = arr.slice(0); // clone arr
-        a.push(arg[i][j]);
-        if (i === max) r.push(a);
-        else helper(a, i + 1);
-      }
-    }
-    helper([], 0);
-    return r;
-  }

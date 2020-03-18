@@ -28,19 +28,19 @@ Estimator:
 
   </thead>
   <tbody>
-    <tr *ngFor="let t of combinations">
+    <tr *ngFor="let j of jsonlist">
       <td class="center aligned">
-        {{t[4]}}
+        {{jsonMetadata(j[0]).observable}}
       </td>
       <td class="center aligned">{{beam[0]}}</td>
-      <td class="center aligned">{{t[1]}}</td>
-      <td class="center aligned">{{t[0]}}</td>
-      <td class="center aligned">{{t[3]}}</td>
-      <td class="center aligned">{{ParamC2str(t)}}</td>
+      <td class="center aligned">{{jsonMetadata(j[0]).model}}</td>
+      <td class="center aligned">{{jsonMetadata(j[0]).target}}</td>
+      <td class="center aligned">{{jsonMetadata(j[0]).benergy}}</td>
+      <td class="center aligned">{{ParamC2str(jsonMetadata(j[0]).parameters)}}</td>
       <!-- <td class="center aligned">{{estimatorCall(getPlots(t))}}</td> -->
       <td class="center aligned">0.0</td>
       <td class="center aligned">
-        <a (click)="showModalPlot(t)">
+        <a (click)="showModalPlot(j)">
           <i class="big image icon"></i>
         </a>
       </td>
