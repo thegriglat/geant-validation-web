@@ -78,6 +78,11 @@ export class StatComparisonComponent implements OnInit {
     return list;
   }
 
+  limit<T>(maxn: number, inlist: T[], outlist: T[]): T[] {
+    if (inlist.length >= maxn) return [];
+    return outlist;
+  }
+
   unstableFilter(v: GvpMctoolNameVersion[]): GvpMctoolNameVersion[] {
     if (this.showUnstableVersions)
       return v;
