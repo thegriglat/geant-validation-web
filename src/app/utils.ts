@@ -143,3 +143,72 @@ export function filterData(data: GvpJSON[], q: GvpPlotXML): GvpJSON[] {
         return false;
     })
 }
+
+export function zip(rows: any[][]): any[][] {
+    return rows[0].map((_, c) => rows.map(row => row[c]));
+}
+
+// plot data utils
+
+export function getX(plot: GvpJSON): number[] {
+    if (plot.chart) {
+        return plot.chart.xValues;
+    } else if (plot.histogram) {
+        const x = [];
+        for (let i = 0; i < plot.histogram.binEdgeLow.length; i++) {
+            x.push(0.5 * (plot.histogram.binEdgeLow[i] + plot.histogram.binEdgeHigh[i]));
+        }
+        return x;
+    }
+    return [];
+}
+
+export function getY(plot: GvpJSON): number[] {
+    if (plot.chart) {
+        return plot.chart.yValues;
+    } else if (plot.histogram) {
+        return plot.histogram.binContent;
+    }
+    return [];
+}
+
+export function getYerrors(plot: GvpJSON): number[] {
+    const p = (plot.chart) ? plot.chart : plot.histogram;
+    const res = [];
+    for (let i = 0; p && i < p.yStatErrorsPlus.length; i++) {
+        // merge errors
+        const statavg = 0.5 * ((p.yStatErrorsPlus[i] || 0) + (p.yStatErrorsMinus[i] || 0));
+        const sysavg = 0.5 * ((p.ySysErrorsPlus[i] || 0) + (p.ySysErrorsMinus[i] || 0));
+        res.push(Math.sqrt(statavg * statavg + sysavg * sysavg));
+    }
+    return res;
+}
+
+// get common points for two plots
+export function getCommonXY(plot1: GvpJSON, plot2: GvpJSON): number[][] {
+    const x1 = getX(plot1);
+    const x2 = getX(plot2);
+    const y1 = getY(plot1);
+    const y2 = getY(plot2);
+    const yerr1 = getYerrors(plot1);
+    const yerr2 = getYerrors(plot2);
+    const rx1: number[] = [];
+    const rx2: number[] = [];
+    const ry1: number[] = [];
+    const ry2: number[] = [];
+    const ry1err: number[] = [];
+    const ry2err: number[] = [];
+    for (let i1 = 0; i1 < x1.length; i1++) {
+        for (let i2 = 0; i2 < x2.length; i2++) {
+            if (x1[i1] === x2[i2]) {
+                rx1.push(x1[i1]);
+                rx2.push(x2[i2]);
+                ry1.push(y1[i1]);
+                ry2.push(y2[i2]);
+                ry1err.push(yerr1[i1]);
+                ry2err.push(yerr2[i2]);
+            }
+        }
+    }
+    return [rx1, ry1, ry1err, rx2, ry2, ry2err];
+}
