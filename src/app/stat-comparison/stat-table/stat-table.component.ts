@@ -3,7 +3,7 @@ import { GVPAPIService } from 'src/app/services/gvpapi.service';
 import { GvpTest, GvpMctoolNameVersion, ParametersList, GvpPlotIdRequest, Nullable, GvpPngRequest, GvpJSON } from 'src/app/classes/gvp-plot';
 import { forkJoin } from 'rxjs';
 import { GvpJSONMetadataMatch, getParametersList } from 'src/app/utils';
-import { getEstimator, Estimator } from './../estimator';
+import { getEstimator, Estimator, estimatorFullName, estimatorsNames } from './../estimator';
 import { SuiModalService } from 'ng2-semantic-ui';
 import { PlotModal } from 'src/app/plot/plot-modal/plot-modal.component';
 
@@ -20,7 +20,7 @@ export class StatTableComponent implements OnInit {
   @Input() beam: string[] = [];
   @Input() parameters?: ParametersList;
 
-  public estimator: Nullable<Estimator> = getEstimator('chi2');
+  public estimator: Nullable<Estimator> = getEstimator();
   // data for table
   public jsonlist: GvpJSON[][] = [];
 
@@ -103,6 +103,14 @@ export class StatTableComponent implements OnInit {
     this.modalService.open(
       new PlotModal(new GvpPngRequest(jsons))
     )
+  }
+
+  estNames() {
+    return estimatorsNames();
+  }
+
+  estFNames(name?: string) {
+    return estimatorFullName(name);
   }
 
 }

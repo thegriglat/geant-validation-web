@@ -3,11 +3,8 @@ Estimator:
   <div class="text">{{estimator?.name}}</div>
   <i class="dropdown icon"></i>
   <div class="menu" suiDropdownMenu>
-    <div class="item" (click)="setEstimator('chi2')">
-      Chi2 test
-    </div>
-    <div class="item" (click)="setEstimator('ks')">
-      Kolmogorov-Smirnov test
+    <div class="item" *ngFor="let est of estNames()" (click)="setEstimator(est)">
+      {{estFNames(est)}}
     </div>
   </div>
 </div>
