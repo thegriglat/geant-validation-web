@@ -189,7 +189,7 @@ export class GvpPlotXML extends GvpPlotterArgs {
 export type ParametersList = [string, string[]][];
 export class GvpPlotIdRequest {
   test_id: number[];
-  target: string;
+  targets: string[];
   version_id: number[];
   model: string[];
   secondary: string[];
@@ -198,11 +198,11 @@ export class GvpPlotIdRequest {
   parameters: ParametersList;
   beam_energy?: string[];
 
-  constructor(test_ids: number[], target: string, version_ids: number[],
+  constructor(test_ids: number[], targets: string[], version_ids: number[],
     models: string[], secondaries: string[], beam_particles: string[],
     observables: string[], parameters: ParametersList, beam_energies?: string[]) {
     this.test_id = test_ids;
-    this.target = target;
+    this.targets = targets;
     this.version_id = version_ids;
     this.model = models;
     this.secondary = secondaries;

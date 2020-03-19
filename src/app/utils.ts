@@ -113,6 +113,20 @@ function _ParametersListEq(p1: ParametersList, p2: ParametersList): boolean {
     return true;
 }
 
+export function GvpJSONExpMetadataMatch(a: GvpJSON, b: GvpJSON): boolean {
+    if (a.metadata.beamParticle === b.metadata.beamParticle &&
+        a.metadata.observableName === b.metadata.observableName &&
+        a.metadata.secondaryParticle === b.metadata.secondaryParticle &&
+        a.metadata.targetName === b.metadata.targetName &&
+        a.metadata.beam_energy_str === b.metadata.beam_energy_str
+    ) {
+        // check params
+        return _ParametersListEq(getParametersList(a.metadata.parameters), getParametersList(b.metadata.parameters));
+    }
+    return false;
+}
+
+
 export function GvpJSONMetadataMatch(a: GvpJSON, b: GvpJSON): boolean {
     if (a.metadata.beamParticle === b.metadata.beamParticle &&
         a.metadata.observableName === b.metadata.observableName &&

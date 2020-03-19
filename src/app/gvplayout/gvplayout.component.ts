@@ -460,7 +460,7 @@ export class GvplayoutComponent implements OnInit {
     const par = p.getParametersList();
     const query: GvpPlotIdRequest = new GvpPlotIdRequest(
       test_ids,
-      p.target,
+      [p.target],
       this.versionsSel.map(e => e.mctool_name_version_id),
       this.modelsSel,
       [p.secondary],
@@ -477,7 +477,7 @@ export class GvplayoutComponent implements OnInit {
       const par_ref = p.reference.getParametersList();
       const query_ref: GvpPlotIdRequest = new GvpPlotIdRequest(
         test_ids,
-        p.reference.target,
+        [p.reference.target],
         this.versionsSel.map(e => e.mctool_name_version_id),
         this.modelsSel,
         [p.reference.secondary],

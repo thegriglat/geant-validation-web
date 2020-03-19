@@ -1,11 +1,12 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { GVPAPIService } from 'src/app/services/gvpapi.service';
-import { GvpTest, GvpMctoolNameVersion, ParametersList, GvpPlotIdRequest, Nullable, GvpPngRequest, GvpJSON } from 'src/app/classes/gvp-plot';
+import { GvpTest, GvpMctoolNameVersion, ParametersList, GvpPlotIdRequest, Nullable, GvpPngRequest, GvpJSON, GvpInspire } from 'src/app/classes/gvp-plot';
 import { forkJoin } from 'rxjs';
-import { GvpJSONMetadataMatch, getParametersList } from 'src/app/utils';
+import { GvpJSONMetadataMatch, getParametersList, GvpJSONExpMetadataMatch } from 'src/app/utils';
 import { getEstimator, Estimator, estimatorFullName, estimatorsNames } from './../estimator';
 import { SuiModalService } from 'ng2-semantic-ui';
 import { PlotModal } from 'src/app/plot/plot-modal/plot-modal.component';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-stat-table',
@@ -18,7 +19,8 @@ export class StatTableComponent implements OnInit {
   @Input() versions: GvpMctoolNameVersion[] = [];
   @Input() observables: string[] = [];
   @Input() beam: string[] = [];
-  @Input() parameters?: ParametersList;
+  @Input() parameters: ParametersList = [];
+  @Input() expdata: GvpInspire[] = [];
 
   public estimator: Nullable<Estimator> = getEstimator();
   // data for table
@@ -45,29 +47,38 @@ export class StatTableComponent implements OnInit {
       if (!this.test) return;
       const query = new GvpPlotIdRequest(
         [this.test.test_id], // testid
-        targets[0], // target
+        targets, // target
         this.versions.map(v => v.mctool_name_version_id), // versions
         models, // model
         secs, // secs
         this.beam, // beams
         this.observables, // observ
-        this.parameters || [], // parameters
+        this.parameters, // parameters
         beamEs // beamenergy
       );
-      this.api.getPlotJSON(query).subscribe(jsons => {
+      const g4_jsons_req = this.api.getPlotJSON(query);
+      const exp_jsons_req = this.api.getExpMatchPlot(query);
+      const all_jsons = forkJoin([g4_jsons_req, exp_jsons_req]).pipe(
+        map(e => {
+          return e[0].concat(...e[1]);
+        })
+      )
+      all_jsons.subscribe(jsons => {
         this.jsonlist = [];
         for (let i = 0; i < jsons.length; ++i) {
           const base_json = jsons[i];
           this.jsonlist.push([base_json])
           for (let j = i + 1; j < jsons.length; ++j) {
             const cmp_json = jsons[j];
-            if (GvpJSONMetadataMatch(base_json, cmp_json)) {
+            // compare function, different for g4 and exp
+            const cmp_fn = (cmp_json.mctool.model === "experiment" || base_json.mctool.model === "experiment") ? GvpJSONExpMetadataMatch : GvpJSONMetadataMatch;
+            if (cmp_fn(base_json, cmp_json)) {
               this.jsonlist[this.jsonlist.length - 1].push(cmp_json);
             }
           }
         }
         // skip plots with missing data
-        this.jsonlist = this.jsonlist.filter(e => e.length === this.versions.length);
+        this.jsonlist = this.jsonlist.filter(e => e.length === this.versions.length + this.expdata.length);
         this.inProgress = false;
       })
     })
@@ -120,7 +131,6 @@ export class StatTableComponent implements OnInit {
 
   tableSort() {
     this.sortDirection *= -1;
-    console.log(this.sortDirection);
     this.jsonlist = this.jsonlist.sort((a: GvpJSON[], b: GvpJSON[]) => {
       return this.sortDirection * Math.sign(
         Number(this.estimatorCall(a)) - Number(this.estimatorCall(b))

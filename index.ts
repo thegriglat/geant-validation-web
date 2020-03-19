@@ -1535,7 +1535,7 @@ app.get('/api/getPlotId', (req: api.APIgetPlotIdRequest, res: api.APIgetPlotIdRe
   const parameters: [string, string[]][] = body.parameters;
   const beam_energy = body.beam_energy;
   const test_id = PGJoin(body.test_id);
-  const target = body.target;
+  const target = PGJoin(body.targets);
   const version_id = PGJoin(body.version_id);
   const model = PGJoin(body.model);
   const secondary = PGJoin(body.secondary);
