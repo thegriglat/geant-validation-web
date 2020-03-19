@@ -118,7 +118,7 @@ export class StatTableComponent implements OnInit {
     return estimatorFullName(name);
   }
 
-  tableSort(){
+  tableSort() {
     this.sortDirection *= -1;
     console.log(this.sortDirection);
     this.jsonlist = this.jsonlist.sort((a: GvpJSON[], b: GvpJSON[]) => {
