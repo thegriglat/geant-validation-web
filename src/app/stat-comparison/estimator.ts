@@ -1,6 +1,8 @@
 import { GvpJSON } from './../classes/gvp-plot';
 
 import { KolmogorovTest } from './kstest';
+import { Chi2Test } from './chi2test';
+
 
 import { getCommonXY, zip } from 'src/app/utils';
 
@@ -13,13 +15,13 @@ interface EstimatorI {
 }
 
 export const estimators: EstimatorI = {
-    'chi2': {
-        name: "Chi2 test",
-        fn: (p1: GvpJSON, p2: GvpJSON) => { return 0.0; }
-    },
     'maxdy': {
         name: "Maximal relative difference, %",
         fn: maxdy
+    },
+    'chi2': {
+        name: "Chi2 test",
+        fn: Chi2Test
     },
     'kstest': {
         name: "Kolmogorov-Smirnov test",
