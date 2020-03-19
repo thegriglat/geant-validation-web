@@ -25,7 +25,7 @@ export class StatTableComponent implements OnInit {
   public jsonlist: GvpJSON[][] = [];
 
   public inProgress = false;
-  private sortDirection = 1;
+  public sortDirection = 1;
 
   constructor(private api: GVPAPIService, private modalService: SuiModalService) { }
 
