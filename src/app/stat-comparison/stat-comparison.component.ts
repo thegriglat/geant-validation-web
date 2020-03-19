@@ -74,7 +74,7 @@ export class StatComparisonComponent implements OnInit {
   }
 
   limit2<T>(list: T[]): T[] {
-    if (this.versionsSel.length + this.checkedExp.length > 1) return [];
+    if (this.isVersionExpCorrect()) return [];
     return list;
   }
 
@@ -212,7 +212,11 @@ export class StatComparisonComponent implements OnInit {
   }
 
   isVersionExpCorrect(): boolean {
-    return this.versionsSel.length + this.checkedExp.length === 2;
+    if (this.versionsSel.length === 2 && this.checkedExp.length === 0)
+      return true;
+    if (this.versionsSel.length === 1 && this.checkedExp.length > 0)
+      return true;
+    return false;
   };
 
   isBeamCorrect(): boolean {
