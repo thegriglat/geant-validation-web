@@ -1,5 +1,7 @@
 import { GvpJSON } from './../classes/gvp-plot';
 
+import { KolmogorovTest } from './kstest';
+
 import { getCommonXY, zip } from 'src/app/utils';
 
 export type EstimatorFn = (p1: GvpJSON, p2: GvpJSON) => number;
@@ -18,6 +20,10 @@ export const estimators: EstimatorI = {
     'maxdy': {
         name: "Maximal relative difference, %",
         fn: maxdy
+    },
+    'kstest': {
+        name: "Kolmogorov-Smirnov test",
+        fn: KolmogorovTest
     }
 };
 
