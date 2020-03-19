@@ -15,7 +15,7 @@ export const estimators: EstimatorI = {
         name: "Chi2 test",
         fn: (p1: GvpJSON, p2: GvpJSON) => { return 0.0; }
     },
-    'mindy': {
+    'maxdy': {
         name: "Maximal relative difference, %",
         fn: maxdy
     }
