@@ -9,7 +9,7 @@
       <div class="ui active inverted dimmer" *ngIf="menuVersions.length === 0">
         <div class="ui loader"></div>
       </div>
-      <sui-multi-select class="selection enlarge" [(ngModel)]="versionsSel" [options]="unstableFilter(menuVersions)"
+      <sui-multi-select class="selection enlarge" [(ngModel)]="versionsSel" [options]="limit2(unstableFilter(menuVersions))"
         [isSearchable]="true" [isDisabled]="false" [optionFormatter]="versionFormatter"
         [optionsFilter]="versionSelectFilter" #versionSelect>
         <sui-select-option *ngFor="let obj of versionSelect.filteredOptions" [value]="obj">
