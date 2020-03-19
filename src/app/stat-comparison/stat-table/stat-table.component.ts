@@ -85,9 +85,9 @@ export class StatTableComponent implements OnInit {
     }
   }
 
-  estimatorCall(plotlist: GvpJSON[]): number {
-    if (!this.estimator) return 0.;
-    return this.estimator.fn(plotlist[0], plotlist[1]);
+  estimatorCall(plotlist: GvpJSON[]): string {
+    if (!this.estimator) return "---";
+    return this.estimator.fn(plotlist[0], plotlist[1]).toFixed(4);
   }
 
 
