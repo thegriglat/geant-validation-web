@@ -24,6 +24,8 @@ export class StatTableComponent implements OnInit {
   // data for table
   public jsonlist: GvpJSON[][] = [];
 
+  public inProgress = false;
+
   constructor(private api: GVPAPIService, private modalService: SuiModalService) { }
 
   ngOnInit() {
@@ -32,6 +34,7 @@ export class StatTableComponent implements OnInit {
     const model_req = this.api.uniqlookup_model(this.test.test_id);
     const sec_req = this.api.uniqlookup_secondaryParticle(this.test.test_id);
     const beamE_req = this.api.uniqlookup_beamEnergies(this.test.test_id);
+    this.inProgress = true;
     const fj = forkJoin([target_req, model_req, sec_req, beamE_req])
     fj.subscribe(metadata_list => {
       const targets = metadata_list[0];
@@ -64,6 +67,7 @@ export class StatTableComponent implements OnInit {
         }
         // skip plots with missing data
         this.jsonlist = this.jsonlist.filter(e => e.length === this.versions.length);
+        this.inProgress = false;
       })
     })
   }
