@@ -25,6 +25,7 @@ export class StatTableComponent implements OnInit {
   public jsonlist: GvpJSON[][] = [];
 
   public inProgress = false;
+  private sortDirection = 1;
 
   constructor(private api: GVPAPIService, private modalService: SuiModalService) { }
 
@@ -115,6 +116,17 @@ export class StatTableComponent implements OnInit {
 
   estFNames(name?: string) {
     return estimatorFullName(name);
+  }
+
+  tableSort(){
+    this.sortDirection *= -1;
+    console.log(this.sortDirection);
+    this.jsonlist = this.jsonlist.sort((a: GvpJSON[], b: GvpJSON[]) => {
+      return this.sortDirection * Math.sign(
+        Number(this.estimatorCall(a)) - Number(this.estimatorCall(b))
+      )
+    })
+
   }
 
 }

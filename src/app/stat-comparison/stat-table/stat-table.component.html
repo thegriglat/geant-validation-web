@@ -13,7 +13,7 @@ Estimator:
   <div class="ui loader"></div>
 </div>
 
-<table class="ui celled table">
+<table class="ui sortable celled table">
   <thead>
     <tr>
       <!-- Observable 	Beam 	Model 	Target 	Beam energy 	Parameters -->
@@ -23,7 +23,7 @@ Estimator:
       <th class="center aligned">Target</th>
       <th class="center aligned">Beam energy</th>
       <th class="center aligned">Parameters</th>
-      <th class="center aligned">Estimator's value</th>
+      <th class="center aligned sorted " (click)="tableSort()" [ngClass]="{'descending': sortDirection === 1, 'ascending': sortDirection === -1}">Estimator's value</th>
       <th class="center aligned">Graph</th>
     </tr>
 
