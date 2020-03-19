@@ -161,7 +161,12 @@ export class StatComparisonComponent implements OnInit {
     })
   }
 
+  isExpCheckboxDisabled(): boolean {
+    return this.versionsSel.length > 1;
+  }
+
   updateExp(e: GvpInspire) {
+    if (this.isExpCheckboxDisabled()) return;
     if (this.checkedExp.indexOf(e) === -1) {
       this.checkedExp.push(e);
     } else {
