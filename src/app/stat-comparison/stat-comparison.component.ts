@@ -5,6 +5,7 @@ import { GvpTest, GvpMctoolNameVersion, GvpInspire, ParametersList, Nullable } f
 import { GVPAPIService } from '../services/gvpapi.service';
 import { Observable } from 'rxjs';
 import { unstableVersionFilter, versionSorter, s2KaTeX } from '../utils';
+import { truncate } from 'fs';
 
 @Component({
   selector: 'app-stat-comparison',
@@ -72,7 +73,7 @@ export class StatComparisonComponent implements OnInit {
     this.submitted = true;
   }
 
-  limit2<T>(list: T[]):  T[] {
+  limit2<T>(list: T[]): T[] {
     if (this.versionsSel.length + this.checkedExp.length > 1) return [];
     return list;
   }
@@ -199,5 +200,24 @@ export class StatComparisonComponent implements OnInit {
         }
       }
     });
+  }
+
+  isVersionExpCorrect(): boolean {
+    return this.versionsSel.length + this.checkedExp.length === 2;
+  };
+
+  isBeamCorrect(): boolean {
+    return this.beamsSel.length === 1;
+  };
+
+  isObservablesCorrect(): boolean {
+    return this.observableSel.length !== 0;
+  };
+  // checks that submit button active
+  isSubmitAllowed(): boolean {
+    if (this.isVersionExpCorrect() &&
+      this.isBeamCorrect() &&
+      this.isObservablesCorrect()) return true;
+    return false
   }
 }

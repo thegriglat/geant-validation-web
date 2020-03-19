@@ -4,7 +4,7 @@
 
 <div class="ui stackable grid">
   <div class="four wide column">
-    <div class="ui segment">
+    <div class="ui segment" [ngClass]="{errorblock: !isVersionExpCorrect()}">
       <h3>Version</h3>
       <div class="ui active inverted dimmer" *ngIf="menuVersions.length === 0">
         <div class="ui loader"></div>
@@ -19,7 +19,7 @@
       <sui-checkbox class="toggle" [(ngModel)]="showUnstableVersions" (checkChange)="filterVersionSel()">Show
         unstable releases</sui-checkbox>
     </div>
-    <div class="ui segment">
+    <div class="ui segment" [ngClass]="{errorblock: !isBeamCorrect()}">
       <h3>Beam</h3>
       <div class="ui active inverted dimmer" *ngIf="menuBeams.length === 0">
         <div class="ui loader"></div>
@@ -30,7 +30,7 @@
         </sui-select-option>
       </sui-multi-select>
     </div>
-    <div class="ui segment">
+    <div class="ui segment" [ngClass]="{errorblock: !isObservablesCorrect()}">
       <h3>Observable</h3>
       <div class="ui active inverted dimmer" *ngIf="menuObservable.length === 0">
         <div class="ui loader"></div>
@@ -54,13 +54,14 @@
       </div>
     </div>
 
-    <div class="ui segment" *ngIf="availableExpDataforTest.length !== 0">
+    <div class="ui segment" *ngIf="availableExpDataforTest.length !== 0"
+      [ngClass]="{errorblock: !isVersionExpCorrect()}">
       <h3>Reference data</h3>
       <div *ngFor="let e of availableExpDataforTest">
         <sui-checkbox (click)="updateExp(e)" [isDisabled]="versionsSel.length > 1">{{e.expname}}</sui-checkbox>
       </div>
     </div>
-    <button class="enlarge ui primary button" (click)="submit()">
+    <button class="enlarge ui primary button" (click)="submit()" [disabled]="!isSubmitAllowed()">
       Submit
     </button>
   </div>
