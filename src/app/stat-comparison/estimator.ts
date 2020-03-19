@@ -1,6 +1,6 @@
 import { GvpJSON } from './../classes/gvp-plot';
 
-import { mindy } from './estimators/mindy';
+import { getCommonXY, zip } from 'src/app/utils';
 
 export type EstimatorFn = (p1: GvpJSON, p2: GvpJSON) => number;
 
@@ -16,8 +16,8 @@ export const estimators: EstimatorI = {
         fn: (p1: GvpJSON, p2: GvpJSON) => { return 0.0; }
     },
     'mindy': {
-        name: "Minimal relative difference, %",
-        fn: mindy
+        name: "Maximal relative difference, %",
+        fn: maxdy
     }
 };
 
@@ -33,4 +33,14 @@ export function estimatorFullName(name?: string) {
 export function getEstimator(name?: string) {
     if (!name) return estimators[estimatorsNames()[0]];
     return estimators[name];
+}
+
+// simple esimators
+
+
+function maxdy(a: GvpJSON, b: GvpJSON): number {
+    const [, y1, , , y2,] = getCommonXY(a, b);
+    return Math.max(
+        ...(zip([y1, y2]).map(e => Math.abs((e[1] - e[0]) * 100 / e[0])))
+    );
 }
