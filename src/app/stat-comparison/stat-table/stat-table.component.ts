@@ -77,8 +77,6 @@ export class StatTableComponent implements OnInit {
             }
           }
         }
-        // skip plots with missing data
-        this.jsonlist = this.jsonlist.filter(e => e.length === this.versions.length + this.expdata.length);
         this.inProgress = false;
       })
     })
