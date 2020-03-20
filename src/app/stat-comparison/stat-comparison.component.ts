@@ -180,6 +180,16 @@ export class StatComparisonComponent implements OnInit {
     this.menuUpdated = true;
   }
 
+  selectAllObservables() {
+    this.observableSel = this.menuObservable.slice();
+    this.menuUpdated = true;
+  }
+
+  deselectAllObservables() {
+    this.observableSel.length = 0;
+    this.menuUpdated = true;
+  }
+
   isParamChecked(pgroup: string, pvalue: string): boolean {
     const pelem = this.parametersSel.filter(e => e[0] === pgroup)[0];
     return pelem[1].indexOf(pvalue) !== -1;
@@ -191,6 +201,28 @@ export class StatComparisonComponent implements OnInit {
       pelem[1].push(pvalue);
     else
       pelem[1].splice(pelem[1].indexOf(pvalue), 1);
+    this.menuUpdated = true;
+  }
+
+  // should show deselect all icon for parameters
+  isParamCollapseShow(pgroup: string): boolean {
+    const pelem = this.parametersSel.filter(e => e[0] === pgroup)[0];
+    const pall = this.menuParameters.filter(e => e[0] === pgroup)[0];
+    return pelem[1].length === pall[1].length;
+  }
+
+  // select all parameters in group
+  selectAllPGroup(pgroup: string): void {
+    const pelem = this.parametersSel.filter(e => e[0] === pgroup)[0];
+    const pall = this.menuParameters.filter(e => e[0] === pgroup)[0];
+    pelem[1] = pall[1].slice();
+    this.menuUpdated = true;
+  }
+
+  // select all parameters in group
+  deselectAllPGroup(pgroup: string): void {
+    const pelem = this.parametersSel.filter(e => e[0] === pgroup)[0];
+    pelem[1].length = 0;
     this.menuUpdated = true;
   }
 

@@ -35,7 +35,14 @@
       </sui-multi-select>
     </div>
     <div class="ui segment" [ngClass]="{errorblock: !isObservablesCorrect()}">
-      <h3>Observable</h3>
+      <h3>Observable
+        <ng-container *ngIf="menuObservable.length !== 1">
+          <i class="ui tasks icon collapseicon" *ngIf="observableSel.length !== menuObservable.length"
+            (click)="selectAllObservables()"></i>
+          <i class="ui eraser icon collapseicon" *ngIf="observableSel.length === menuObservable.length"
+            (click)="deselectAllObservables()"></i>
+        </ng-container>
+      </h3>
       <div class="ui active inverted dimmer" *ngIf="menuObservable.length === 0">
         <div class="ui loader"></div>
       </div>
@@ -54,7 +61,12 @@
         <div class="ui loader"></div>
       </div>
       <div *ngFor="let paramGroup of menuParameters">
-        <h4>{{paramGroup[0]}}</h4>
+        <h4>{{paramGroup[0]}}
+          <i class="ui tasks icon collapseicon" *ngIf="!isParamCollapseShow(paramGroup[0])"
+            (click)="selectAllPGroup(paramGroup[0])"></i>
+          <i class="ui eraser icon collapseicon" *ngIf="isParamCollapseShow(paramGroup[0])"
+            (click)="deselectAllPGroup(paramGroup[0])"></i>
+        </h4>
         <div *ngFor="let pvalue of sortParameterGroup(paramGroup[1])" class="parametersBlock">
           <div class="ui checkbox">
             <input type="checkbox" [checked]="isParamChecked(paramGroup[0], pvalue)"

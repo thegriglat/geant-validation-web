@@ -5,3 +5,7 @@ div.errorblock {
 div.parametersBlock {
     padding-left: 10px;
 }
+
+.collapseicon {
+    float:right;
+}
