@@ -1,3 +1,7 @@
 div.errorblock {
     border-color: red;
 }
+
+div.parametersBlock {
+    padding-left: 10px;
+}

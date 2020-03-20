@@ -54,8 +54,8 @@
         <div class="ui loader"></div>
       </div>
       <div *ngFor="let paramGroup of menuParameters">
-        <b>{{paramGroup[0]}}</b><br>
-        <div *ngFor="let pvalue of paramGroup[1]">
+        <h4>{{paramGroup[0]}}</h4>
+        <div *ngFor="let pvalue of paramGroup[1]" class="parametersBlock">
           <div class="ui checkbox">
             <input type="checkbox" [checked]="isParamChecked(paramGroup[0], pvalue)"
               (click)="updateParam(paramGroup[0], pvalue)">
@@ -64,6 +64,8 @@
             </label>
           </div>
         </div>
+        <!-- divider, hide for the last -->
+        <div class="ui divider" *ngIf="menuParameters.indexOf(paramGroup) !== menuParameters.length - 1"></div>
       </div>
     </div>
 
