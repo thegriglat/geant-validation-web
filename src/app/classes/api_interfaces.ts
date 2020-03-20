@@ -136,3 +136,16 @@ export interface APIgetPlotIdRequest extends express.Request {
 export interface APIgetPlotIdResponse extends express.Response {
     json(body: number[]): this;
 }
+
+export interface OnlineMenuFilterReq {
+    test_id: number,
+    beams: string[],
+    observables: string[],
+    versions: number[]
+}
+
+export interface OnlineMenuFilterRes {
+    versions: number[],
+    beams: string[],
+    observables: string[]
+  }

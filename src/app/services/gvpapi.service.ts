@@ -6,6 +6,7 @@ import { flatMap, map } from 'rxjs/operators';
 
 import { CustomEncoder } from './../classes/urlencoder';
 import { getParametersList } from '../utils';
+import { OnlineMenuFilterReq, OnlineMenuFilterRes } from '../classes/api_interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -155,6 +156,12 @@ export class GVPAPIService {
     return this.getPlotId(query).pipe(
       flatMap(ids => this.multiget(ids))
     )
+  }
+
+  public menuFilter(query: OnlineMenuFilterReq) {
+    const s = JSON.stringify(query);
+    const params = this.getParams().set("q", s);
+    return this._get<OnlineMenuFilterRes>("/api/onlineMenuFilter", params);
   }
 
   public getExpMatchPlot(query: GvpPlotIdRequest) {

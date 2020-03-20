@@ -1689,12 +1689,7 @@ idea:
 */
 
 app.get('/api/onlineMenuFilter', (req, res) => {
-  const input = {
-    test_id: 101,
-    beams: [] as string[],
-    observables: [] as string[],
-    versions: [240] as number[],
-  }
+  const input: api.OnlineMenuFilterReq = JSON.parse(req.query.q)
   const beam_all_p = uniqlookup_beamParticle(input.test_id);
   const observable_all_p = uniqlookup_observableName(input.test_id);
   const version_all_p = uniqlookup_version(input.test_id);
@@ -1712,7 +1707,6 @@ app.get('/api/onlineMenuFilter', (req, res) => {
     sec_all_p,
     be_all_p
   ]).then(list => {
-    console.log("after pall 1726")
     const beams_all = list[0];
     const observables_all = list[1];
     const versions_all = list[2];
@@ -1792,12 +1786,11 @@ app.get('/api/onlineMenuFilter', (req, res) => {
     // TODO parameters
     // end check beam, version, observable
     Promise.all(all_requests).then(noop => {
-      const resp = {
+      const resp: api.OnlineMenuFilterRes = {
         versions: res_versions,
         beams: res_beams,
         observables: res_observables
       }
-      console.log(resp);
       res.status(200).json(resp)
     })
 
