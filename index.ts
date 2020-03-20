@@ -1567,7 +1567,11 @@ app.get('/api/uniqlookup', (req: api.APIuniqlookupRequest, res: api.APIuniqlooku
 /**
  * Gets the id of the plot that corresponds with the specified parameters
  */
-function getPlotId(body: GvpPlotIdRequest): Promise<number[]> {
+function getPlotIdLimit1(body: GvpPlotIdRequest): Promise<number[]> {
+  return getPlotId(body, " limit 1");
+}
+
+function getPlotId(body: GvpPlotIdRequest, postfix = ""): Promise<number[]> {
   const parameters: [string, string[]][] = body.parameters;
   const beam_energy = body.beam_energy;
   const test_id = PGJoin(body.test_id);
@@ -1608,6 +1612,9 @@ function getPlotId(body: GvpPlotIdRequest): Promise<number[]> {
     }
     if (sqllist.length !== 0) sql += ` and ( ${sqllist.join(' and ')})`;
   }
+  // for LIMIT1 (for onlineMenuFilter)
+  sql += postfix;
+  console.log(sql);
   return execSQL(params, sql).then((result) => {
     const r: number[] = [];
     for (let i = 0; i < result.length; i++) r.push(result[i].plot_id);
@@ -1741,7 +1748,7 @@ app.get('/api/onlineMenuFilter', (req, res) => {
         // override beam to test
         qb.beamparticle = [beam];
         all_requests.push(
-          getPlotId(qb).then(beam_test_ids => {
+          getPlotIdLimit1(qb).then(beam_test_ids => {
             if (beam_test_ids.length !== 0) {
               // at least one plot found
               res_beams.push(beam);
@@ -1763,7 +1770,7 @@ app.get('/api/onlineMenuFilter', (req, res) => {
       const qv = Object.assign({}, query_template);
       qv.version_id = [version];
       all_requests.push(
-        getPlotId(qv).then(v_pid => {
+        getPlotIdLimit1(qv).then(v_pid => {
           if (v_pid.length !== 0)
             res_versions.push(version);
         })
@@ -1780,7 +1787,7 @@ app.get('/api/onlineMenuFilter', (req, res) => {
       const qo = Object.assign({}, query_template);
       qo.observable = [observable];
       all_requests.push(
-        getPlotId(qo).then(o_pid => {
+        getPlotIdLimit1(qo).then(o_pid => {
           if (o_pid.length !== 0)
             res_observables.push(observable);
         })
