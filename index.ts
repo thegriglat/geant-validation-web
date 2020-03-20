@@ -9,6 +9,7 @@ const session = require('express-session');
 const fs = require('fs');
 import * as http from 'http';
 import { isString, isUndefined, isNull } from 'util';
+import { observable, Observable } from 'rxjs';
 const https = require('https');
 const bodyParser = require('body-parser');
 const pg = require('pg');
@@ -460,6 +461,7 @@ function apigetJSON(id: number): Promise<Nullable<GvpJSON>> {
 function apimultiget(ids: number[]): Promise<GvpJSON[]> {
   const promises = ids.map(e => apigetJSON(e));
   return Promise.all(promises).then(list => {
+    console.log("amget");
     return list.filter(e => !isNull(e)) as GvpJSON[];
   });
 }
@@ -1525,6 +1527,35 @@ function uniqlookup(test_id: number, JSONAttr: string): Promise<any[]> {
   });
 }
 
+function uniqlookup_version(test_id: number) {
+  return uniqlookup(test_id, "mctool.version").then(r => r as number[]);
+}
+function uniqlookup_beamParticle(test_id: number) {
+  return uniqlookup(test_id, "metadata.beamParticle").then(r => r as string[]);
+}
+function uniqlookup_beamEnergies(test_id: number) {
+  return uniqlookup(test_id, "metadata.beamEnergies").then(r => r as string[]);
+}
+function uniqlookup_model(test_id: number) {
+  return uniqlookup(test_id, "mctool.model").then(r => r as string[]);
+}
+function uniqlookup_targetName(test_id: number) {
+  return uniqlookup(test_id, "metadata.targetName").then(r => r as string[]);
+}
+function uniqlookup_secondaryParticle(test_id: number) {
+  return uniqlookup(test_id, "metadata.secondaryParticle").then(r => r as string[]);
+}
+function uniqlookup_observableName(test_id: number) {
+  return uniqlookup(test_id, "metadata.observableName").then(r => r as string[]);
+}
+
+function uniqlookup_parameters(test_id: number) {
+  return uniqlookup(test_id, "metadata.parameters").then(r => {
+    return r as GvpParameter[];
+  });
+}
+
+
 app.get('/api/uniqlookup', (req: api.APIuniqlookupRequest, res: api.APIuniqlookupResponse) => {
   const test_id = req.query.test_id;
   const JSONAttr = req.query.JSONAttr;
@@ -1562,6 +1593,7 @@ function getPlotId(body: GvpPlotIdRequest): Promise<number[]> {
       }
     sql += ` and (${sqlsuffix.join(' or ')})`;
   }
+  // TODO: need to check length of parameters ???
   if (parameters) {
     const sqllist: string[] = [];
     for (const pair of parameters) {
@@ -1581,7 +1613,6 @@ function getPlotId(body: GvpPlotIdRequest): Promise<number[]> {
     for (let i = 0; i < result.length; i++) r.push(result[i].plot_id);
     return r;
   });
-})
 }
 
 app.get('/api/getPlotId', (req: api.APIgetPlotIdRequest, res: api.APIgetPlotIdResponse) => {
@@ -1656,8 +1687,133 @@ idea:
 4. extract metadata from jsons
 5. return to client
 */
-app.get('/api/onlineMenuFilter', (req, res) => {
 
+function getAttr(json: GvpJSON, attribute: string) {
+  const attrs = attribute.split(".");
+  let obj = json;
+  for (let i of attrs)
+    obj = obj[i];
+  return obj;
+}
+
+function distinctExtract(jsons: GvpJSON[], attribute: string): any[] {
+  return Array.from(new Set(jsons.map(e => getAttr(e, attribute))));
+}
+
+app.get('/api/onlineMenuFilter', (req, res) => {
+  const input = {
+    test_id: 101,
+    beams: [] as string[],
+    observables: [] as string[],
+    versions: [240] as number[],
+  }
+  const beam_all_p = uniqlookup_beamParticle(input.test_id);
+  const observable_all_p = uniqlookup_observableName(input.test_id);
+  const version_all_p = uniqlookup_version(input.test_id);
+  const target_all_p = uniqlookup_targetName(input.test_id);
+  const model_all_p = uniqlookup_model(input.test_id);
+  const sec_all_p = uniqlookup_secondaryParticle(input.test_id);
+  const be_all_p = uniqlookup_beamEnergies(input.test_id);
+  // const parameter_all_p = uniqlookup_parameters(test_id);
+  Promise.all([
+    beam_all_p,
+    observable_all_p,
+    version_all_p,
+    target_all_p,
+    model_all_p,
+    sec_all_p,
+    be_all_p
+  ]).then(list => {
+    console.log("after pall 1726")
+    const beams_all = list[0];
+    const observables_all = list[1];
+    const versions_all = list[2];
+    const targets = list[3];
+    const models = list[4];
+    const secs = list[5];
+    const benergies = list[6];
+    const query_template = new GvpPlotIdRequest(
+      [input.test_id], // test
+      targets, // targets
+      (input.versions.length === 0) ? versions_all : input.versions, // versions (changes)
+      models, //models
+      secs, // secs
+      (input.beams.length === 0) ? beams_all : input.beams,  // beams (changes)
+      (input.observables.length === 0) ? observables_all : input.observables, // observables (changes)
+      [], // special case to ignore parameters (changes)
+      benergies // beam energy
+    );
+
+    // we need to check that after selection some versions/observables/parameters available
+    // e.g. has at least 1 plot
+
+    // variable to pass further to Promise.all
+    let all_requests: Promise<any>[] = [];
+    // check beam
+
+    const res_beams = input.beams;
+    // 'if' as only one beam can be selected
+    if (input.beams.length === 0) {
+      for (let beam of beams_all) {
+        const qb = Object.assign({}, query_template);
+        // override beam to test
+        qb.beamparticle = [beam];
+        all_requests.push(
+          getPlotId(qb).then(beam_test_ids => {
+            if (beam_test_ids.length !== 0) {
+              // at least one plot found
+              res_beams.push(beam);
+            }
+          })
+        )
+      }
+    }
+
+    // check versions
+    let res_versions: number[] = [];
+    for (let version of versions_all) {
+      if (input.versions.indexOf(version) !== -1)
+        // skip known versions
+        continue;
+      // test version by version
+      const qv = Object.assign({}, query_template);
+      qv.version_id = [version];
+      all_requests.push(
+        getPlotId(qv).then(v_pid => {
+          if (v_pid.length !== 0)
+            res_versions.push(version);
+        })
+      )
+    }
+
+    // check observables
+    let res_observables: string[] = [];
+    for (let observable of observables_all) {
+      if (input.observables.indexOf(observable) !== -1)
+        continue;
+      const qo = Object.assign({}, query_template);
+      qo.observable = [observable];
+      all_requests.push(
+        getPlotId(qo).then(o_pid => {
+          if (o_pid.length !== 0)
+            res_observables.push(observable);
+        })
+      )
+    }
+
+    // TODO parameters
+    // end check beam, version, observable
+    Promise.all(all_requests).then(noop => {
+      const resp = {
+        versions: res_versions,
+        beams: res_beams,
+        observables: res_observables
+      }
+      console.log(resp);
+      res.status(200).json(resp)
+    })
+
+  })
 })
 
 /**
@@ -2131,16 +2287,22 @@ app.get('/api/setLoggingStatus', (req, res) => {
  *
  * @param id Optional parameter if we only want to retrieve information of only one specific row
  */
-app.get('/api/test', (req: api.APITestRequest, res: api.APITestResponse) => {
-  const id = req.query.id;
+
+function api_test(id?: number): Promise<GvpTest[]> {
   let query: string = queries.all_tests;
   const sqlparams: number[] = [];
   if (!isUndefined(id)) {
     sqlparams.push(id);
     query = queries.test_by_id;
   }
-  execSQL(sqlparams, query).then(result => {
-    res.status(200).json(result as GvpTest[]);
+  return execSQL(sqlparams, query).then(result => {
+    return result as GvpTest[];
+  });
+}
+app.get('/api/test', (req: api.APITestRequest, res: api.APITestResponse) => {
+  const id = req.query.id;
+  api_test(id).then(result => {
+    res.status(200).json(result);
   });
 });
 
