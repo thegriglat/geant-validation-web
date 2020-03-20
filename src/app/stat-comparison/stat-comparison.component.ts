@@ -5,6 +5,7 @@ import { GvpTest, GvpMctoolNameVersion, GvpInspire, ParametersList, Nullable } f
 import { GVPAPIService } from '../services/gvpapi.service';
 import { unstableVersionFilter, versionSorter, s2KaTeX } from '../utils';
 import { StatTableComponent } from './stat-table/stat-table.component';
+import { OnlineMenuFilterRes, OnlineMenuFilterReq } from '../classes/api_interfaces';
 
 @Component({
   selector: 'app-stat-comparison',
@@ -32,6 +33,12 @@ export class StatComparisonComponent implements OnInit {
   public submitted = false;
   @ViewChild(StatTableComponent)
   private stattable: Nullable<StatTableComponent> = null;
+
+  private onlineMenuFilter: OnlineMenuFilterRes = {
+    versions: [],
+    beams: [],
+    observables: []
+  };
 
   private MCToolNameCache = new Map<number, string>();
   /** Cache of MC tool versions, popuated on page load
@@ -95,6 +102,21 @@ export class StatComparisonComponent implements OnInit {
     return items.filter(e => e.version.indexOf(query) !== -1);
   }
 
+  versionOnlineFilter(items: GvpMctoolNameVersion[]): GvpMctoolNameVersion[] {
+    // respect onlineMenuFilter
+    return items.filter(e => this.onlineMenuFilter.versions.indexOf(e.mctool_name_version_id) !== -1);
+  }
+
+  beamOnlineFilter(items: string[]): string[] {
+    // respect onlineMenuFilter
+    return items.filter(e => this.onlineMenuFilter.beams.indexOf(e) !== -1);
+  }
+
+  observableOnlineFilter(items: string[]): string[] {
+    // respect onlineMenuFilter
+    return items.filter(e => this.onlineMenuFilter.observables.indexOf(e) !== -1);
+  }
+
   versionFormatter(item: GvpMctoolNameVersion, query?: string): string {
     return item.version;
   }
@@ -128,6 +150,7 @@ export class StatComparisonComponent implements OnInit {
       if (this.menuVersions.length === 1) {
         this.versionsSel = this.menuVersions.slice();
       }
+      this.onlineMenuFilter.versions = this.menuVersions.map(e => e.mctool_name_version_id);
     });
   }
 
@@ -135,6 +158,7 @@ export class StatComparisonComponent implements OnInit {
     this.api.uniqlookup_beamParticle(test.test_id).subscribe(beams => {
       this.menuBeams = beams;
       if (this.menuBeams.length === 1) this.beamsSel = this.menuBeams.slice();
+      this.onlineMenuFilter.beams = this.menuBeams.slice();
     })
   }
 
@@ -143,6 +167,7 @@ export class StatComparisonComponent implements OnInit {
       this.menuObservable = observables;
       // TODO: fix checkbox
       if (this.menuObservable.length === 1) this.observableSel = this.menuObservable.slice();
+      this.onlineMenuFilter.observables = this.menuObservable.slice();
     })
   }
 
@@ -177,17 +202,17 @@ export class StatComparisonComponent implements OnInit {
     } else {
       this.observableSel.splice(this.observableSel.indexOf(observable), 1);
     }
-    this.menuUpdated = true;
+    this.firesUpdateMenu();
   }
 
   selectAllObservables() {
     this.observableSel = this.menuObservable.slice();
-    this.menuUpdated = true;
+    this.firesUpdateMenu();
   }
 
   deselectAllObservables() {
     this.observableSel.length = 0;
-    this.menuUpdated = true;
+    this.firesUpdateMenu();
   }
 
   isParamChecked(pgroup: string, pvalue: string): boolean {
@@ -201,7 +226,7 @@ export class StatComparisonComponent implements OnInit {
       pelem[1].push(pvalue);
     else
       pelem[1].splice(pelem[1].indexOf(pvalue), 1);
-    this.menuUpdated = true;
+    this.firesUpdateMenu();
   }
 
   // should show deselect all icon for parameters
@@ -216,14 +241,14 @@ export class StatComparisonComponent implements OnInit {
     const pelem = this.parametersSel.filter(e => e[0] === pgroup)[0];
     const pall = this.menuParameters.filter(e => e[0] === pgroup)[0];
     pelem[1] = pall[1].slice();
-    this.menuUpdated = true;
+    this.firesUpdateMenu();
   }
 
   // select all parameters in group
   deselectAllPGroup(pgroup: string): void {
     const pelem = this.parametersSel.filter(e => e[0] === pgroup)[0];
     pelem[1].length = 0;
-    this.menuUpdated = true;
+    this.firesUpdateMenu();
   }
 
   sortParameterGroup(pvalues: string[]): string[] {
@@ -250,6 +275,24 @@ export class StatComparisonComponent implements OnInit {
 
   firesUpdateMenu() {
     this.menuUpdated = true;
+    if (this.test) {
+      const query: OnlineMenuFilterReq = {
+        test_id: this.test.test_id,
+        versions: this.versionsSel.map(e => e.mctool_name_version_id),
+        beams: this.beamsSel,
+        observables: this.observableSel
+      }
+      this.api.menuFilter(query).subscribe(data => {
+        this.onlineMenuFilter = data;
+        if (this.onlineMenuFilter.beams.length === 1)
+          this.beamsSel = this.onlineMenuFilter.beams.slice();
+        if (this.onlineMenuFilter.observables.length === 1) {
+          this.observableSel = this.onlineMenuFilter.observables.slice();
+          if (this.onlineMenuFilter.versions.length === 1)
+            this.versionsSel = this.menuVersions.filter(e => e.mctool_name_version_id === this.onlineMenuFilter.versions[0])
+        }
+      })
+    }
   }
 
   private updateExpDescription(testId: number) {
