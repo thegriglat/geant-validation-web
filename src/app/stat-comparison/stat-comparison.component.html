@@ -56,7 +56,13 @@
       <div *ngFor="let paramGroup of menuParameters">
         <b>{{paramGroup[0]}}</b><br>
         <div *ngFor="let pvalue of paramGroup[1]">
-          <sui-checkbox (click)="updateParam(paramGroup[0], pvalue)">{{pvalue}}</sui-checkbox>
+          <div class="ui checkbox">
+            <input type="checkbox" [checked]="isParamChecked(paramGroup[0], pvalue)"
+              (click)="updateParam(paramGroup[0], pvalue)">
+            <label>
+              {{pvalue}}
+            </label>
+          </div>
         </div>
       </div>
     </div>

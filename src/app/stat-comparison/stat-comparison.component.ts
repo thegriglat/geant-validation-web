@@ -145,7 +145,7 @@ export class StatComparisonComponent implements OnInit {
     this.api.uniqlookup_parametersList(test.test_id).subscribe(parameters => {
       this.menuParameters = parameters;
       for (let i of this.menuParameters) {
-        this.parametersSel.push([i[0], []]);
+        this.parametersSel.push([i[0], i[1].slice()]);
       }
       this.parametersUpdating = false;
     })
@@ -170,6 +170,11 @@ export class StatComparisonComponent implements OnInit {
     } else {
       this.observableSel.splice(this.observableSel.indexOf(observable), 1);
     }
+  }
+
+  isParamChecked(pgroup: string, pvalue: string): boolean {
+    const pelem = this.parametersSel.filter(e => e[0] === pgroup)[0];
+    return pelem[1].indexOf(pvalue) !== -1;
   }
 
   updateParam(pgroup: string, pvalue: string): void {
