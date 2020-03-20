@@ -185,6 +185,24 @@ export class StatComparisonComponent implements OnInit {
       pelem[1].splice(pelem[1].indexOf(pvalue), 1);
   }
 
+  sortParameterGroup(pvalues: string[]): string[] {
+    // sort by first word, to catch '1 deg'
+    // also check that first word is number
+    return pvalues.sort((a: string, b: string) => {
+      const w1 = a.split(" ")[0];
+      const w2 = b.split(" ")[0];
+      const wn1 = Number(w1);
+      const wn2 = Number(w2)
+      if (wn1 != NaN && wn2 !== NaN)
+        // number
+        return wn1 - wn2;
+      // string
+      if (w2 < w1) return 1;
+      if (w2 > w1) return -1;
+      return 0;
+    })
+  }
+
   katex(s: string): string {
     return s2KaTeX(s);
   }
