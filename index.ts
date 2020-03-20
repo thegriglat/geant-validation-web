@@ -1754,9 +1754,11 @@ app.get('/api/onlineMenuFilter', (req, res) => {
     // check versions
     let res_versions: number[] = [];
     for (let version of versions_all) {
-      if (input.versions.indexOf(version) !== -1)
+      if (input.versions.indexOf(version) !== -1) {
         // skip known versions
+        res_versions.push(version);
         continue;
+      }
       // test version by version
       const qv = Object.assign({}, query_template);
       qv.version_id = [version];
@@ -1771,8 +1773,10 @@ app.get('/api/onlineMenuFilter', (req, res) => {
     // check observables
     let res_observables: string[] = [];
     for (let observable of observables_all) {
-      if (input.observables.indexOf(observable) !== -1)
+      if (input.observables.indexOf(observable) !== -1) {
+        res_observables.push(observable);
         continue;
+      }
       const qo = Object.assign({}, query_template);
       qo.observable = [observable];
       all_requests.push(
