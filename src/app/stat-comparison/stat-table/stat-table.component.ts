@@ -2,7 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { GVPAPIService } from 'src/app/services/gvpapi.service';
 import { GvpTest, GvpMctoolNameVersion, ParametersList, GvpPlotIdRequest, Nullable, GvpPngRequest, GvpJSON, GvpInspire } from 'src/app/classes/gvp-plot';
 import { forkJoin } from 'rxjs';
-import { GvpJSONMetadataMatch, getParametersList, GvpJSONExpMetadataMatch } from 'src/app/utils';
+import { GvpJSONMetadataMatch, getParametersList, GvpJSONExpMetadataMatch, ParametersListEq } from 'src/app/utils';
 import { getEstimator, Estimator, estimatorFullName, estimatorsNames } from './../estimator';
 import { SuiModalService } from 'ng2-semantic-ui';
 import { PlotModal } from 'src/app/plot/plot-modal/plot-modal.component';
@@ -53,7 +53,7 @@ export class StatTableComponent implements OnInit {
         secs, // secs
         this.beam, // beams
         this.observables, // observ
-        this.parameters, // parameters
+        [], // SPECIAL! not request parameters as impossible to select >1 par. Filter in the code parameters
         beamEs // beamenergy
       );
       const g4_jsons_req = this.api.getPlotJSON(query);
@@ -67,9 +67,14 @@ export class StatTableComponent implements OnInit {
         this.jsonlist = [];
         for (let i = 0; i < jsons.length; ++i) {
           const base_json = jsons[i];
+          if (!ParametersListEq(getParametersList(base_json.metadata.parameters), this.parameters))
+            continue;
           this.jsonlist.push([base_json])
           for (let j = i + 1; j < jsons.length; ++j) {
             const cmp_json = jsons[j];
+            if (!ParametersListEq(getParametersList(cmp_json.metadata.parameters), this.parameters))
+              // jump forward if json not match selected parameters
+              continue;
             // compare function, different for g4 and exp
             const cmp_fn = (cmp_json.mctool.model === "experiment" || base_json.mctool.model === "experiment") ? GvpJSONExpMetadataMatch : GvpJSONMetadataMatch;
             if (cmp_fn(base_json, cmp_json)) {

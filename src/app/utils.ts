@@ -100,7 +100,7 @@ export function getParametersList(parameters: GvpParameter[]): ParametersList {
     return p;
 }
 
-function _ParametersListEq(p1: ParametersList, p2: ParametersList): boolean {
+export function ParametersListEq(p1: ParametersList, p2: ParametersList): boolean {
     for (const i of p1) {
         const idx = p2.map(e => e[0]).indexOf(i[0]);
         if (idx === -1) return false;
@@ -121,7 +121,7 @@ export function GvpJSONExpMetadataMatch(a: GvpJSON, b: GvpJSON): boolean {
         a.metadata.beam_energy_str === b.metadata.beam_energy_str
     ) {
         // check params
-        return _ParametersListEq(getParametersList(a.metadata.parameters), getParametersList(b.metadata.parameters));
+        return ParametersListEq(getParametersList(a.metadata.parameters), getParametersList(b.metadata.parameters));
     }
     return false;
 }
@@ -137,7 +137,7 @@ export function GvpJSONMetadataMatch(a: GvpJSON, b: GvpJSON): boolean {
         a.metadata.beam_energy_str === b.metadata.beam_energy_str
     ) {
         // check params
-        return _ParametersListEq(getParametersList(a.metadata.parameters), getParametersList(b.metadata.parameters));
+        return ParametersListEq(getParametersList(a.metadata.parameters), getParametersList(b.metadata.parameters));
     }
     return false;
 }
@@ -152,7 +152,7 @@ export function filterData(data: GvpJSON[], q: GvpPlotXML): GvpJSON[] {
             j.metadata.beam_energy_str === q.energy
         ) {
             // check params
-            return _ParametersListEq(getParametersList(j.metadata.parameters), q.getParametersList());
+            return ParametersListEq(getParametersList(j.metadata.parameters), q.getParametersList());
         }
         return false;
     })
