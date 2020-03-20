@@ -39,7 +39,7 @@
       <div class="ui active inverted dimmer" *ngIf="menuObservable.length === 0">
         <div class="ui loader"></div>
       </div>
-      <div *ngFor="let o of menuObservable">
+      <div *ngFor="let o of menuObservable.sort()">
         <div class="ui checkbox">
           <input type="checkbox" [checked]="observableSel.indexOf(o) !== -1" (click)="updateObservable(o)">
           <label>
