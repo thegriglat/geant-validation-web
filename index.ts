@@ -1487,9 +1487,7 @@ app.get('/api/checkMCTool', (req: api.APIcheckMCToolRequest, res: api.APIcheckMC
   });
 });
 
-app.get('/api/uniqlookup', (req: api.APIuniqlookupRequest, res: api.APIuniqlookupResponse) => {
-  const test_id = req.query.test_id;
-  const JSONAttr = req.query.JSONAttr;
+function uniqlookup(test_id: number, JSONAttr: string): Promise<any[]> {
   const getSQL = {
     'mctool.version':
       'select mctool_name_version.mctool_name_version_id as out from mctool_name_version inner join plot on plot.mctool_name_version_id = mctool_name_version.mctool_name_version_id where plot.test_id = $1 group by mctool_name_version.mctool_name_version_id',
@@ -1509,7 +1507,7 @@ app.get('/api/uniqlookup', (req: api.APIuniqlookupRequest, res: api.APIuniqlooku
       'select parnames, parvalues from plot where plot.test_id = $1 group by parnames, parvalues'
   };
   const sql = getSQL[JSONAttr];
-  execSQL([test_id], sql).then((result) => {
+  return execSQL([test_id], sql).then((result) => {
     const r: any[] = [];
     for (const i of result) {
       if (JSONAttr !== 'metadata.parameters') r.push(i.out);
@@ -1523,8 +1521,16 @@ app.get('/api/uniqlookup', (req: api.APIuniqlookupRequest, res: api.APIuniqlooku
         }
       }
     }
-    res.status(200).json(r);
+    return r;
   });
+}
+
+app.get('/api/uniqlookup', (req: api.APIuniqlookupRequest, res: api.APIuniqlookupResponse) => {
+  const test_id = req.query.test_id;
+  const JSONAttr = req.query.JSONAttr;
+  uniqlookup(test_id, JSONAttr).then(r => {
+    res.status(200).json(r);
+  })
 });
 
 /**
