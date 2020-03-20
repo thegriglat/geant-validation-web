@@ -9,9 +9,9 @@
       <div class="ui active inverted dimmer" *ngIf="menuVersions.length === 0">
         <div class="ui loader"></div>
       </div>
-      <sui-multi-select class="selection enlarge" [(ngModel)]="versionsSel" [options]="unstableFilter(menuVersions)"
-        [isSearchable]="true" [isDisabled]="false" [optionFormatter]="versionFormatter"
-        [optionsFilter]="versionSelectFilter" #versionSelect>
+      <sui-multi-select class="selection enlarge" (ngModelChange)="firesUpdateMenu()" [(ngModel)]="versionsSel"
+        [options]="unstableFilter(menuVersions)" [isSearchable]="true" [isDisabled]="false"
+        [optionFormatter]="versionFormatter" [optionsFilter]="versionSelectFilter" #versionSelect>
         <ng-container *ngIf="!isVersionExpCorrect()">
           <sui-select-option *ngFor="let obj of versionSelect.filteredOptions" [value]="obj">
           </sui-select-option>
@@ -26,8 +26,8 @@
       <div class="ui active inverted dimmer" *ngIf="menuBeams.length === 0">
         <div class="ui loader"></div>
       </div>
-      <sui-multi-select class="selection enlarge" [(ngModel)]="beamsSel" [options]="menuBeams" [isSearchable]="true"
-        [isDisabled]="false" #beamSelect>
+      <sui-multi-select class="selection enlarge" (ngModelChange)="firesUpdateMenu()" [(ngModel)]="beamsSel"
+        [options]="menuBeams" [isSearchable]="true" [isDisabled]="false" #beamSelect>
         <ng-container *ngIf="!isBeamCorrect()">
           <sui-select-option *ngFor="let obj of beamSelect.filteredOptions" [value]="obj">
           </sui-select-option>
@@ -76,7 +76,9 @@
         <sui-checkbox (click)="updateExp(e)" [isDisabled]="isExpCheckboxDisabled()">{{e.expname}}</sui-checkbox>
       </div>
     </div>
-    <button class="enlarge ui primary button" (click)="submit()" [disabled]="!isSubmitAllowed()">
+    <button class="enlarge ui button"
+      [ngClass]="{'orange': menuUpdated && submitted, 'primary': !menuUpdated || !submitted}" (click)="submit()"
+      [disabled]="!isSubmitAllowed()">
       Submit
     </button>
   </div>

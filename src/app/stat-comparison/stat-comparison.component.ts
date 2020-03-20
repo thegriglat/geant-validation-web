@@ -28,6 +28,9 @@ export class StatComparisonComponent implements OnInit {
   public menuParameters: ParametersList = [];
   public parametersSel: ParametersList = [];
   public parametersUpdating = false;
+  // fires if menu updated -> to color submit button
+  public menuUpdated = false;
+  // to see stattable
   public submitted = false;
   @ViewChild(StatTableComponent)
   private stattable: Nullable<StatTableComponent> = null;
@@ -75,6 +78,7 @@ export class StatComparisonComponent implements OnInit {
     if (this.stattable)
       this.stattable.ngOnInit();
     this.submitted = true;
+    this.menuUpdated = false;
   }
 
   unstableFilter(v: GvpMctoolNameVersion[]): GvpMctoolNameVersion[] {
@@ -166,6 +170,7 @@ export class StatComparisonComponent implements OnInit {
     } else {
       this.checkedExp.splice(this.checkedExp.indexOf(e), 1);
     }
+    this.menuUpdated = true;
   }
 
   updateObservable(observable: string): void {
@@ -174,6 +179,7 @@ export class StatComparisonComponent implements OnInit {
     } else {
       this.observableSel.splice(this.observableSel.indexOf(observable), 1);
     }
+    this.menuUpdated = true;
   }
 
   isParamChecked(pgroup: string, pvalue: string): boolean {
@@ -187,6 +193,7 @@ export class StatComparisonComponent implements OnInit {
       pelem[1].push(pvalue);
     else
       pelem[1].splice(pelem[1].indexOf(pvalue), 1);
+    this.menuUpdated = true;
   }
 
   sortParameterGroup(pvalues: string[]): string[] {
@@ -209,6 +216,10 @@ export class StatComparisonComponent implements OnInit {
 
   katex(s: string): string {
     return s2KaTeX(s);
+  }
+
+  firesUpdateMenu() {
+    this.menuUpdated = true;
   }
 
   private updateExpDescription(testId: number) {
