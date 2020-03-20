@@ -9,11 +9,13 @@
       <div class="ui active inverted dimmer" *ngIf="menuVersions.length === 0">
         <div class="ui loader"></div>
       </div>
-      <sui-multi-select class="selection enlarge" [(ngModel)]="versionsSel"
-        [options]="limit2(unstableFilter(menuVersions))" [isSearchable]="true" [isDisabled]="false"
-        [optionFormatter]="versionFormatter" [optionsFilter]="versionSelectFilter" #versionSelect>
-        <sui-select-option *ngFor="let obj of versionSelect.filteredOptions" [value]="obj">
-        </sui-select-option>
+      <sui-multi-select class="selection enlarge" [(ngModel)]="versionsSel" [options]="unstableFilter(menuVersions)"
+        [isSearchable]="true" [isDisabled]="false" [optionFormatter]="versionFormatter"
+        [optionsFilter]="versionSelectFilter" #versionSelect>
+        <ng-container *ngIf="!isVersionExpCorrect()">
+          <sui-select-option *ngFor="let obj of versionSelect.filteredOptions" [value]="obj">
+          </sui-select-option>
+        </ng-container>
       </sui-multi-select>
       <div class="ui divider"></div>
       <sui-checkbox class="toggle" [(ngModel)]="showUnstableVersions" (checkChange)="filterVersionSel()">Show
@@ -24,10 +26,12 @@
       <div class="ui active inverted dimmer" *ngIf="menuBeams.length === 0">
         <div class="ui loader"></div>
       </div>
-      <sui-multi-select class="selection enlarge" [(ngModel)]="beamsSel" [options]="limit(1, beamsSel, menuBeams)"
-        [isSearchable]="true" [isDisabled]="false" #beamSelect>
-        <sui-select-option *ngFor="let obj of beamSelect.filteredOptions" [value]="obj">
-        </sui-select-option>
+      <sui-multi-select class="selection enlarge" [(ngModel)]="beamsSel" [options]="menuBeams" [isSearchable]="true"
+        [isDisabled]="false" #beamSelect>
+        <ng-container *ngIf="!isBeamCorrect()">
+          <sui-select-option *ngFor="let obj of beamSelect.filteredOptions" [value]="obj">
+          </sui-select-option>
+        </ng-container>
       </sui-multi-select>
     </div>
     <div class="ui segment" [ngClass]="{errorblock: !isObservablesCorrect()}">
