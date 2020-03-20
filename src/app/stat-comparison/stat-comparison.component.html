@@ -40,9 +40,12 @@
         <div class="ui loader"></div>
       </div>
       <div *ngFor="let o of menuObservable">
-        <sui-checkbox (click)="updateObservable(o)">
-          <ng-katex class="center" [equation]="katex(o)"></ng-katex>
-        </sui-checkbox>
+        <div class="ui checkbox">
+          <input type="checkbox" [checked]="observableSel.indexOf(o) !== -1" (click)="updateObservable(o)">
+          <label>
+            <ng-katex class="center" [equation]="katex(o)"></ng-katex>
+          </label>
+        </div>
       </div>
     </div>
     <div class="ui segment" *ngIf="!parametersUpdating && menuParameters.length !== 0">
