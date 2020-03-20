@@ -49,6 +49,8 @@ export function getEstimator(name?: string) {
 function maxdy(a: GvpJSON, b: GvpJSON): number {
     const [, y1, , , y2,] = getCommonXY(a, b);
     return Math.max(
-        ...(zip([y1, y2]).map(e => Math.abs((e[1] - e[0]) * 100 / e[0])))
+        ...(zip([y1, y2]).map(e => Math.abs(
+            (e[0] === 0) ? 0 : (e[1] - e[0]) * 100 / e[0]
+        )))
     );
 }
