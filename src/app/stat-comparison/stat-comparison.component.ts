@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { switchMap, map } from 'rxjs/operators';
 import { GvpTest, GvpMctoolNameVersion, GvpInspire, ParametersList, Nullable } from '../classes/gvp-plot';
@@ -6,6 +6,7 @@ import { GVPAPIService } from '../services/gvpapi.service';
 import { Observable } from 'rxjs';
 import { unstableVersionFilter, versionSorter, s2KaTeX } from '../utils';
 import { truncate } from 'fs';
+import { StatTableComponent } from './stat-table/stat-table.component';
 
 @Component({
   selector: 'app-stat-comparison',
@@ -28,6 +29,8 @@ export class StatComparisonComponent implements OnInit {
   public parametersSel: ParametersList = [];
   public parametersUpdating = false;
   public submitted = false;
+  @ViewChild(StatTableComponent)
+  private stattable: Nullable<StatTableComponent> = null;
 
   private MCToolNameCache = new Map<number, string>();
   /** Cache of MC tool versions, popuated on page load
@@ -69,7 +72,8 @@ export class StatComparisonComponent implements OnInit {
   }
 
   submit() {
-    this.submitted = false;
+    if (this.stattable)
+      this.stattable.ngOnInit();
     this.submitted = true;
   }
 
