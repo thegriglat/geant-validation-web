@@ -1613,7 +1613,6 @@ function getPlotId(body: GvpPlotIdRequest, postfix = ""): Promise<number[]> {
   }
   // for LIMIT1 (for onlineMenuFilter)
   sql += postfix;
-  console.log(sql);
   return execSQL(params, sql).then((result) => {
     const r: number[] = [];
     for (let i = 0; i < result.length; i++) r.push(result[i].plot_id);
