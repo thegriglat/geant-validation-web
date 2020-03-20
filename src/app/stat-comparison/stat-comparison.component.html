@@ -5,7 +5,9 @@
 <div class="ui stackable grid">
   <div class="four wide column">
     <div class="ui segment" [ngClass]="{errorblock: !isVersionExpCorrect()}">
-      <h3>Version</h3>
+      <h3>Version
+        <div class="ui tiny active inline loader collapseicon" *ngIf="onlineFilterProgress"></div>
+      </h3>
       <div class="ui active inverted dimmer" *ngIf="menuVersions.length === 0">
         <div class="ui loader"></div>
       </div>
@@ -22,7 +24,9 @@
         unstable releases</sui-checkbox>
     </div>
     <div class="ui segment" [ngClass]="{errorblock: !isBeamCorrect()}">
-      <h3>Beam</h3>
+      <h3>Beam
+        <div class="ui tiny active inline loader collapseicon" *ngIf="onlineFilterProgress"></div>
+      </h3>
       <div class="ui active inverted dimmer" *ngIf="menuBeams.length === 0">
         <div class="ui loader"></div>
       </div>
@@ -36,6 +40,7 @@
     </div>
     <div class="ui segment" [ngClass]="{errorblock: !isObservablesCorrect()}">
       <h3>Observable
+        <div class="ui tiny active inline loader collapseicon" *ngIf="onlineFilterProgress"></div>
         <ng-container *ngIf="menuObservable.length !== 1">
           <i class="ui tasks icon collapseicon" *ngIf="observableSel.length !== menuObservable.length"
             (click)="selectAllObservables()"></i>

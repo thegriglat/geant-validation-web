@@ -31,6 +31,8 @@ export class StatComparisonComponent implements OnInit {
   public menuUpdated = false;
   // to see stattable
   public submitted = false;
+  // indicated that onlineMenuFilter working (long request)
+  public onlineFilterProgress = false;
   @ViewChild(StatTableComponent)
   private stattable: Nullable<StatTableComponent> = null;
 
@@ -282,15 +284,16 @@ export class StatComparisonComponent implements OnInit {
         beams: this.beamsSel,
         observables: this.observableSel
       }
+      this.onlineFilterProgress = true;
       this.api.menuFilter(query).subscribe(data => {
+        this.onlineFilterProgress = false;
         this.onlineMenuFilter = data;
         if (this.onlineMenuFilter.beams.length === 1)
           this.beamsSel = this.onlineMenuFilter.beams.slice();
-        if (this.onlineMenuFilter.observables.length === 1) {
+        if (this.onlineMenuFilter.observables.length === 1)
           this.observableSel = this.onlineMenuFilter.observables.slice();
-          if (this.onlineMenuFilter.versions.length === 1)
-            this.versionsSel = this.menuVersions.filter(e => e.mctool_name_version_id === this.onlineMenuFilter.versions[0])
-        }
+        if (this.onlineMenuFilter.versions.length === 1)
+          this.versionsSel = this.menuVersions.filter(e => e.mctool_name_version_id === this.onlineMenuFilter.versions[0])
       })
     }
   }
