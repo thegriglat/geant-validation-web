@@ -191,7 +191,6 @@ export class StatComparisonComponent implements OnInit {
       pelem[1].push(pvalue);
     else
       pelem[1].splice(pelem[1].indexOf(pvalue), 1);
-    console.log(this.parametersSel);
     this.menuUpdated = true;
   }
 
