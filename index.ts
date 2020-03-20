@@ -9,7 +9,6 @@ const session = require('express-session');
 const fs = require('fs');
 import * as http from 'http';
 import { isString, isUndefined, isNull } from 'util';
-import { observable, Observable } from 'rxjs';
 const https = require('https');
 const bodyParser = require('body-parser');
 const pg = require('pg');
