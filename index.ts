@@ -1688,18 +1688,6 @@ idea:
 5. return to client
 */
 
-function getAttr(json: GvpJSON, attribute: string) {
-  const attrs = attribute.split(".");
-  let obj = json;
-  for (let i of attrs)
-    obj = obj[i];
-  return obj;
-}
-
-function distinctExtract(jsons: GvpJSON[], attribute: string): any[] {
-  return Array.from(new Set(jsons.map(e => getAttr(e, attribute))));
-}
-
 app.get('/api/onlineMenuFilter', (req, res) => {
   const input = {
     test_id: 101,
