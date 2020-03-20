@@ -1,11 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { switchMap, map } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 import { GvpTest, GvpMctoolNameVersion, GvpInspire, ParametersList, Nullable } from '../classes/gvp-plot';
 import { GVPAPIService } from '../services/gvpapi.service';
-import { Observable } from 'rxjs';
 import { unstableVersionFilter, versionSorter, s2KaTeX } from '../utils';
-import { truncate } from 'fs';
 import { StatTableComponent } from './stat-table/stat-table.component';
 
 @Component({
