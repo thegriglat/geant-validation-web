@@ -1530,8 +1530,7 @@ app.get('/api/uniqlookup', (req: api.APIuniqlookupRequest, res: api.APIuniqlooku
 /**
  * Gets the id of the plot that corresponds with the specified parameters
  */
-app.get('/api/getPlotId', (req: api.APIgetPlotIdRequest, res: api.APIgetPlotIdResponse) => {
-  const body: GvpPlotIdRequest = JSON.parse(req.query.json_encoded);
+function getPlotId(body: GvpPlotIdRequest): Promise<number[]> {
   const parameters: [string, string[]][] = body.parameters;
   const beam_energy = body.beam_energy;
   const test_id = PGJoin(body.test_id);
@@ -1571,11 +1570,20 @@ app.get('/api/getPlotId', (req: api.APIgetPlotIdRequest, res: api.APIgetPlotIdRe
     }
     if (sqllist.length !== 0) sql += ` and ( ${sqllist.join(' and ')})`;
   }
-  execSQL(params, sql).then((result) => {
+  return execSQL(params, sql).then((result) => {
     const r: number[] = [];
     for (let i = 0; i < result.length; i++) r.push(result[i].plot_id);
-    res.status(200).json(r);
+    return r;
   });
+})
+}
+
+app.get('/api/getPlotId', (req: api.APIgetPlotIdRequest, res: api.APIgetPlotIdResponse) => {
+  const body: GvpPlotIdRequest = JSON.parse(req.query.json_encoded);
+  getPlotId(body).then(pids => {
+    res.status(200).json(pids);
+  })
+
 });
 
 /**
@@ -1633,6 +1641,18 @@ app.get('/api/getIdHint', (req, res) => {
     res.status(200).json(r);
   });
 });
+
+/*
+idea: 
+1. by getPlotId gets ids for current selection
+2. if some selections are empty -- use all available values
+3. request json for these ids
+4. extract metadata from jsons
+5. return to client
+*/
+app.get('/api/onlineMenuFilter', (req, res) => {
+
+})
 
 /**
  *
