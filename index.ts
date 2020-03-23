@@ -1567,10 +1567,10 @@ app.get('/api/uniqlookup', (req: api.APIuniqlookupRequest, res: api.APIuniqlooku
  * Gets the id of the plot that corresponds with the specified parameters
  */
 function getPlotIdLimit1(body: GvpPlotIdRequest): Promise<number[]> {
-  return getPlotId(body, " limit 1");
+  return getPlotId(body, true);
 }
 
-function getPlotId(body: GvpPlotIdRequest, postfix = ""): Promise<number[]> {
+function getPlotId(body: GvpPlotIdRequest, limit1: boolean = false): Promise<number[]> {
   const parameters: [string, string[]][] = body.parameters;
   const beam_energy = body.beam_energy;
   const test_id = PGJoin(body.test_id);
@@ -1612,7 +1612,7 @@ function getPlotId(body: GvpPlotIdRequest, postfix = ""): Promise<number[]> {
     if (sqllist.length !== 0) sql += ` and ( ${sqllist.join(' and ')})`;
   }
   // for LIMIT1 (for onlineMenuFilter)
-  sql += postfix;
+  if (limit1) sql += " LIMIT 1";
   return execSQL(params, sql).then((result) => {
     const r: number[] = [];
     for (let i = 0; i < result.length; i++) r.push(result[i].plot_id);
