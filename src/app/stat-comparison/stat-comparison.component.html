@@ -12,8 +12,9 @@
         <div class="ui loader"></div>
       </div>
       <sui-multi-select class="selection enlarge" (selectedOptionsChange)="firesUpdateMenu()" [(ngModel)]="versionsSel"
-        [options]="versionOnlineFilter(unstableFilter(menuVersions))" [isSearchable]="true" [isDisabled]="false"
-        [optionFormatter]="versionFormatter" [optionsFilter]="versionSelectFilter" #versionSelect>
+        [options]="versionOnlineFilter(unstableFilter(menuVersions))" [isSearchable]="true"
+        [isDisabled]="onlineFilterProgress" [optionFormatter]="versionFormatter" [optionsFilter]="versionSelectFilter"
+        #versionSelect>
         <ng-container *ngIf="!isVersionExpCorrect()">
           <sui-select-option *ngFor="let obj of versionSelect.filteredOptions" [value]="obj">
           </sui-select-option>
@@ -31,7 +32,7 @@
         <div class="ui loader"></div>
       </div>
       <sui-multi-select class="selection enlarge" (selectedOptionsChange)="firesUpdateMenu()" [(ngModel)]="beamsSel"
-        [options]="beamOnlineFilter(menuBeams)" [isSearchable]="true" [isDisabled]="false" #beamSelect>
+        [options]="beamOnlineFilter(menuBeams)" [isSearchable]="true" [isDisabled]="onlineFilterProgress" #beamSelect>
         <ng-container *ngIf="!isBeamCorrect()">
           <sui-select-option *ngFor="let obj of beamSelect.filteredOptions" [value]="obj">
           </sui-select-option>
@@ -53,7 +54,8 @@
       </div>
       <div *ngFor="let o of observableOnlineFilter(menuObservable.sort())">
         <div class="ui checkbox">
-          <input type="checkbox" [checked]="observableSel.indexOf(o) !== -1" (click)="updateObservable(o)">
+          <input type="checkbox" [disabled]="onlineFilterProgress" [checked]="observableSel.indexOf(o) !== -1"
+            (click)="updateObservable(o)">
           <label>
             <ng-katex class="center" [equation]="katex(o)"></ng-katex>
           </label>
