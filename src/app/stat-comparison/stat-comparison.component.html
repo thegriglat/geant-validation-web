@@ -41,13 +41,13 @@
     </div>
     <div class="ui segment" [ngClass]="{errorblock: !isObservablesCorrect()}">
       <h3>Observable
-        <ng-container *ngIf="menuObservable.length !== 1">
+        <div class="ui tiny active inline loader collapseicon" *ngIf="onlineFilterProgress"></div>
+        <ng-container *ngIf="menuObservable.length !== 1 && !onlineFilterProgress">
           <i class="ui tasks icon collapseicon" *ngIf="observableSel.length !== menuObservable.length"
             (click)="selectAllObservables()"></i>
           <i class="ui eraser icon collapseicon" *ngIf="observableSel.length === menuObservable.length"
             (click)="deselectAllObservables()"></i>
         </ng-container>
-        <div class="ui tiny active inline loader collapseicon" *ngIf="onlineFilterProgress"></div>
       </h3>
       <div class="ui active inverted dimmer" *ngIf="menuObservable.length === 0">
         <div class="ui loader"></div>
