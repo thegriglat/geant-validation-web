@@ -2,10 +2,10 @@
     <div class="ui loader"></div>
 </div>
 <ng-container *ngIf="!popupEnable">
-    <img class="ui rounded centered image pointer filled" [src]="url" *ngIf="!inProgress" (click)="showModal(config)">
+    <img class="ui rounded centered image pointer" [src]="url" *ngIf="!inProgress" (click)="showModal(config)">
 </ng-container>
 <ng-container *ngIf="popupEnable">
-    <img class="ui rounded centered image pointer filled" [src]="url" *ngIf="!inProgress" (click)="showModal(config)" suiPopup
+    <img class="ui rounded centered image pointer" [src]="url" *ngIf="!inProgress" (click)="showModal(config)" suiPopup
         [popupTemplate]="popupTemplate" [popupPlacement]="bottom">
     <ng-template let-popup #popupTemplate>
         <b>Observable</b>: {{getHintData().observable}}<br>

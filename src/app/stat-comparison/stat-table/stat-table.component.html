@@ -13,7 +13,7 @@ Estimator:
   <div class="ui loader"></div>
 </div>
 
-<table class="ui fixed sortable celled table">
+<table class="ui sortable celled table">
   <thead>
     <tr>
       <!-- Observable 	Beam 	Model 	Target 	Beam energy 	Parameters -->
@@ -30,7 +30,7 @@ Estimator:
   </thead>
   <tbody>
     <ng-container *ngFor="let j of jsonlist">
-      <tr (click)="isRowCollapsed = !isRowCollapsed">
+      <tr (click)="collapseRow(j)" class="pointer">
         <td class="center aligned">
           {{jsonMetadata(j[0]).observable}}
         </td>
@@ -42,8 +42,8 @@ Estimator:
         <td class="center aligned">{{estimatorCall(j)}}</td>
       </tr>
       <tr>
-        <td colspan="7" class="center aligned"  *ngIf="!isRowCollapsed">
-          <app-plot [configObs]="getPlotConfig(j)" [popupEnable]="false" width="50%"></app-plot>
+        <td colspan="7" class="center aligned" *ngIf="isRowCollapsed(j)">
+          <app-plot class="rowplot" [configObs]="getPlotConfig(j)" [popupEnable]="false"></app-plot>
         </td>
       </tr>
     </ng-container>

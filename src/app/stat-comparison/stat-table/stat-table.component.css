@@ -1,0 +1,8 @@
+.pointer:hover {
+    cursor: pointer;
+}
+
+.rowplot {
+    max-width: 50%;
+    display: inline-block;
+}

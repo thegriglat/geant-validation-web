@@ -29,7 +29,8 @@ export class StatTableComponent implements OnInit {
   public inProgress = false;
   public sortDirection = 1;
 
-  public isRowCollapsed = true;
+  private collapseMap: Map<GvpJSON[], boolean> = new Map<GvpJSON[], boolean>();
+
   constructor(private api: GVPAPIService, private modalService: SuiModalService) { }
 
   ngOnInit() {
@@ -131,6 +132,14 @@ export class StatTableComponent implements OnInit {
 
   estFNames(name?: string) {
     return estimatorFullName(name);
+  }
+
+  collapseRow(jj: GvpJSON[]): void {
+    this.collapseMap.set(jj, !!!this.collapseMap.get(jj));
+  }
+
+  isRowCollapsed(jj: GvpJSON[]): boolean {
+    return this.collapseMap.get(jj) || false;
   }
 
   tableSort() {

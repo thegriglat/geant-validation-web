@@ -12,12 +12,10 @@
 img.pointer {
     cursor: pointer;
     padding: 5px;
+    width: 100% !important;
+    max-width: 100% !important;
 }
 
 img.pointer:hover {
     box-shadow: 0 0 10px rgba(0,0,0,0.5);
-}
-
-.filled {
-    width: 50%;
 }
