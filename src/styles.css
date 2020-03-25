@@ -31,7 +31,7 @@ h1 {
     min-width: 100% !important;
 }
 
-.center {
+div.center {
     display: flex;
     justify-content: center;
 }

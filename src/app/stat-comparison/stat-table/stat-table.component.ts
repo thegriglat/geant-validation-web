@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { GVPAPIService } from 'src/app/services/gvpapi.service';
 import { GvpTest, GvpMctoolNameVersion, ParametersList, GvpPlotIdRequest, Nullable, GvpPngRequest, GvpJSON, GvpInspire } from 'src/app/classes/gvp-plot';
-import { forkJoin, from } from 'rxjs';
+import { forkJoin, from, Observable } from 'rxjs';
 import { GvpJSONMetadataMatch, getParametersList, GvpJSONExpMetadataMatch, ParametersListEq } from 'src/app/utils';
 import { getEstimator, Estimator, estimatorFullName, estimatorsNames } from './../estimator';
 import { SuiModalService } from 'ng2-semantic-ui';
@@ -29,6 +29,7 @@ export class StatTableComponent implements OnInit {
   public inProgress = false;
   public sortDirection = 1;
 
+  public isRowCollapsed = true;
   constructor(private api: GVPAPIService, private modalService: SuiModalService) { }
 
   ngOnInit() {
@@ -84,6 +85,10 @@ export class StatTableComponent implements OnInit {
     })
   }
 
+  getPlotConfig(j: GvpJSON[]): Observable<GvpPngRequest> {
+    return from([new GvpPngRequest(j)]);
+  }
+
   jsonMetadata(j: GvpJSON) {
     return {
       observable: j.metadata.observableName,
@@ -116,14 +121,12 @@ export class StatTableComponent implements OnInit {
     return s.join(", ");
   }
 
-  showModalPlot(jsons: GvpJSON[]): void {
-    this.modalService.open(
-      new PlotModal(new GvpPngRequest(jsons))
-    )
-  }
-
   estNames() {
     return estimatorsNames();
+  }
+
+  toggleCollapseRow(js: GvpJSON[]): void {
+
   }
 
   estFNames(name?: string) {

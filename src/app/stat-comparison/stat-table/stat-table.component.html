@@ -13,7 +13,7 @@ Estimator:
   <div class="ui loader"></div>
 </div>
 
-<table class="ui sortable celled table">
+<table class="ui fixed sortable celled table">
   <thead>
     <tr>
       <!-- Observable 	Beam 	Model 	Target 	Beam energy 	Parameters -->
@@ -25,26 +25,27 @@ Estimator:
       <th class="center aligned">Parameters</th>
       <th class="center aligned sorted " (click)="tableSort()"
         [ngClass]="{'descending': sortDirection === 1, 'ascending': sortDirection === -1}">Estimator's value</th>
-      <th class="center aligned">Graph</th>
     </tr>
 
   </thead>
   <tbody>
-    <tr *ngFor="let j of jsonlist">
-      <td class="center aligned">
-        {{jsonMetadata(j[0]).observable}}
-      </td>
-      <td class="center aligned">{{beam[0]}}</td>
-      <td class="center aligned">{{jsonMetadata(j[0]).model}}</td>
-      <td class="center aligned">{{jsonMetadata(j[0]).target}}</td>
-      <td class="center aligned">{{jsonMetadata(j[0]).benergy}}</td>
-      <td class="center aligned">{{ParamC2str(jsonMetadata(j[0]).parameters)}}</td>
-      <td class="center aligned">{{estimatorCall(j)}}</td>
-      <td class="center aligned">
-        <a (click)="showModalPlot(j)">
-          <i class="big image icon"></i>
-        </a>
-      </td>
-    </tr>
+    <ng-container *ngFor="let j of jsonlist">
+      <tr (click)="isRowCollapsed = !isRowCollapsed">
+        <td class="center aligned">
+          {{jsonMetadata(j[0]).observable}}
+        </td>
+        <td class="center aligned">{{beam[0]}}</td>
+        <td class="center aligned">{{jsonMetadata(j[0]).model}}</td>
+        <td class="center aligned">{{jsonMetadata(j[0]).target}}</td>
+        <td class="center aligned">{{jsonMetadata(j[0]).benergy}}</td>
+        <td class="center aligned">{{ParamC2str(jsonMetadata(j[0]).parameters)}}</td>
+        <td class="center aligned">{{estimatorCall(j)}}</td>
+      </tr>
+      <tr>
+        <td colspan="7" class="center aligned"  *ngIf="!isRowCollapsed">
+          <app-plot [configObs]="getPlotConfig(j)" [popupEnable]="false" width="50%"></app-plot>
+        </td>
+      </tr>
+    </ng-container>
   </tbody>
 </table>

@@ -1,23 +1,28 @@
 <div class="ui active inverted dimmer" *ngIf="inProgress">
     <div class="ui loader"></div>
 </div>
-<img class="ui rounded centered image pointer" [src]="url" *ngIf="!inProgress" (click)="showModal(config)" suiPopup
-    [popupTemplate]="popupTemplate" [popupPlacement]="bottom">
-<ng-template let-popup #popupTemplate>
-    <b>Observable</b>: {{getHintData().observable}}<br>
-    <b>Beam particle</b>: {{getHintData().beam}}<br>
-    <b>Beam energy</b>: {{getHintData().beam_energy}}<br>
-    <b>Target</b>: {{getHintData().target}}<br>
-    <ul>
-        <li *ngFor="let e of getHintData().items">
-            <ng-container *ngIf="!e.isExp">
-                <b>{{e.version}}</b>, <b>{{e.model}}</b>
-            </ng-container>
-            <ng-container *ngIf="e.isExp">
-                <b>{{e.expname}}</b>
-            </ng-container>
-            <ng-container *ngFor="let ep of e.parameters">, {{ep.names}} = {{ep.values}}
-            </ng-container>
-        </li>
-    </ul>
-</ng-template>
+<ng-container *ngIf="!popupEnable">
+    <img class="ui rounded centered image pointer filled" [src]="url" *ngIf="!inProgress" (click)="showModal(config)">
+</ng-container>
+<ng-container *ngIf="popupEnable">
+    <img class="ui rounded centered image pointer filled" [src]="url" *ngIf="!inProgress" (click)="showModal(config)" suiPopup
+        [popupTemplate]="popupTemplate" [popupPlacement]="bottom">
+    <ng-template let-popup #popupTemplate>
+        <b>Observable</b>: {{getHintData().observable}}<br>
+        <b>Beam particle</b>: {{getHintData().beam}}<br>
+        <b>Beam energy</b>: {{getHintData().beam_energy}}<br>
+        <b>Target</b>: {{getHintData().target}}<br>
+        <ul>
+            <li *ngFor="let e of getHintData().items">
+                <ng-container *ngIf="!e.isExp">
+                    <b>{{e.version}}</b>, <b>{{e.model}}</b>
+                </ng-container>
+                <ng-container *ngIf="e.isExp">
+                    <b>{{e.expname}}</b>
+                </ng-container>
+                <ng-container *ngFor="let ep of e.parameters">, {{ep.names}} = {{ep.values}}
+                </ng-container>
+            </li>
+        </ul>
+    </ng-template>
+</ng-container>
