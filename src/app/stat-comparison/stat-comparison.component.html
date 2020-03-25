@@ -106,10 +106,10 @@
     <app-stat-table *ngIf="submitted" [test]="test" [versions]="versionsSel" [beam]="beamsSel"
       [observables]="observableSel" [parameters]="parametersSel" [expdata]="checkedExp"></app-stat-table>
     <ng-container *ngIf="!submitted && test">
-      <p>
+      <p *ngIf="test.responsible">
         <b>Author(s)</b>: {{test.responsible.join(", ")}}
       </p>
-      <p>
+      <p *ngIf="test.description">
         <b>Description</b>: {{test.description}}
       </p>
     </ng-container>
