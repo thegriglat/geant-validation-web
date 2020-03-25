@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { GVPAPIService } from 'src/app/services/gvpapi.service';
 import { GvpTest, GvpMctoolNameVersion, ParametersList, GvpPlotIdRequest, Nullable, GvpPngRequest, GvpJSON, GvpInspire } from 'src/app/classes/gvp-plot';
-import { forkJoin } from 'rxjs';
+import { forkJoin, from } from 'rxjs';
 import { GvpJSONMetadataMatch, getParametersList, GvpJSONExpMetadataMatch, ParametersListEq } from 'src/app/utils';
 import { getEstimator, Estimator, estimatorFullName, estimatorsNames } from './../estimator';
 import { SuiModalService } from 'ng2-semantic-ui';
@@ -57,7 +57,8 @@ export class StatTableComponent implements OnInit {
         beamEs // beamenergy
       );
       const g4_jsons_req = this.api.getPlotJSON(query);
-      const exp_jsons_req = this.api.getExpMatchPlot(query);
+      // don't request if no exp data selected
+      const exp_jsons_req = (this.expdata.length !== 0) ? this.api.getExpMatchPlot(query) : from([[] as GvpJSON[]]);
       const all_jsons = forkJoin([g4_jsons_req, exp_jsons_req]).pipe(
         map(e => {
           return e[0].concat(...e[1]);
@@ -65,19 +66,15 @@ export class StatTableComponent implements OnInit {
       )
       all_jsons.subscribe(jsons => {
         this.jsonlist = [];
+        jsons = jsons.filter(j => ParametersListEq(getParametersList(j.metadata.parameters), this.parameters))
         for (let i = 0; i < jsons.length; ++i) {
           const base_json = jsons[i];
-          if (!ParametersListEq(getParametersList(base_json.metadata.parameters), this.parameters))
-            continue;
-          this.jsonlist.push([base_json])
           for (let j = i + 1; j < jsons.length; ++j) {
             const cmp_json = jsons[j];
-            if (!ParametersListEq(getParametersList(cmp_json.metadata.parameters), this.parameters))
-              // jump forward if json not match selected parameters
-              continue;
             // compare function, different for g4 and exp
             const cmp_fn = (cmp_json.mctool.model === "experiment" || base_json.mctool.model === "experiment") ? GvpJSONExpMetadataMatch : GvpJSONMetadataMatch;
             if (cmp_fn(base_json, cmp_json)) {
+              this.jsonlist.push([base_json])
               this.jsonlist[this.jsonlist.length - 1].push(cmp_json);
             }
           }
