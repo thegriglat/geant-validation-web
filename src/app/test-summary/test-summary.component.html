@@ -1,5 +1,9 @@
 <h1>Tests summary</h1>
 
+<sui-progress class="bottom indicating active" [value]="progressValue" [maximum]="getProgressMax()"
+  *ngIf="progressValue != getProgressMax()">
+</sui-progress>
+
 <table class="ui compact celled table">
   <thead>
     <tr>

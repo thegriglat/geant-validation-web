@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { GVPAPIService } from '../services/gvpapi.service';
 import { distinct, versionSorter, unstableVersionFilter } from '../utils';
-import { GvpMctoolNameVersion } from '../classes/gvp-plot';
+import { GvpMctoolNameVersion, GvpTest } from '../classes/gvp-plot';
 import { isNull, isUndefined } from 'util';
 
 @Component({
@@ -16,23 +16,29 @@ export class TestSummaryComponent implements OnInit {
   // testname,version -> existence
   public data = new Map<[string, number], boolean>();
   private _versionCache: GvpMctoolNameVersion[] = [];
+  public progressValue: number = 0;
+  private ntests: number = 0;
 
   ngOnInit() {
     this.api.mctool_name_version().subscribe(versions => {
       this._versionCache = versions.slice();
     });
     this.api.test().subscribe(tests => {
+      this.ntests = tests.length;
       for (const test of tests) {
         this.api.uniqlookup_version(test.test_id).subscribe(vnumbers => {
           for (const versionId of vnumbers) {
             this.set(test.test_name, versionId);
           }
+          this.progressValue++;
         })
       }
     })
   }
 
-
+  getProgressMax(): number {
+    return this.ntests;
+  }
   private set(test: string, version: number): void {
     this.data.set([test, version], true);
   }
