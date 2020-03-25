@@ -105,5 +105,13 @@
     <!-- TODO: reference data -->
     <app-stat-table *ngIf="submitted" [test]="test" [versions]="versionsSel" [beam]="beamsSel"
       [observables]="observableSel" [parameters]="parametersSel" [expdata]="checkedExp"></app-stat-table>
+    <ng-container *ngIf="!submitted && test">
+      <p>
+        <b>Author(s)</b>: {{test.responsible.join(", ")}}
+      </p>
+      <p>
+        <b>Description</b>: {{test.description}}
+      </p>
+    </ng-container>
   </div>
 </div>
