@@ -126,10 +126,6 @@ export class StatTableComponent implements OnInit {
     return estimatorsNames();
   }
 
-  toggleCollapseRow(js: GvpJSON[]): void {
-
-  }
-
   estFNames(name?: string) {
     return estimatorFullName(name);
   }
