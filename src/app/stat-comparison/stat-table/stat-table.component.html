@@ -42,7 +42,7 @@ Estimator:
         <td class="center aligned">{{estimatorCall(j)}}</td>
       </tr>
       <tr>
-        <td colspan="7" class="center aligned" *ngIf="isRowCollapsed(j)">
+        <td colspan="7" class="center aligned" *ngIf="isRowShown(j)">
           <app-plot class="rowplot" [configObs]="getPlotConfig(j)" [popupEnable]="false"></app-plot>
         </td>
       </tr>
