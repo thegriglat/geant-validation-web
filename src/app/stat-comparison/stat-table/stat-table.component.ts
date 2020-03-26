@@ -134,6 +134,11 @@ export class StatTableComponent implements OnInit {
     this.collapseMap.set(jj, !!!this.collapseMap.get(jj));
   }
 
+  expandAll(jl: GvpJSON[][]): void {
+    for (let j of jl)
+      this.collapseRow(j);
+  }
+
   isRowShown(jj: GvpJSON[]): boolean {
     return this.collapseMap.get(jj) || false;
   }
