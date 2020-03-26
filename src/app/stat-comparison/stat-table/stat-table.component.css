@@ -1,6 +1,7 @@
 tr.pointer:hover td {
     cursor: pointer;
-    background-color: #dde6ee;
+    background-color: #e9f3fc;
+    transition: 0.5s;
 }
 
 .rowplot {
