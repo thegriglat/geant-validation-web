@@ -5,6 +5,8 @@ import { Observable, from, forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { SuiModalService } from 'ng2-semantic-ui';
 import { PlotModal } from './plot-modal/plot-modal.component';
+import { RatioMaxDiff } from './ratiofunctions';
+import { isUndefined, isNull } from 'util';
 
 interface HintData {
   observable: string,
@@ -112,5 +114,21 @@ export class PlotComponent implements OnInit {
     this.modalService.open(
       new PlotModal(config)
     )
+  }
+
+  isRatioPlot(): boolean {
+    if (!this.config || isUndefined(this.config.refid) || isNull(this.config.refid)) return false;
+    return true;
+  }
+
+  ratioDiff(): string {
+    // possibility to change estimator further
+    let estimator = RatioMaxDiff;
+    if (!this.config || isUndefined(this.config.refid) || isNull(this.config.refid)) return "";
+    const refid = this.config.refid;
+    const baseplot = this.config.data[Math.abs(1 - refid)];
+    const refplot = this.config.data[refid];
+    const estim_v = estimator.fn(baseplot, refplot);
+    return `${estimator.description} = ${estim_v.toPrecision(5)}`;
   }
 }

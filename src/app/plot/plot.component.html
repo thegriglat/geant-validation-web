@@ -3,6 +3,8 @@
 </div>
 <img class="ui rounded centered image pointer" [src]="url" *ngIf="!inProgress" (click)="showModal(config)" suiPopup
     [popupTemplate]="popupTemplate" [popupPlacement]="bottom">
+<ng-katex *ngIf="!inProgress && isRatioPlot()" class="center" [equation]="ratioDiff()"></ng-katex>
+
 <ng-template let-popup #popupTemplate>
     <b>Observable</b>: {{getHintData().observable}}<br>
     <b>Beam particle</b>: {{getHintData().beam}}<br>
