@@ -75,6 +75,8 @@ export class GvplayoutComponent implements OnInit {
   // progress of plotting
   progressValue: number = 0;
   showUnstableVersions = false;
+  // colors -> hsl(0, 100%, 44%) 0..100
+  allReference = true;
 
   ngOnInit() {
     this.layoutService.getAllLayouts().subscribe((data) => {
@@ -451,6 +453,9 @@ export class GvplayoutComponent implements OnInit {
     r.ymin = p.ymin;
     r.ymax = p.ymax;
     r.plotStyle = p.plotStyle;
+    // see setFirstReference()
+    // set first plot as reference
+    if( this.allReference) r.refid = 0;
 
     // query
     const tests = this.ALLTESTS.filter(e => e.test_name === p.test);
@@ -535,5 +540,10 @@ export class GvplayoutComponent implements OnInit {
 
   isText(p: GvpPlot): boolean {
     return p.isText();
+  }
+
+  setFirstReference() {
+    this.allReference = !this.allReference;
+    this.magic();
   }
 }
