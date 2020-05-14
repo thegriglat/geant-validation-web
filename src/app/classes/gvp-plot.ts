@@ -115,7 +115,7 @@ export class GvpPlotterArgs {
 }
 
 /** Plot information for loading from XML file */
-type getset = { get: { (): string }, set: { (v: string): void } };
+type GetSetFunction = { get: { (): string }, set: { (v: string): void } };
 export class GvpPlotXML extends GvpPlotterArgs {
   test: string = "";
   observable: string = "";
@@ -132,7 +132,7 @@ export class GvpPlotXML extends GvpPlotterArgs {
   parvalue?: string = "";
   colspan?: number = 1;
 
-  private _keys = new Map<string, getset>();
+  private _keys = new Map<string, GetSetFunction>();
 
   constructor() {
     super();
