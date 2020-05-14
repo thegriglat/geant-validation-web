@@ -30,3 +30,8 @@ h1 {
 .enlarge {
     min-width: 100% !important;
 }
+
+.center {
+    display: flex;
+    justify-content: center;
+}
