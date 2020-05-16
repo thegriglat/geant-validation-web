@@ -76,7 +76,7 @@ export class GvplayoutComponent implements OnInit {
   progressValue: number = 0;
   showUnstableVersions = false;
   // colors -> hsl(0, 100%, 44%) 0..100
-  allReference = true;
+  allReference = false;
 
   ngOnInit() {
     this.layoutService.getAllLayouts().subscribe((data) => {

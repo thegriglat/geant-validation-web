@@ -35,6 +35,7 @@ interface HintData {
 export class PlotComponent implements OnInit {
 
   @Input() configObs!: Observable<GvpPngRequest>;
+  @Input() isRatio = false;
   @Output() done = new EventEmitter<boolean>();
   url: string = "";
   status = false;
@@ -50,6 +51,9 @@ export class PlotComponent implements OnInit {
     this.configObs.subscribe(e => {
       if (e && e.data.length !== 0) {
         this.config = e;
+        if (!isNull(e.refid) && !isUndefined(e.refid)){
+          this.isRatio = true;
+        }
         this.doStuff(e);
         this.setHintData(e.data).subscribe(e => {
           this.hintData = e;
@@ -117,8 +121,7 @@ export class PlotComponent implements OnInit {
   }
 
   isRatioPlot(): boolean {
-    if (!this.config || isUndefined(this.config.refid) || isNull(this.config.refid)) return false;
-    return true;
+    return this.isRatio;
   }
 
   ratioDiff(): string {
