@@ -7,7 +7,7 @@ interface RatioFunctions {
     fn: { (base: GvpJSON, ref: GvpJSON): number };
 }
 
-export const RatioMaxDiff: RatioFunctions = {
+const RatioMaxDiff: RatioFunctions = {
     description: "\\sum \\frac{\\Delta y}{y_{ref}}",
     fn: (base: GvpJSON, ref: GvpJSON) => {
         const [rx1, ry1, ry1err, rx2, ry2, ry2err] = getCommonXY(base, ref);
@@ -18,3 +18,5 @@ export const RatioMaxDiff: RatioFunctions = {
         return diff;
     }
 }
+
+export const RatioDiffEstimator = RatioMaxDiff;

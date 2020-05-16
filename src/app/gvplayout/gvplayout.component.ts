@@ -5,6 +5,8 @@ import { GVPAPIService } from '../services/gvpapi.service';
 import { map } from 'rxjs/operators';
 import { forkJoin } from 'rxjs';
 import { unroll, versionSorter, unstableVersionFilter, getColumnWide, distinct, getDefault, filterData, distinctJSON } from './../utils';
+import { PlotEmitType } from '../plot/plot.component';
+import { RatioDiffEstimator } from '../plot/ratiofunctions';
 
 /**
  * Shows [plots]{@link PlotComponent} for a given version(s) and model(s) using a predefined or custom template
@@ -455,7 +457,7 @@ export class GvplayoutComponent implements OnInit {
     r.plotStyle = p.plotStyle;
     // see setFirstReference()
     // set first plot as reference
-    if( this.allReference) r.refid = 0;
+    if (this.allReference) r.refid = 0;
 
     // query
     const tests = this.ALLTESTS.filter(e => e.test_name === p.test);
@@ -518,8 +520,9 @@ export class GvplayoutComponent implements OnInit {
     return unroll(this.plots).filter(e => !e.isText()).length;
   }
 
-  incrementProgress() {
+  incrementProgress(event: PlotEmitType) {
     this.progressValue += 1;
+    console.log(event.ratiodiff);
   }
 
   isCenteredRow(row: GvpPlot[]): boolean {
@@ -545,5 +548,11 @@ export class GvplayoutComponent implements OnInit {
   setFirstReference() {
     this.allReference = !this.allReference;
     this.magic();
+  }
+
+  formatRatioDiff(ratio: number): string {
+    const est = RatioDiffEstimator;
+    const precision = 5;
+    return `${est.description} = ${ratio.toPrecision(precision)}`;
   }
 }

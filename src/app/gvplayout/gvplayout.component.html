@@ -89,8 +89,12 @@
             <div class="ui row" *ngFor="let row of plots" [ngClass]="{'centered': isCenteredRow(row)}">
                 <div class="ui aligned wide column" [ngClass]="{'enlarge': row.length === 1}" *ngFor="let plot of row">
                     <ng-container *ngIf="!plot.isText()">
-                        <app-plot [isRatio]="allReference" [configObs]="getPlotConfig(plot)" (done)="incrementProgress()"></app-plot>
+                        <app-plot [isRatio]="allReference" [configObs]="getPlotConfig(plot)"
+                            (done)="incrementProgress($event)" #pl>
+                        </app-plot>
                         <ng-katex class="center" *ngIf="plot.title !== ''" [equation]="plot.title">
+                        </ng-katex>
+                        <ng-katex class="center" *ngIf="pl.isRatio" [equation]="formatRatioDiff(pl.ratiodiff)">
                         </ng-katex>
                     </ng-container>
                     <ng-katex [equation]="plot.text" *ngIf="plot.isText()"></ng-katex>

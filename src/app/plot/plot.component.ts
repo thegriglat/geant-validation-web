@@ -5,7 +5,7 @@ import { Observable, from, forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { SuiModalService } from 'ng2-semantic-ui';
 import { PlotModal } from './plot-modal/plot-modal.component';
-import { RatioMaxDiff } from './ratiofunctions';
+import { RatioDiffEstimator } from './ratiofunctions';
 import { isUndefined, isNull } from 'util';
 
 interface HintData {
@@ -23,6 +23,8 @@ interface HintData {
   }[]
 }
 
+export type PlotEmitType = { ratiodiff: number };
+
 /**
  * Container for a single plot. WIP.
  */
@@ -36,11 +38,12 @@ export class PlotComponent implements OnInit {
 
   @Input() configObs!: Observable<GvpPngRequest>;
   @Input() isRatio = false;
-  @Output() done = new EventEmitter<boolean>();
+  @Output() done = new EventEmitter<PlotEmitType>();
   url: string = "";
   status = false;
   inProgress = false;
   modalRoot = true;
+  ratiodiff: number = 0;
   config: Nullable<GvpPngRequest> = null;
   private hintData: Nullable<HintData> = null;
 
@@ -51,7 +54,7 @@ export class PlotComponent implements OnInit {
     this.configObs.subscribe(e => {
       if (e && e.data.length !== 0) {
         this.config = e;
-        if (!isNull(e.refid) && !isUndefined(e.refid)){
+        if (!isNull(e.refid) && !isUndefined(e.refid)) {
           this.isRatio = true;
         }
         this.doStuff(e);
@@ -70,7 +73,12 @@ export class PlotComponent implements OnInit {
       if (res.status) {
         this.status = res.status;
         this.url = res.filename;
-        this.done.emit(true);
+        let emit_v: PlotEmitType = { ratiodiff: 0. };
+        if (this.isRatio) {
+          emit_v.ratiodiff = this.ratioDiff()
+          this.ratiodiff = emit_v.ratiodiff;
+        };
+        this.done.emit(emit_v);
       };
       this.inProgress = !res.status;
     })
@@ -124,14 +132,14 @@ export class PlotComponent implements OnInit {
     return this.isRatio;
   }
 
-  ratioDiff(): string {
+  ratioDiff(): number {
     // possibility to change estimator further
-    let estimator = RatioMaxDiff;
-    if (!this.config || isUndefined(this.config.refid) || isNull(this.config.refid)) return "";
+    const estimator = RatioDiffEstimator;
+    if (!this.config || isUndefined(this.config.refid) || isNull(this.config.refid)) return 0;
     const refid = this.config.refid;
     const baseplot = this.config.data[Math.abs(1 - refid)];
     const refplot = this.config.data[refid];
     const estim_v = estimator.fn(baseplot, refplot);
-    return `${estimator.description} = ${estim_v.toPrecision(5)}`;
+    return estim_v;
   }
 }
