@@ -79,6 +79,9 @@ export class GvplayoutComponent implements OnInit {
   showUnstableVersions = false;
   // colors -> hsl(0, 100%, 44%) 0..100
   allReference = false;
+  // for coloring ratio diff
+  _maxRatio = 0;
+  _minRatio = 0;
 
   ngOnInit() {
     this.layoutService.getAllLayouts().subscribe((data) => {
@@ -433,6 +436,8 @@ export class GvplayoutComponent implements OnInit {
     if (div) div.scrollIntoView();
     this.magicPressed = true;
     this.progressValue = 0;
+    this._maxRatio = 0;
+    this._minRatio = 0;
     // dirty hack to update plots
     // and then angular cache for getPlotConfig will be invalidated
     // and new Observable from getPlotConfig will be generated
@@ -522,7 +527,10 @@ export class GvplayoutComponent implements OnInit {
 
   incrementProgress(event: PlotEmitType) {
     this.progressValue += 1;
-    console.log(event.ratiodiff);
+    const rd = event.ratiodiff;
+    // update min/max
+    if (rd < this._minRatio) this._minRatio = rd;
+    if (rd > this._maxRatio) this._maxRatio = rd;
   }
 
   isCenteredRow(row: GvpPlot[]): boolean {
@@ -554,5 +562,12 @@ export class GvplayoutComponent implements OnInit {
     const est = RatioDiffEstimator;
     const precision = 5;
     return `${est.description} = ${ratio.toPrecision(precision)}`;
+  }
+
+  ratioColor(ratio: number) {
+    const l1 = this._maxRatio - this._minRatio;
+    const l2 = ratio - this._minRatio;
+    const prcnt = 100 - Math.round(100 * l2 / l1);
+    return `hsl(${prcnt}, 100%, 44%)`;
   }
 }
