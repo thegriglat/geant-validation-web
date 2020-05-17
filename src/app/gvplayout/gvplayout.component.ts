@@ -542,8 +542,10 @@ export class GvplayoutComponent implements OnInit {
     this.progressValue += 1;
     const rd = event.ratiodiff;
     // update min/max
-    if (rd < this._minRatio) this._minRatio = rd;
-    if (rd > this._maxRatio) this._maxRatio = rd;
+    if (isFinite(rd)) {
+      if (rd < this._minRatio) this._minRatio = rd;
+      if (rd > this._maxRatio) this._maxRatio = rd;
+    }
     if (event.plotData)
       for (let i of event.plotData.items) {
         if (this._uniqVersionModel.filter(e => e.model === i.model && e.version === i.version).length === 0)
@@ -600,10 +602,12 @@ export class GvplayoutComponent implements OnInit {
 
   ratioColor(ratio: number) {
     // L in HSL color
+
     const GREEN_L = 25;
     const RED_L = 44;
     const l1 = this._maxRatio - this._minRatio;
-    const l2 = ratio - this._minRatio;
+    // if not finite -- red
+    const l2 = isFinite(ratio) ? ratio - this._minRatio : l1;
     const prcnt = 100 - Math.round(100 * l2 / l1);
     const intensity = RED_L - prcnt * (RED_L - GREEN_L) / 100;
     return `hsl(${prcnt}, 100%, ${intensity}%)`;
