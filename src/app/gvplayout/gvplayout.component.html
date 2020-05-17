@@ -105,7 +105,7 @@
                         </app-plot>
                         <ng-katex class="center" *ngIf="plot.title !== ''" [equation]="plot.title">
                         </ng-katex>
-                        <ng-katex class="center" *ngIf="pl.isRatio" [equation]="formatRatioDiff(pl.ratiodiff)"
+                        <ng-katex class="center" *ngIf="pl.ratiodiff !== 0" [equation]="formatRatioDiff(pl.ratiodiff)"
                             [style.color]="ratioColor(pl.ratiodiff)">
                         </ng-katex>
                     </ng-container>

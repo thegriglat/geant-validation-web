@@ -141,9 +141,9 @@ export class PlotComponent implements OnInit {
     const estimator = RatioDiffEstimator;
     if (!this.config || isUndefined(this.config.refid) || isNull(this.config.refid)) return 0;
     const refid = this.config.refid;
-    const baseplot = this.config.data[Math.abs(1 - refid)];
+    const baseplot = this.config.data[Math.abs(refid - 1)];
     const refplot = this.config.data[refid];
-    const estim_v = estimator.fn(baseplot, refplot);
-    return estim_v;
+    if (!baseplot || !refplot) return 0;
+    return estimator.fn(baseplot, refplot);
   }
 }
