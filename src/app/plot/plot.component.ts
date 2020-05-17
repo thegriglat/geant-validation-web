@@ -23,7 +23,10 @@ interface HintData {
   }[]
 }
 
-export type PlotEmitType = { ratiodiff: number };
+export type PlotEmitType = {
+  ratiodiff: number,
+  plotData: Nullable<HintData>
+};
 
 /**
  * Container for a single plot. WIP.
@@ -37,7 +40,6 @@ export type PlotEmitType = { ratiodiff: number };
 export class PlotComponent implements OnInit {
 
   @Input() configObs!: Observable<GvpPngRequest>;
-  @Input() isRatio = false;
   @Output() done = new EventEmitter<PlotEmitType>();
   url: string = "";
   status = false;
@@ -51,16 +53,14 @@ export class PlotComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.configObs.subscribe(e => {
-      if (e && e.data.length !== 0) {
-        this.config = e;
-        if (!isNull(e.refid) && !isUndefined(e.refid)) {
-          this.isRatio = true;
-        }
-        this.doStuff(e);
-        this.setHintData(e.data).subscribe(e => {
-          this.hintData = e;
+    this.configObs.subscribe(config => {
+      if (config && config.data.length !== 0) {
+        this.config = config;
+        this.setHintData(config.data).subscribe(hint => {
+          this.hintData = hint;
+          this.doStuff(config);
         });
+
       }
     });
 
@@ -73,8 +73,11 @@ export class PlotComponent implements OnInit {
       if (res.status) {
         this.status = res.status;
         this.url = res.filename;
-        let emit_v: PlotEmitType = { ratiodiff: 0. };
-        if (this.isRatio) {
+        let emit_v: PlotEmitType = {
+          ratiodiff: 0.,
+          plotData: this.hintData
+        };
+        if (this.isRatioPlot()) {
           emit_v.ratiodiff = this.ratioDiff()
           this.ratiodiff = emit_v.ratiodiff;
         };
@@ -129,7 +132,8 @@ export class PlotComponent implements OnInit {
   }
 
   isRatioPlot(): boolean {
-    return this.isRatio;
+    if (!this.config) return false;
+    return !isNull(this.config.refid) && !isUndefined(this.config.refid);
   }
 
   ratioDiff(): number {
