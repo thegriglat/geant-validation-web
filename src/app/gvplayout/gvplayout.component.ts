@@ -549,6 +549,10 @@ export class GvplayoutComponent implements OnInit {
         if (this._uniqVersionModel.filter(e => e.model === i.model && e.version === i.version).length === 0)
           this._uniqVersionModel.push({ version: i.version, model: i.model } as VersionModel);
       }
+    if (this._uniqVersionModel.length < 2) {
+      this._uniqVersionModel = [];
+      this.currentVersionModelRatio = null;
+    }
     if (this.currentVersionModelRatio)
       for (let i of this._uniqVersionModel) {
         if (this.currentVersionModelRatio.version === i.version
