@@ -8,3 +8,9 @@
     margin-left: 0px;
     border-radius: 0px 75px 75px 0px !important;
 }
+
+.trashicon {
+    float: right;
+    color:red;
+    cursor: pointer;
+}

@@ -567,6 +567,7 @@ export class GvplayoutComponent implements OnInit {
   }
 
   versionModelRatioChange(event: VersionModel) {
+    this.currentVersionModelRatio = event;
     // just force redraw with new currentVersionModelRatio
     this.magic();
   }

@@ -47,7 +47,10 @@
             <sui-checkbox class="toggle" [(ngModel)]="useMarkers">Use markers</sui-checkbox>
             <ng-container *ngIf="_uniqVersionModel.length !== 0">
                 <div class="ui divider"></div>
-                <h4>Reference:</h4>
+                <h4>Reference:
+                    <i class="ui close icon trashicon" *ngIf="currentVersionModelRatio"
+                    (click)="versionModelRatioChange(null)"></i>
+                </h4>
                 <sui-select class="selection enlarge" [(ngModel)]="currentVersionModelRatio"
                     [options]="_uniqVersionModel" [isSearchable]="false" [isDisabled]="false"
                     [optionFormatter]="_uniqVersionModelFormatter"
