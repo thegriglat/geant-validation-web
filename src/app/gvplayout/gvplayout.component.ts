@@ -562,6 +562,7 @@ export class GvplayoutComponent implements OnInit {
   }
 
   _uniqVersionModelFormatter(item: VersionModel, query?: string): string {
+    if (item.version === "experiment") return "experimental data";
     return `${item.version} ${item.model}`
   }
 
