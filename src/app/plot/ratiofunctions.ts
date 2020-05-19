@@ -8,7 +8,7 @@ interface RatioFunctions {
 }
 
 const RatioSum: RatioFunctions = {
-    description: "\\sum \\frac{\\Delta y}{y_{ref}}",
+    description: "\\sum \\frac{\\Delta y}{y}",
     fn: (base: GvpJSON, ref: GvpJSON) => {
         const [rx1, ry1, ry1err, rx2, ry2, ry2err] = getCommonXY(base, ref);
         let diff = 0;
@@ -20,7 +20,7 @@ const RatioSum: RatioFunctions = {
 }
 
 const RatioMaxDiff: RatioFunctions = {
-    description: "max(\\frac{\\Delta y}{y_{ref}})",
+    description: "max(\\frac{\\Delta y}{y})",
     fn: (base: GvpJSON, ref: GvpJSON) => {
         const [rx1, ry1, ry1err, rx2, ry2, ry2err] = getCommonXY(base, ref);
         let diff = 0;
