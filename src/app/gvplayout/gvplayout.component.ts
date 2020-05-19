@@ -416,6 +416,8 @@ export class GvplayoutComponent implements OnInit {
       this.checkedExp = [];
       this.progressValue = 0;
       this.currentVersionModelRatio = null;
+      this._uniqVersionModel = [];
+      this.currentVersionModelRatio = null;
       this.updateMenu(results);
     });
   }
