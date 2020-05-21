@@ -1440,7 +1440,7 @@ async function getPNG(body: GvpPngRequest): Promise<GvpPngResponse> {
   }
   const plotter_cmd = `${PLOTTERPATH}/plotter -j ${j_options.join(
     ' -j '
-  )} -s markerSize=${markerSize} ${ratio_option} -f json root png eps ${refid_option} -y ${yaxis} -x ${xaxis} -o ${fname} ${xmin_option} ${xmax_option} ${ymin_option} ${ymax_option} ${plotStyle_option} && sed -i'' '/MarkerSize/s/2/0.8/g' ${fname}.json`;
+  )} --ratiohist 1 -s markerSize=${markerSize} ${ratio_option} -f json root png eps ${refid_option} -y ${yaxis} -x ${xaxis} -o ${fname} ${xmin_option} ${xmax_option} ${ymin_option} ${ymax_option} ${plotStyle_option} && sed -i'' '/MarkerSize/s/2/0.8/g' ${fname}.json`;
   console.log(`PLOTTER_CMD = ${plotter_cmd}`);
   // eslint-disable-next-line
   while (N_REQUESTS >= MAX_REQUESTS) {
