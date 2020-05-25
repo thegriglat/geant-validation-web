@@ -7,8 +7,7 @@ import { forkJoin } from 'rxjs';
 import { unroll, versionSorter, unstableVersionFilter, getColumnWide, distinct, getDefault, filterData, distinctJSON } from './../utils';
 import { PlotEmitType } from '../plot/plot.component';
 import { RatioDiffEstimator } from '../plot/ratiofunctions';
-import { isNull } from 'util';
-
+import { trigger, transition, style, animate } from '@angular/animations';
 
 type VersionModel = { version: string, model: string };
 
@@ -19,7 +18,18 @@ type VersionModel = { version: string, model: string };
 @Component({
   selector: 'app-gvplayout',
   templateUrl: './gvplayout.component.html',
-  styleUrls: ['./gvplayout.component.css']
+  styleUrls: ['./gvplayout.component.css'],
+  animations: [
+    trigger('slideInOut', [
+      transition(':enter', [
+        style({ transform: 'translateX(-100%)' }),
+        animate('500ms ease-in', style({ transform: 'translateX(0%)' }))
+      ]),
+      transition(':leave', [
+        animate('500ms ease-in', style({ transform: 'translateX(-100%)' }))
+      ])
+    ])
+  ]
 })
 export class GvplayoutComponent implements OnInit {
 
