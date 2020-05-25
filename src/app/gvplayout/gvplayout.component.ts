@@ -5,6 +5,12 @@ import { GVPAPIService } from '../services/gvpapi.service';
 import { map } from 'rxjs/operators';
 import { forkJoin } from 'rxjs';
 import { unroll, versionSorter, unstableVersionFilter, getColumnWide, distinct, getDefault, filterData, distinctJSON } from './../utils';
+import { PlotEmitType } from '../plot/plot.component';
+import { RatioDiffEstimator } from '../plot/ratiofunctions';
+import { isNull } from 'util';
+
+
+type VersionModel = { version: string, model: string };
 
 /**
  * Shows [plots]{@link PlotComponent} for a given version(s) and model(s) using a predefined or custom template
@@ -75,6 +81,11 @@ export class GvplayoutComponent implements OnInit {
   // progress of plotting
   progressValue: number = 0;
   showUnstableVersions = false;
+  // for coloring ratio diff
+  _maxRatio = 0;
+  _minRatio = 0;
+  _uniqVersionModel: VersionModel[] = [];
+  currentVersionModelRatio: Nullable<VersionModel> = null;
 
   ngOnInit() {
     this.layoutService.getAllLayouts().subscribe((data) => {
@@ -404,6 +415,9 @@ export class GvplayoutComponent implements OnInit {
       this.availableExpDataforTest = [];
       this.checkedExp = [];
       this.progressValue = 0;
+      this.currentVersionModelRatio = null;
+      this._uniqVersionModel = [];
+      this.currentVersionModelRatio = null;
       this.updateMenu(results);
     });
   }
@@ -429,6 +443,9 @@ export class GvplayoutComponent implements OnInit {
     if (div) div.scrollIntoView();
     this.magicPressed = true;
     this.progressValue = 0;
+    this._maxRatio = 0;
+    this._minRatio = 0;
+    this._uniqVersionModel = [];
     // dirty hack to update plots
     // and then angular cache for getPlotConfig will be invalidated
     // and new Observable from getPlotConfig will be generated
@@ -498,6 +515,16 @@ export class GvplayoutComponent implements OnInit {
             r.refid = r.data.indexOf(rp[0]);
           }
         }
+        if (this.currentVersionModelRatio) {
+          // force 'refid' value
+          for (let i = 0; i < r.data.length; i++) {
+            if (r.data[i].mctool.version === this.currentVersionModelRatio.version
+              && r.data[i].mctool.model === this.currentVersionModelRatio.model) {
+              r.refid = i;
+              break;
+            }
+          }
+        }
         return r;
       })
     )
@@ -513,8 +540,40 @@ export class GvplayoutComponent implements OnInit {
     return unroll(this.plots).filter(e => !e.isText()).length;
   }
 
-  incrementProgress() {
+  incrementProgress(event: PlotEmitType) {
     this.progressValue += 1;
+    const rd = event.ratiodiff;
+    // update min/max
+    if (isFinite(rd)) {
+      if (rd < this._minRatio) this._minRatio = rd;
+      if (rd > this._maxRatio) this._maxRatio = rd;
+    }
+    if (event.plotData)
+      for (let i of event.plotData.items) {
+        if (this._uniqVersionModel.filter(e => e.model === i.model && e.version === i.version).length === 0)
+          this._uniqVersionModel.push({ version: i.version, model: i.model } as VersionModel);
+      }
+    if (this._uniqVersionModel.length < 2) {
+      this._uniqVersionModel = [];
+      this.currentVersionModelRatio = null;
+    }
+    if (this.currentVersionModelRatio)
+      for (let i of this._uniqVersionModel) {
+        if (this.currentVersionModelRatio.version === i.version
+          && this.currentVersionModelRatio.model === i.model)
+          this.currentVersionModelRatio = i;
+      }
+  }
+
+  _uniqVersionModelFormatter(item: VersionModel, query?: string): string {
+    if (item.version === "experiment") return "experimental data";
+    return `${item.version} ${item.model}`
+  }
+
+  versionModelRatioChange(event: VersionModel) {
+    this.currentVersionModelRatio = event;
+    // just force redraw with new currentVersionModelRatio
+    this.magic();
   }
 
   isCenteredRow(row: GvpPlot[]): boolean {
@@ -535,5 +594,24 @@ export class GvplayoutComponent implements OnInit {
 
   isText(p: GvpPlot): boolean {
     return p.isText();
+  }
+
+  formatRatioDiff(ratio: number): string {
+    const est = RatioDiffEstimator;
+    const precision = 5;
+    return `${est.description} = ${ratio.toPrecision(precision)}`;
+  }
+
+  ratioColor(ratio: number) {
+    // L in HSL color
+
+    const GREEN_L = 25;
+    const RED_L = 44;
+    const l1 = this._maxRatio - this._minRatio;
+    // if not finite -- red
+    const l2 = isFinite(ratio) ? ratio - this._minRatio : l1;
+    const prcnt = 100 - Math.round(100 * l2 / l1);
+    const intensity = RED_L - prcnt * (RED_L - GREEN_L) / 100;
+    return `hsl(${prcnt}, 100%, ${intensity}%)`;
   }
 }

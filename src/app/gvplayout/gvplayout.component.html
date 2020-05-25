@@ -45,6 +45,22 @@
             </div>
             <div class="ui divider"></div>
             <sui-checkbox class="toggle" [(ngModel)]="useMarkers">Use markers</sui-checkbox>
+            <ng-container *ngIf="_uniqVersionModel.length !== 0">
+                <div class="ui divider"></div>
+                <h4>Reference:
+                    <i class="ui close icon trashicon" *ngIf="currentVersionModelRatio"
+                    (click)="versionModelRatioChange(null)"></i>
+                </h4>
+                <sui-select class="selection enlarge" [(ngModel)]="currentVersionModelRatio"
+                    [options]="_uniqVersionModel" [isSearchable]="false" [isDisabled]="false"
+                    [optionFormatter]="_uniqVersionModelFormatter"
+                    (selectedOptionChange)="versionModelRatioChange($event)" #ratioselect>
+                    <ng-container *ngFor="let versionmodel of ratioselect.filteredOptions">
+                        <sui-select-option [value]="versionmodel">
+                        </sui-select-option>
+                    </ng-container>
+                </sui-select>
+            </ng-container>
         </div>
         <div class="ui segment" *ngIf="currentLayout">
             <h3>Version</h3>
@@ -88,8 +104,12 @@
             <div class="ui row" *ngFor="let row of plots" [ngClass]="{'centered': isCenteredRow(row)}">
                 <div class="ui aligned wide column" [ngClass]="{'enlarge': row.length === 1}" *ngFor="let plot of row">
                     <ng-container *ngIf="!plot.isText()">
-                        <app-plot [configObs]="getPlotConfig(plot)" (done)="incrementProgress()"></app-plot>
+                        <app-plot [configObs]="getPlotConfig(plot)" (done)="incrementProgress($event)" #pl>
+                        </app-plot>
                         <ng-katex class="center" *ngIf="plot.title !== ''" [equation]="plot.title">
+                        </ng-katex>
+                        <ng-katex class="center" *ngIf="pl.ratiodiff !== 0" [equation]="formatRatioDiff(pl.ratiodiff)"
+                            [style.color]="ratioColor(pl.ratiodiff)">
                         </ng-katex>
                     </ng-container>
                     <ng-katex [equation]="plot.text" *ngIf="plot.isText()"></ng-katex>
