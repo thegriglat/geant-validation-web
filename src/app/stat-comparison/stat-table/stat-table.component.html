@@ -43,8 +43,8 @@ Estimator:
         <td class="center aligned">{{ParamC2str(jsonMetadata(j[0]).parameters)}}</td>
         <td class="center aligned">{{estimatorCall(j)}}</td>
       </tr>
-      <tr>
-        <td colspan="7" class="center aligned" *ngIf="isRowShown(j)">
+      <tr *ngIf="isRowShown(j)">
+        <td colspan="7" class="center aligned">
           <div class="ui segment">
             <app-plot class="rowplot" [configObs]="getPlotConfig(j)" [popupEnable]="false"></app-plot>
           </div>
