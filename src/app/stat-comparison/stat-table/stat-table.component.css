@@ -1,0 +1,10 @@
+tr.pointer:hover td {
+    cursor: pointer;
+    background-color: #e9f3fc;
+    transition: 0.5s;
+}
+
+.rowplot {
+    max-width: 50%;
+    display: inline-block;
+}

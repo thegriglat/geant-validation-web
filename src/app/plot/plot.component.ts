@@ -40,6 +40,7 @@ export type PlotEmitType = {
 export class PlotComponent implements OnInit {
 
   @Input() configObs!: Observable<GvpPngRequest>;
+  @Input() popupEnable = true;
   @Output() done = new EventEmitter<PlotEmitType>();
   url: string = "";
   status = false;

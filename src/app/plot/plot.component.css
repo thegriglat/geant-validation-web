@@ -12,6 +12,8 @@
 img.pointer {
     cursor: pointer;
     padding: 5px;
+    width: 100% !important;
+    max-width: 100% !important;
 }
 
 img.pointer:hover {
