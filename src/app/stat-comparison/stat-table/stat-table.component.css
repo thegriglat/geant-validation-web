@@ -16,6 +16,7 @@ div.segment.noborder {
 
 td.expanded {
     border-left: none !important;
+    font-weight: bold;
 }
 
 td.expandedplot {
