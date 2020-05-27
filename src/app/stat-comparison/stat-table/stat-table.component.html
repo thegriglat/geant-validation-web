@@ -44,7 +44,7 @@ Estimator:
           {{ParamC2str(jsonMetadata(j[0]).parameters)}}</td>
         <td class="center aligned" [ngClass]="{noleftborder: isRowShown(j)}">{{estimatorCall(j)}}</td>
       </tr>
-      <tr *ngIf="isRowShown(j)">
+      <tr *ngIf="isRowShown(j)" [@slideInOut]>
         <td colspan="7" class="center aligned notopborder">
           <div class="ui segment noborder">
             <app-plot class="rowplot" [configObs]="getPlotConfig(j)" [popupEnable]="false"></app-plot>

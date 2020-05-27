@@ -7,11 +7,23 @@ import { getEstimator, Estimator, estimatorFullName, estimatorsNames } from './.
 import { SuiModalService } from 'ng2-semantic-ui';
 import { PlotModal } from 'src/app/plot/plot-modal/plot-modal.component';
 import { map } from 'rxjs/operators';
+import { trigger, transition, style, animate } from '@angular/animations';
 
 @Component({
   selector: 'app-stat-table',
   templateUrl: './stat-table.component.html',
-  styleUrls: ['./stat-table.component.css']
+  styleUrls: ['./stat-table.component.css'],
+  animations: [
+    trigger('slideInOut', [
+      transition(':enter', [
+        style({ transform: 'translateX(100%)' }),
+        animate('500ms ease-in', style({ transform: 'translateX(0%)' }))
+      ]),
+      transition(':leave', [
+        animate('500ms ease-in', style({ transform: 'translateX(100%)' }))
+      ])
+    ])
+  ]
 })
 export class StatTableComponent implements OnInit {
 
