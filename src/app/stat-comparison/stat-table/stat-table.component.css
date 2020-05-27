@@ -14,10 +14,10 @@ div.segment.noborder {
     box-shadow: none;
 }
 
-td.noleftborder {
+td.expanded {
     border-left: none !important;
 }
 
-td.notopborder {
+td.expandedplot {
     border-top: none !important;
 }
