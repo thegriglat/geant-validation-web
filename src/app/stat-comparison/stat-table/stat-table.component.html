@@ -33,18 +33,19 @@ Estimator:
   <tbody>
     <ng-container *ngFor="let j of jsonlist">
       <tr (click)="collapseRow(j)" class="pointer">
-        <td class="center aligned">
+        <td class="center aligned" [ngClass]="{noleftborder: isRowShown(j)}">
           {{jsonMetadata(j[0]).observable}}
         </td>
-        <td class="center aligned">{{beam[0]}}</td>
-        <td class="center aligned">{{jsonMetadata(j[0]).model}}</td>
-        <td class="center aligned">{{jsonMetadata(j[0]).target}}</td>
-        <td class="center aligned">{{jsonMetadata(j[0]).benergy}}</td>
-        <td class="center aligned">{{ParamC2str(jsonMetadata(j[0]).parameters)}}</td>
-        <td class="center aligned">{{estimatorCall(j)}}</td>
+        <td class="center aligned" [ngClass]="{noleftborder: isRowShown(j)}">{{beam[0]}}</td>
+        <td class="center aligned" [ngClass]="{noleftborder: isRowShown(j)}">{{jsonMetadata(j[0]).model}}</td>
+        <td class="center aligned" [ngClass]="{noleftborder: isRowShown(j)}">{{jsonMetadata(j[0]).target}}</td>
+        <td class="center aligned" [ngClass]="{noleftborder: isRowShown(j)}">{{jsonMetadata(j[0]).benergy}}</td>
+        <td class="center aligned" [ngClass]="{noleftborder: isRowShown(j)}">
+          {{ParamC2str(jsonMetadata(j[0]).parameters)}}</td>
+        <td class="center aligned" [ngClass]="{noleftborder: isRowShown(j)}">{{estimatorCall(j)}}</td>
       </tr>
       <tr *ngIf="isRowShown(j)">
-        <td colspan="7" class="center aligned">
+        <td colspan="7" class="center aligned notopborder">
           <div class="ui segment noborder">
             <app-plot class="rowplot" [configObs]="getPlotConfig(j)" [popupEnable]="false"></app-plot>
           </div>
