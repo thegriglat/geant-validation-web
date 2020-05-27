@@ -45,7 +45,7 @@ Estimator:
       </tr>
       <tr *ngIf="isRowShown(j)" class="pointer">
         <td colspan="7" class="center aligned">
-          <div class="ui segment">
+          <div class="ui segment noborder">
             <app-plot class="rowplot" [configObs]="getPlotConfig(j)" [popupEnable]="false"></app-plot>
           </div>
         </td>

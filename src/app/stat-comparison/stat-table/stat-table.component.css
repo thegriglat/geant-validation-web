@@ -8,3 +8,8 @@ tr.pointer:hover td {
     max-width: 50%;
     display: inline-block;
 }
+
+div.segment.noborder {
+    border:none;
+    box-shadow: none;
+}
