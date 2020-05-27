@@ -8,3 +8,17 @@ tr.pointer:hover td {
     max-width: 50%;
     display: inline-block;
 }
+
+div.segment.noborder {
+    border:none;
+    box-shadow: none;
+}
+
+td.expanded {
+    border-left: none !important;
+    font-weight: bold;
+}
+
+td.expandedplot {
+    border-top: none !important;
+}
