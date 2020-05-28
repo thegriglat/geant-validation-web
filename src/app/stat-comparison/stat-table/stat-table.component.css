@@ -15,10 +15,10 @@ div.segment.noborder {
 }
 
 td.expanded {
-    border-left: none !important;
+    border-left-style: hidden !important;
     font-weight: bold;
 }
 
 td.expandedplot {
-    border-top: none !important;
+    border-top-style: hidden !important;
 }
