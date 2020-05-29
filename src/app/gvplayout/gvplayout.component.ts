@@ -304,6 +304,18 @@ export class GvplayoutComponent implements OnInit {
           }
         }
       }
+      if (this.DefaultBlock.has('version')) {
+        this.versionsSel = this.versionsSel.slice();
+        const version_names = this.menuVersions.map(e => e.version);
+        for (const v of getDefault(this.DefaultBlock, 'version', "").split('|')) {
+          if (version_names.indexOf(v) !== -1 && this.versionsSel.map(e => e.version).indexOf(v) === -1) {
+            const tmp = this.menuVersions.find(e => e.version === v)
+            // always true, for compiler
+            if (tmp)
+              this.versionsSel.push(tmp);
+          }
+        }
+      }
     });
   }
 
