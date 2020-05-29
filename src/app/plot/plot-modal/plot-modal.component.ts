@@ -109,13 +109,14 @@ export class PlotModalComponent implements OnInit {
       this.useOnlyRatio = false;
     };
     this.config.markerSize = (this.useMarkers) ? 1 : 0;
-    this.modalRoot = true;
+    this.modalRoot = !this.modalRoot;
     this.selectedRef = p;
     this.inProgress = true;
     this.api.getPNG(this.config).subscribe(e => {
       if (e.status) {
         this.url = e.filename;
         this.inProgress = false;
+        this.switchModalRoot();
       }
     })
   }
