@@ -13,7 +13,9 @@ Estimator:
   <div class="ui loader"></div>
 </div>
 
-<button class="ui primary button" (click)="expandAll(jsonlist)" *ngIf="jsonlist.length !== 0">Toggle all</button>
+<button class="ui primary button" (click)="expandAll(jsonlist)" *ngIf="jsonlist.length !== 0">
+  {{isAllRowsShown(jsonlist) ? 'Collapse' : 'Show'}} all plots
+</button>
 
 <table class="ui sortable celled table">
   <thead>

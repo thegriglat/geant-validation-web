@@ -151,6 +151,15 @@ export class StatTableComponent implements OnInit {
       this.collapseRow(j);
   }
 
+  isAllRowsShown(jl: GvpJSON[][]): boolean {
+    for (let j of jl) {
+      if (!this.isRowShown(j)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   isRowShown(jj: GvpJSON[]): boolean {
     return this.collapseMap.get(jj) || false;
   }
