@@ -633,8 +633,9 @@ export class GvplayoutComponent implements OnInit {
     // if not finite -- red
     const l2 = isFinite(ratio) ? ratio - this._minRatio : l1;
     const prcnt = 100 - Math.round(100 * l2 / l1);
-    const intensity = RED_L - prcnt * (RED_L - GREEN_L) / 100;
-    return `hsl(${prcnt}, 100%, ${intensity}%)`;
+    const intensity = Math.round(RED_L - prcnt * (RED_L - GREEN_L) / 100);
+    const color = `hsl(${prcnt}, 100%, ${intensity}%)`;
+    return color;
   }
 
   getIdPlot(plot: GvpPlot): string {
@@ -645,7 +646,8 @@ export class GvplayoutComponent implements OnInit {
     // need to find element by Id and get ratio and color
     const e = document.getElementById("ratio_" + this.getIdPlot(plot));
     if (!e) return "";
-    return e.style.color || "black";
+    if (!e.style.color) return "";
+    return e.style.color;
   }
 
   scrollto(plot: GvpPlot): void {
