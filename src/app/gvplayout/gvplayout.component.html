@@ -49,7 +49,7 @@
                 <div class="ui divider"></div>
                 <h4>Reference:
                     <i class="ui close icon trashicon" *ngIf="currentVersionModelRatio"
-                    (click)="versionModelRatioChange(null)"></i>
+                        (click)="versionModelRatioChange(null)"></i>
                 </h4>
                 <sui-select class="selection enlarge" [(ngModel)]="currentVersionModelRatio"
                     [options]="_uniqVersionModel" [isSearchable]="false" [isDisabled]="false"
@@ -100,6 +100,22 @@
         </button>
     </div>
     <div [ngClass]="getSUIGridSize(isMenuCollapsed)">
+        <!-- map box  -->
+        <div [ngClass]="getSUIGridSize(isMenuCollapsed)">
+            <div class="ui stackable sixteen column grid" *ngIf="magicPressed && currentVersionModelRatio">
+                <div class="ui row"></div>
+                <div class="ui row gridmaprow" *ngFor="let row of plots">
+                    <div *ngFor="let plot of row">
+                        <ng-container *ngIf="!plot.isText()">
+                            <div class="ui empty circular label gridmapelement"
+                                [style.background-color]="getPlotRatioColor(plot)"></div>
+                        </ng-container>
+                    </div>
+                </div>
+                <div class="ui divider"></div>
+            </div>
+        </div>
+        <!-- end map box -->
         <div class="ui stackable" [ngClass]="getSUIGridClass(getMaxColumns(plots))" *ngIf="magicPressed">
             <div class="ui row" *ngFor="let row of plots" [ngClass]="{'centered': isCenteredRow(row)}">
                 <div class="ui aligned wide column" [ngClass]="{'enlarge': row.length === 1}" *ngFor="let plot of row">
@@ -108,8 +124,8 @@
                         </app-plot>
                         <ng-katex class="center" *ngIf="plot.title !== ''" [equation]="plot.title">
                         </ng-katex>
-                        <ng-katex class="center" *ngIf="pl.ratiodiff !== 0" [equation]="formatRatioDiff(pl.ratiodiff)"
-                            [style.color]="ratioColor(pl.ratiodiff)">
+                        <ng-katex [id]="getIdPlot(plot)" class="center" *ngIf="pl.ratiodiff !== 0"
+                            [equation]="formatRatioDiff(pl.ratiodiff)" [style.color]="ratioColor(pl.ratiodiff)">
                         </ng-katex>
                     </ng-container>
                     <ng-katex [equation]="plot.text" *ngIf="plot.isText()"></ng-katex>

@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { LayoutService } from '../services/layout.service';
-import { GvpTest, GvpPlot, GvpMctoolNameVersion, GvpLayout, GvpInspire, GvpPngRequest, GvpPlotIdRequest, GvpPlotType, Nullable, GvpJSON } from '../classes/gvp-plot';
+import { GvpTest, GvpPlot, GvpMctoolNameVersion, GvpLayout, GvpInspire, GvpPngRequest, GvpPlotIdRequest, GvpPlotType, Nullable } from '../classes/gvp-plot';
 import { GVPAPIService } from '../services/gvpapi.service';
 import { map } from 'rxjs/operators';
 import { forkJoin } from 'rxjs';
-import { unroll, versionSorter, unstableVersionFilter, getColumnWide, distinct, getDefault, filterData, distinctJSON } from './../utils';
+import { unroll, versionSorter, unstableVersionFilter, getColumnWide, distinct, getDefault, filterData, distinctJSON, getIdPlot } from './../utils';
 import { PlotEmitType } from '../plot/plot.component';
 import { RatioDiffEstimator } from '../plot/ratiofunctions';
 import { trigger, transition, style, animate } from '@angular/animations';
@@ -624,7 +624,7 @@ export class GvplayoutComponent implements OnInit {
     return `${est.description} = ${ratio.toPrecision(precision)}`;
   }
 
-  ratioColor(ratio: number) {
+  ratioColor(ratio: number): string {
     // L in HSL color
 
     const GREEN_L = 25;
@@ -636,4 +636,16 @@ export class GvplayoutComponent implements OnInit {
     const intensity = RED_L - prcnt * (RED_L - GREEN_L) / 100;
     return `hsl(${prcnt}, 100%, ${intensity}%)`;
   }
+
+  getIdPlot(plot: GvpPlot): string {
+    return getIdPlot(plot);
+  }
+
+  getPlotRatioColor(plot: GvpPlot): string {
+    // need to find element by Id and get ratio and color
+    const e = document.getElementById(this.getIdPlot(plot));
+    if (!e) return "";
+    return e.style.color || "black";
+  }
+
 }
