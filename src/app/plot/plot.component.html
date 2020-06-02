@@ -12,7 +12,7 @@
         <b>Beam particle</b>: {{getHintData().beam}}<br>
         <b>Beam energy</b>: {{getHintData().beam_energy}}<br>
         <b>Target</b>: {{getHintData().target}}<br>
-        <ul>
+        <ul *ngIf="getHintData()">
             <li *ngFor="let e of getHintData().items">
                 <ng-container *ngIf="!e.isExp">
                     <b>{{e.version}}</b>, <b>{{e.model}}</b>
