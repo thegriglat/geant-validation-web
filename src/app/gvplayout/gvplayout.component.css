@@ -16,11 +16,11 @@
 }
 
 div.row.gridmaprow {
-    padding: 0 !important;
+    padding: 1px !important;
 }
 
 div.gridmapelement {
-    margin-left: 2px !important;
-    margin-right: 2px !important;
+    margin-left: 5px !important;
+    margin-right: 5px !important;
     cursor: pointer;
 }

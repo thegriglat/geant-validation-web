@@ -100,20 +100,27 @@
         </button>
     </div>
     <div [ngClass]="getSUIGridSize(isMenuCollapsed)">
-        <!-- map box  -->
-        <div class="ui stackable sixteen column grid" *ngIf="magicPressed && currentVersionModelRatio">
-            <div class="ui row"></div>
-            <div class="ui row gridmaprow" *ngFor="let row of plots">
-                <div *ngFor="let plot of row">
-                    <ng-container *ngIf="!plot.isText()">
-                        <div class="ui empty circular label gridmapelement"
-                            [style.background-color]="getPlotRatioColor(plot)" (click)="scrollto(plot)"></div>
-                    </ng-container>
-                </div>
-            </div>
-            <div class="ui divider"></div>
-        </div>
-        <!-- end map box -->
+        <ng-template let-popup #rmapPopupTemplate>
+            <!-- map box  -->
+            <table>
+                <tr *ngFor="let row of rowsWithPlots(plots)">
+                    <td class="gridmapelement" *ngFor="let plot of row">
+                        <ng-container *ngIf="!plot.isText()">
+                            <div class="ui empty circular label gridmapelement"
+                                [style.background-color]="getPlotRatioColor(plot)"
+                                (click)="popup.close();scrollto(plot)">
+                            </div>
+                        </ng-container>
+                    </td>
+                </tr>
+            </table>
+            <!-- end map box -->
+        </ng-template>
+        <button class="ui icon button" suiPopup popupPlacement="bottom" [popupTemplate]="rmapPopupTemplate"
+            popupTrigger="outsideClick" *ngIf="magicPressed && currentVersionModelRatio">
+            Difference map
+        </button>
+
         <div class="ui stackable" [ngClass]="getSUIGridClass(getMaxColumns(plots))" *ngIf="magicPressed">
             <div class="ui row" *ngFor="let row of plots" [ngClass]="{'centered': isCenteredRow(row)}">
                 <div class="ui aligned wide column" [ngClass]="{'enlarge': row.length === 1}" *ngFor="let plot of row">

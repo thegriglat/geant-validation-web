@@ -602,6 +602,13 @@ export class GvplayoutComponent implements OnInit {
     return row.filter(e => e.isPlot() || e.isRatio()).length === 0;
   }
 
+  rowsWithPlots(plots: GvpPlot[][]): GvpPlot[][] {
+    // filters rows so they contains at least one plot/ratio plot
+    return plots.filter(pl =>
+      pl.map(e => e.isPlot() || e.isRatio()).indexOf(true) !== -1
+    )
+  }
+
   getMaxColumns(plots: GvpPlot[][]): number {
     return Math.max(...plots.map(e => e.length));
   }
