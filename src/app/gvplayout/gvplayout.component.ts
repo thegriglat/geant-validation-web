@@ -643,9 +643,16 @@ export class GvplayoutComponent implements OnInit {
 
   getPlotRatioColor(plot: GvpPlot): string {
     // need to find element by Id and get ratio and color
-    const e = document.getElementById(this.getIdPlot(plot));
+    const e = document.getElementById("ratio_" + this.getIdPlot(plot));
     if (!e) return "";
     return e.style.color || "black";
+  }
+
+  scrollto(plot: GvpPlot): void {
+    const id = "plot_" + this.getIdPlot(plot);
+    const e = document.getElementById(id);
+    if (!e) return;
+    e.scrollIntoView();
   }
 
 }

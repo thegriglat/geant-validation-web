@@ -108,7 +108,7 @@
                     <div *ngFor="let plot of row">
                         <ng-container *ngIf="!plot.isText()">
                             <div class="ui empty circular label gridmapelement"
-                                [style.background-color]="getPlotRatioColor(plot)"></div>
+                                [style.background-color]="getPlotRatioColor(plot)" (click)="scrollto(plot)"></div>
                         </ng-container>
                     </div>
                 </div>
@@ -120,11 +120,12 @@
             <div class="ui row" *ngFor="let row of plots" [ngClass]="{'centered': isCenteredRow(row)}">
                 <div class="ui aligned wide column" [ngClass]="{'enlarge': row.length === 1}" *ngFor="let plot of row">
                     <ng-container *ngIf="!plot.isText()">
-                        <app-plot [configObs]="getPlotConfig(plot)" (done)="incrementProgress($event)" #pl>
+                        <app-plot [id]="'plot_' + getIdPlot(plot)" [configObs]="getPlotConfig(plot)"
+                            (done)="incrementProgress($event)" #pl>
                         </app-plot>
                         <ng-katex class="center" *ngIf="plot.title !== ''" [equation]="plot.title">
                         </ng-katex>
-                        <ng-katex [id]="getIdPlot(plot)" class="center" *ngIf="pl.ratiodiff !== 0"
+                        <ng-katex [id]="'ratio_' + getIdPlot(plot)" class="center" *ngIf="pl.ratiodiff !== 0"
                             [equation]="formatRatioDiff(pl.ratiodiff)" [style.color]="ratioColor(pl.ratiodiff)">
                         </ng-katex>
                     </ng-container>
