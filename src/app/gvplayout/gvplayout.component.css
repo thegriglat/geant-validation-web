@@ -14,3 +14,13 @@
     color:red;
     cursor: pointer;
 }
+
+div.row.gridmaprow {
+    padding: 1px !important;
+}
+
+div.gridmapelement {
+    margin-left: 5px !important;
+    margin-right: 5px !important;
+    cursor: pointer;
+}

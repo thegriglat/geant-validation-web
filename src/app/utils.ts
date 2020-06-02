@@ -1,4 +1,4 @@
-import { GvpMctoolNameVersion, GvpPlotXML, GvpJSON, GvpHistogram, ParametersList, GvpParameter } from './classes/gvp-plot';
+import { GvpMctoolNameVersion, GvpPlotXML, GvpJSON, ParametersList, GvpParameter, GvpPlot } from './classes/gvp-plot';
 
 export function unroll<T>(arr: T[][]): T[] {
     return arr.reduce((res, e) => (res = res.concat(...e)));
@@ -225,4 +225,16 @@ export function getCommonXY(plot1: GvpJSON, plot2: GvpJSON): number[][] {
         }
     }
     return [rx1, ry1, ry1err, rx2, ry2, ry2err];
+}
+
+export function hashCode(s: string) {
+    var h = 0, l = s.length, i = 0;
+    if (l > 0)
+        while (i < l)
+            h = (h << 5) - h + s.charCodeAt(i++) | 0;
+    return h;
+};
+
+export function getIdPlot(plot: GvpPlot): string {
+    return String(Math.abs(hashCode(JSON.stringify(plot))));
 }

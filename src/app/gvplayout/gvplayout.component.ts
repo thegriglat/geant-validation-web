@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { LayoutService } from '../services/layout.service';
-import { GvpTest, GvpPlot, GvpMctoolNameVersion, GvpLayout, GvpInspire, GvpPngRequest, GvpPlotIdRequest, GvpPlotType, Nullable, GvpJSON } from '../classes/gvp-plot';
+import { GvpTest, GvpPlot, GvpMctoolNameVersion, GvpLayout, GvpInspire, GvpPngRequest, GvpPlotIdRequest, GvpPlotType, Nullable } from '../classes/gvp-plot';
 import { GVPAPIService } from '../services/gvpapi.service';
 import { map } from 'rxjs/operators';
 import { forkJoin } from 'rxjs';
-import { unroll, versionSorter, unstableVersionFilter, getColumnWide, distinct, getDefault, filterData, distinctJSON } from './../utils';
+import { unroll, versionSorter, unstableVersionFilter, getColumnWide, distinct, getDefault, filterData, distinctJSON, getIdPlot } from './../utils';
 import { PlotEmitType } from '../plot/plot.component';
 import { RatioDiffEstimator } from '../plot/ratiofunctions';
 import { trigger, transition, style, animate } from '@angular/animations';
@@ -602,6 +602,13 @@ export class GvplayoutComponent implements OnInit {
     return row.filter(e => e.isPlot() || e.isRatio()).length === 0;
   }
 
+  rowsWithPlots(plots: GvpPlot[][]): GvpPlot[][] {
+    // filters rows so they contains at least one plot/ratio plot
+    return plots.filter(pl =>
+      pl.map(e => e.isPlot() || e.isRatio()).indexOf(true) !== -1
+    )
+  }
+
   getMaxColumns(plots: GvpPlot[][]): number {
     return Math.max(...plots.map(e => e.length));
   }
@@ -624,7 +631,7 @@ export class GvplayoutComponent implements OnInit {
     return `${est.description} = ${ratio.toPrecision(precision)}`;
   }
 
-  ratioColor(ratio: number) {
+  ratioColor(ratio: number): string {
     // L in HSL color
 
     const GREEN_L = 25;
@@ -633,7 +640,28 @@ export class GvplayoutComponent implements OnInit {
     // if not finite -- red
     const l2 = isFinite(ratio) ? ratio - this._minRatio : l1;
     const prcnt = 100 - Math.round(100 * l2 / l1);
-    const intensity = RED_L - prcnt * (RED_L - GREEN_L) / 100;
-    return `hsl(${prcnt}, 100%, ${intensity}%)`;
+    const intensity = Math.round(RED_L - prcnt * (RED_L - GREEN_L) / 100);
+    const color = `hsl(${prcnt}, 100%, ${intensity}%)`;
+    return color;
   }
+
+  getIdPlot(plot: GvpPlot): string {
+    return getIdPlot(plot);
+  }
+
+  getPlotRatioColor(plot: GvpPlot): string {
+    // need to find element by Id and get ratio and color
+    const e = document.getElementById("ratio_" + this.getIdPlot(plot));
+    if (!e) return "";
+    if (!e.style.color) return "";
+    return e.style.color;
+  }
+
+  scrollto(plot: GvpPlot): void {
+    const id = "plot_" + this.getIdPlot(plot);
+    const e = document.getElementById(id);
+    if (!e) return;
+    e.scrollIntoView();
+  }
+
 }
