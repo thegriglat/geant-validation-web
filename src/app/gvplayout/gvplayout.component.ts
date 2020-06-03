@@ -266,6 +266,7 @@ export class GvplayoutComponent implements OnInit {
       if (this.menuVersions.length === 1) {
         this.versionsSel = this.menuVersions.slice();
       }
+      this.versionChanged(this.versionsSel);
     });
   }
 
@@ -316,6 +317,7 @@ export class GvplayoutComponent implements OnInit {
           }
         }
       }
+      this.modelChanged(this.modelsSel);
     });
   }
 
