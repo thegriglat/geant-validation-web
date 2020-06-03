@@ -45,16 +45,16 @@
             </div>
             <div class="ui divider"></div>
             <sui-checkbox class="toggle" [(ngModel)]="useMarkers">Use markers</sui-checkbox>
-            <ng-container *ngIf="_uniqVersionModel.length !== 0">
+            <ng-container *ngIf="_uniqVersionModel.length > 1">
                 <div class="ui divider"></div>
                 <h4>Reference:
                     <i class="ui close icon trashicon" *ngIf="currentVersionModelRatio"
-                        (click)="versionModelRatioChange(null)"></i>
+                        (click)="currentVersionModelRatio = null"></i>
                 </h4>
                 <sui-select class="selection enlarge" [(ngModel)]="currentVersionModelRatio"
                     [options]="_uniqVersionModel" [isSearchable]="false" [isDisabled]="false"
                     [optionFormatter]="_uniqVersionModelFormatter"
-                    (selectedOptionChange)="versionModelRatioChange($event)" #ratioselect>
+                    (selectedOptionChange)="currentVersionModelRatio = $event" #ratioselect>
                     <ng-container *ngFor="let versionmodel of ratioselect.filteredOptions">
                         <sui-select-option [value]="versionmodel">
                         </sui-select-option>
@@ -69,7 +69,8 @@
             </div>
             <sui-multi-select class="selection enlarge" [(ngModel)]="versionsSel"
                 [options]="unstableFilter(menuVersions)" [isSearchable]="true" [isDisabled]="false"
-                [optionFormatter]="versionFormatter" [optionsFilter]="versionSelectFilter" #multiSelect>
+                [optionFormatter]="versionFormatter" [optionsFilter]="versionSelectFilter"
+                (selectedOptionsChange)="versionChanged($event)" #multiSelect>
                 <sui-select-option *ngFor="let obj of multiSelect.filteredOptions" [value]="obj">
                 </sui-select-option>
             </sui-multi-select>
@@ -83,7 +84,7 @@
                 <div class="ui loader"></div>
             </div>
             <sui-multi-select class="selection enlarge" [(ngModel)]="modelsSel" [options]="models" [isSearchable]="true"
-                [isDisabled]="false" #multiSelect>
+                [isDisabled]="false" (selectedOptionsChange)="modelChanged($event)" #multiSelect>
                 <sui-select-option *ngFor="let obj of multiSelect.filteredOptions" [value]="obj">
                 </sui-select-option>
             </sui-multi-select>

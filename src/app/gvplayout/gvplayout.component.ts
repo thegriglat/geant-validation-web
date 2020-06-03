@@ -396,6 +396,22 @@ export class GvplayoutComponent implements OnInit {
     } else {
       this.checkedExp.splice(this.checkedExp.indexOf(e), 1);
     }
+    // update reference select
+    const vm = this._uniqVersionModel.find(e => e.model === "experiment" && e.version === "experiment");
+    if (vm) {
+      // present in menu
+      if (this.checkedExp.length === 0) {
+        // but not should
+        const idx = this._uniqVersionModel.indexOf(vm);
+        this._uniqVersionModel.splice(idx, 1);
+      }
+    } else {
+      // not present in menu
+      if (this.checkedExp.length !== 0) {
+        // but should
+        this._uniqVersionModel.push({ version: "experiment", model: "experiment" })
+      }
+    }
   }
 
   updateTags(tag: string) {
@@ -439,7 +455,6 @@ export class GvplayoutComponent implements OnInit {
       this.progressValue = 0;
       this.currentVersionModelRatio = null;
       this._uniqVersionModel = [];
-      this.currentVersionModelRatio = null;
       this.updateMenu(results);
     });
   }
@@ -467,7 +482,6 @@ export class GvplayoutComponent implements OnInit {
     this.progressValue = 0;
     this._maxRatio = 0;
     this._minRatio = 0;
-    this._uniqVersionModel = [];
     // dirty hack to update plots
     // and then angular cache for getPlotConfig will be invalidated
     // and new Observable from getPlotConfig will be generated
@@ -570,32 +584,11 @@ export class GvplayoutComponent implements OnInit {
       if (rd < this._minRatio) this._minRatio = rd;
       if (rd > this._maxRatio) this._maxRatio = rd;
     }
-    if (event.plotData)
-      for (let i of event.plotData.items) {
-        if (this._uniqVersionModel.filter(e => e.model === i.model && e.version === i.version).length === 0)
-          this._uniqVersionModel.push({ version: i.version, model: i.model } as VersionModel);
-      }
-    if (this._uniqVersionModel.length < 2) {
-      this._uniqVersionModel = [];
-      this.currentVersionModelRatio = null;
-    }
-    if (this.currentVersionModelRatio)
-      for (let i of this._uniqVersionModel) {
-        if (this.currentVersionModelRatio.version === i.version
-          && this.currentVersionModelRatio.model === i.model)
-          this.currentVersionModelRatio = i;
-      }
   }
 
   _uniqVersionModelFormatter(item: VersionModel, query?: string): string {
     if (item.version === "experiment") return "experimental data";
     return `${item.version} ${item.model}`
-  }
-
-  versionModelRatioChange(event: VersionModel) {
-    this.currentVersionModelRatio = event;
-    // just force redraw with new currentVersionModelRatio
-    this.magic();
   }
 
   isCenteredRow(row: GvpPlot[]): boolean {
@@ -611,6 +604,20 @@ export class GvplayoutComponent implements OnInit {
 
   getMaxColumns(plots: GvpPlot[][]): number {
     return Math.max(...plots.map(e => e.length));
+  }
+
+  versionChanged(svers: GvpMctoolNameVersion[]) {
+    this._uniqVersionModel = [];
+    for (let m of this.modelsSel)
+      for (let v of svers.map(e => e.version))
+        this._uniqVersionModel.push({ version: v, model: m });
+  }
+
+  modelChanged(smod: string[]) {
+    this._uniqVersionModel = [];
+    for (let v of this.versionsSel.map(e => e.version))
+      for (let m of smod)
+        this._uniqVersionModel.push({ version: v, model: m });
   }
 
   getSUIGridClass(cols: number): string {
