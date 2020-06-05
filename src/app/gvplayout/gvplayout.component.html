@@ -124,7 +124,8 @@
 
         <div class="ui stackable" [ngClass]="getSUIGridClass(getMaxColumns(plots))" *ngIf="magicPressed">
             <div class="ui row" *ngFor="let row of plots" [ngClass]="{'centered': isCenteredRow(row)}">
-                <div class="ui aligned wide column" [ngClass]="{'enlarge': row.length === 1}" *ngFor="let plot of row">
+                <div class="ui aligned wide column nopadding" [ngClass]="{'enlarge': row.length === 1}"
+                    *ngFor="let plot of row">
                     <ng-container *ngIf="!plot.isText()">
                         <app-plot [id]="'plot_' + getIdPlot(plot)" [configObs]="getPlotConfig(plot)"
                             (done)="incrementProgress($event)" #pl>

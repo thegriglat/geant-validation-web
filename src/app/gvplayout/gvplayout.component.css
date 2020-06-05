@@ -15,6 +15,9 @@
     cursor: pointer;
 }
 
+div.nopadding {
+    padding: 0px !important
+}
 div.row.gridmaprow {
     padding: 1px !important;
 }
