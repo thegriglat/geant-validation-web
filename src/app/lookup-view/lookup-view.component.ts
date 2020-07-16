@@ -74,6 +74,7 @@ export class LookupViewComponent implements OnInit {
   ];
   tableData: string[] = [];
   _tests: GvpTest[] = [];
+  filterStr: string = "";
   constructor(private api: GVPAPIService) { }
 
   ngOnInit() {
@@ -100,8 +101,21 @@ export class LookupViewComponent implements OnInit {
     return input.replace(new RegExp(" ", "g"), " \\space ");
   }
 
+  filter(inp: string[]): string[] {
+    if (this.filterStr.length != 0) {
+      const rgx = new RegExp(this.filterStr, "i");
+      return inp.filter(e => e.match(rgx));
+    }
+    return inp;
+  }
+
   sort(data: string[]): string[] {
     if (!this.currentTable) return data;
     return data.sort(this.currentTable.sorter);
+
+  }
+
+  setFilter(f: string) {
+    this.filterStr = f;
   }
 }

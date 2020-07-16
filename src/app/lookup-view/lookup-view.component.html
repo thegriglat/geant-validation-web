@@ -13,6 +13,10 @@
       </ng-container>
     </sui-select>
   </div>
+  <div class="field" *ngIf="currentTable">
+    <label>Filter</label>
+    <input #filter (keyup)="setFilter(filter.value)">
+  </div>
 </div>
 
 <table class="ui compact celled table" *ngIf="currentTable">
@@ -25,7 +29,7 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let row of sort(tableData)">
+    <tr *ngFor="let row of filter(sort(tableData))">
       <td>{{row}}</td>
       <td *ngIf="isLatex()">
         <ng-katex class="center" [equation]="latexize(row)">
