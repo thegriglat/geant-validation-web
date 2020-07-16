@@ -311,3 +311,27 @@ export class GvpMctoolName {
 
 export const EXPERIMENT_VERSION_ID = -1;
 export const EXPERIMENT_TEST_ID = 102;
+
+export interface GvpObservable {
+  observable_id: number;
+  observable_name: string;
+};
+
+export interface GvpModel {
+  mctool_model_id: number,
+  mctool_model_name: string,
+  mctool_name_id: number
+};
+
+export interface GvpParticle {
+  particle_id: number,
+  pdgid: number,
+  particle_name: string,
+  synonyms: string[]
+};
+
+export interface GvpTarget {
+  target_id: number,
+  target_name: string,
+  description: string
+};

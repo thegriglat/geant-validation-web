@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, from } from 'rxjs';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { GvpTest, GvpJSON, GvpMctoolNameVersion, GvpMctoolName, GvpParameter, GvpInspire, GvpPngRequest, GvpPngResponse, GvpPlotIdRequest, EXPERIMENT_TEST_ID, EXPERIMENT_VERSION_ID } from '../classes/gvp-plot';
+import { GvpTest, GvpJSON, GvpMctoolNameVersion, GvpMctoolName, GvpParameter, GvpInspire, GvpPngRequest, GvpPngResponse, GvpPlotIdRequest, EXPERIMENT_TEST_ID, EXPERIMENT_VERSION_ID, GvpObservable, GvpModel, GvpParticle, GvpTarget } from '../classes/gvp-plot';
 import { flatMap, map } from 'rxjs/operators';
 
 import { CustomEncoder } from './../classes/urlencoder';
@@ -99,6 +99,34 @@ export class GVPAPIService {
     if (id !== undefined)
       params.set("id", String(id));
     return this._get<GvpMctoolName[]>("/api/mctool_name", params);
+  }
+
+  public observable(id?: number) {
+    let params = this.getParams();
+    if (id !== undefined)
+      params.set("id", String(id));
+    return this._get<GvpObservable[]>("/api/observable", params);
+  }
+
+  public model(id?: number) {
+    let params = this.getParams();
+    if (id !== undefined)
+      params.set("id", String(id));
+    return this._get<GvpModel[]>("/api/mctool_model", params);
+  }
+
+  public particle(id?: number) {
+    let params = this.getParams();
+    if (id !== undefined)
+      params.set("id", String(id));
+    return this._get<GvpParticle[]>("/api/particle", params);
+  }
+
+  public target(id?: number) {
+    let params = this.getParams();
+    if (id !== undefined)
+      params.set("id", String(id));
+    return this._get<GvpTarget[]>("/api/target", params);
   }
 
   private uniqlookup<T>(test_id: number, JSONAttr: string) {
