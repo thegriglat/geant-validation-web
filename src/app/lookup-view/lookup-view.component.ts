@@ -27,31 +27,6 @@ export class LookupViewComponent implements OnInit {
   currentTable: Nullable<Table> = null;
   _tables: Table[] = [
     {
-      name: "Observable",
-      getter: this.api.observable(),
-      mapper: function (e: GvpObservable) { return e.observable_name; },
-      sorter: defaultStrSortFn
-    },
-    {
-      name: "Physics model",
-      getter: this.api.model(),
-      mapper: function (e: GvpModel) { return e.mctool_model_name; },
-      sorter: defaultStrSortFn
-
-    },
-    {
-      name: "Version",
-      getter: this.api.mctool_name_version(),
-      mapper: function (e: GvpMctoolNameVersion) { return e.version; },
-      sorter: (a: string, b: string) => _versionSorterComparator(a, b) * -1
-    },
-    {
-      name: "Particle",
-      getter: this.api.particle(),
-      mapper: function (e: GvpParticle) { return e.particle_name; },
-      sorter: defaultStrSortFn
-    },
-    {
       name: "Tool",
       getter: this.api.mctool_name(),
       mapper: function (e: GvpMctoolName) { return e.mctool_name_name; },
@@ -64,9 +39,33 @@ export class LookupViewComponent implements OnInit {
       sorter: defaultStrSortFn
     },
     {
+      name: "Observable",
+      getter: this.api.observable(),
+      mapper: function (e: GvpObservable) { return e.observable_name; },
+      sorter: defaultStrSortFn
+    },
+    {
+      name: "Physics model",
+      getter: this.api.model(),
+      mapper: function (e: GvpModel) { return e.mctool_model_name; },
+      sorter: defaultStrSortFn
+    },
+    {
+      name: "Version",
+      getter: this.api.mctool_name_version(),
+      mapper: function (e: GvpMctoolNameVersion) { return e.version; },
+      sorter: (a: string, b: string) => _versionSorterComparator(a, b) * -1
+    },
+    {
       name: "Target",
       getter: this.api.target(),
       mapper: function (e: GvpTarget) { return e.target_name; },
+      sorter: defaultStrSortFn
+    },
+    {
+      name: "Particle",
+      getter: this.api.particle(),
+      mapper: function (e: GvpParticle) { return e.particle_name; },
       sorter: defaultStrSortFn
     }
     // parameters
