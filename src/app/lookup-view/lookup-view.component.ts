@@ -1,15 +1,21 @@
 import { Component, OnInit } from '@angular/core';
 import { Nullable, GvpTest, GvpMctoolNameVersion, GvpMctoolName, GvpObservable, GvpModel, GvpParticle, GvpTarget } from '../classes/gvp-plot';
 import { GVPAPIService } from '../services/gvpapi.service';
-import { forkJoin, Observable } from 'rxjs';
-import { tokenKey } from '@angular/core/src/view';
+import { Observable } from 'rxjs';
 import { isNull } from 'util';
+import { _versionSorterComparator } from '../utils';
 
 interface Table {
   name: string;
   getter: Observable<any[]>,
-  mapper: { (e: any): string };
+  mapper: { (e: any): string },
+  sorter: { (a: string, b: string): number }
 };
+
+const defaultStrSortFn = (a: string, b: string) => {
+  if (a === b) return 0;
+  return a.localeCompare(b);
+}
 
 @Component({
   selector: 'app-lookup-view',
@@ -23,37 +29,45 @@ export class LookupViewComponent implements OnInit {
     {
       name: "Observable",
       getter: this.api.observable(),
-      mapper: function (e: GvpObservable) { return e.observable_name; }
+      mapper: function (e: GvpObservable) { return e.observable_name; },
+      sorter: defaultStrSortFn
     },
     {
       name: "Physics model",
       getter: this.api.model(),
-      mapper: function (e: GvpModel) { return e.mctool_model_name; }
+      mapper: function (e: GvpModel) { return e.mctool_model_name; },
+      sorter: defaultStrSortFn
+
     },
     {
       name: "Version",
       getter: this.api.mctool_name_version(),
-      mapper: function (e: GvpMctoolNameVersion) { return e.version; }
+      mapper: function (e: GvpMctoolNameVersion) { return e.version; },
+      sorter: (a: string, b: string) => _versionSorterComparator(a, b) * -1
     },
     {
       name: "Particle",
       getter: this.api.particle(),
-      mapper: function (e: GvpParticle) { return e.particle_name; }
+      mapper: function (e: GvpParticle) { return e.particle_name; },
+      sorter: defaultStrSortFn
     },
     {
       name: "Tool",
       getter: this.api.mctool_name(),
-      mapper: function (e: GvpMctoolName) { return e.mctool_name_name; }
+      mapper: function (e: GvpMctoolName) { return e.mctool_name_name; },
+      sorter: defaultStrSortFn
     },
     {
       name: "Test",
       getter: this.api.test(),
-      mapper: function (e: GvpTest) { return e.test_name; }
+      mapper: function (e: GvpTest) { return e.test_name; },
+      sorter: defaultStrSortFn
     },
     {
       name: "Target",
       getter: this.api.target(),
-      mapper: function (e: GvpTarget) { return e.target_name; }
+      mapper: function (e: GvpTarget) { return e.target_name; },
+      sorter: defaultStrSortFn
     }
     // parameters
     // beam energy
@@ -84,5 +98,10 @@ export class LookupViewComponent implements OnInit {
 
   latexize(input: string): string {
     return input.replace(new RegExp(" ", "g"), " \\space ");
+  }
+
+  sort(data: string[]): string[] {
+    if (!this.currentTable) return data;
+    return data.sort(this.currentTable.sorter);
   }
 }

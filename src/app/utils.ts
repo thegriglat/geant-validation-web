@@ -13,7 +13,7 @@ interface hasVersionField {
     version: string;
 }
 
-function _versionSorterComparator(a: string, b: string): number {
+export function _versionSorterComparator(a: string, b: string): number {
     if (a === b) {
         return 0;
     }

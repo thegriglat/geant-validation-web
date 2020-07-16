@@ -25,7 +25,7 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let row of tableData">
+    <tr *ngFor="let row of sort(tableData)">
       <td>{{row}}</td>
       <td *ngIf="isLatex()">
         <ng-katex class="center" [equation]="latexize(row)">
