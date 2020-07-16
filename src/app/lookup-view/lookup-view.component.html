@@ -1,3 +1,28 @@
-<p>
-  lookup-view works!
-</p>
+<h1 class="pageheader" id="headerblk">
+  Lookup tables
+</h1>
+<div class="ui form">
+  <div class="field">
+    <label>Table</label>
+    <sui-select class="selection enlarge" [(ngModel)]="currentTable" [options]="_tables"
+      [isSearchable]="false" [isDisabled]="false" [optionFormatter]="tableFormatter" (selectedOptionChange)="onTableChange($event)" #tableselect>
+      <ng-container *ngFor="let t of tableselect.filteredOptions">
+        <sui-select-option [value]="t">
+        </sui-select-option>
+      </ng-container>
+    </sui-select>
+  </div>
+</div>
+
+<table class="ui compact celled table" *ngIf="currentTable">
+  <thead>
+    <tr>
+      <th>{{currentTable.name}}</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let test of tableData">
+      <td>{{test}}</td>
+    </tr>
+  </tbody>
+</table>
