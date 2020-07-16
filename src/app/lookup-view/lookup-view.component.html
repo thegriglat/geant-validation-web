@@ -18,8 +18,8 @@
 <table class="ui compact celled table" *ngIf="currentTable">
   <thead>
     <tr>
-      <th>{{currentTable.name}}</th>
-      <th *ngIf="isLatex()">
+      <th class="center aligned">{{currentTable.name}}</th>
+      <th *ngIf="isLatex()" class="center aligned">
         LaTeX
       </th>
     </tr>
