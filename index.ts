@@ -613,7 +613,7 @@ app.post('/uploadException', isLoggedIn, (req, res) => {
 });
 */
 // Function to receive file content in the request body
-app.post('/upload', isLoggedIn, (req, res) => {
+app.post('/upload', (req, res) => {
   logger.info('upload requested');
   const json = req.body;
   // get inspire info
