@@ -290,7 +290,10 @@ function execSQL(params: any[], sql: string): Promise<SQLRow[]> {
           console.error('error running query', err);
           reject(Error('error running query'));
         }
-        resolve(result.rows);
+        if (!isUndefined(result))
+          resolve(result.rows);
+        else
+          reject(Error('error running query'));
       });
     });
   });
