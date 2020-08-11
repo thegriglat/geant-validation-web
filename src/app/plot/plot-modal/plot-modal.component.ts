@@ -3,7 +3,8 @@ import { GvpPngRequest, GvpJSON, Nullable } from 'src/app/classes/gvp-plot';
 import { GVPAPIService } from 'src/app/services/gvpapi.service';
 import { from, forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { SuiModal, ComponentModalConfig, ModalSize } from 'ng2-semantic-ui';
+import { ComponentModalConfig, ModalSize } from 'ng2-semantic-ui';
+import { Modal } from 'ng2-semantic-ui/dist';
 
 declare var JSROOT: any;
 
@@ -11,7 +12,7 @@ interface IConfirmModalContext {
   config: GvpPngRequest;
 }
 
-export class PlotModal extends ComponentModalConfig<IConfirmModalContext, void, void> {
+export class PlotModal extends ComponentModalConfig<IConfirmModalContext, void> {
   constructor(config: GvpPngRequest, size = ModalSize.Small) {
     super(PlotModalComponent, { config });
     this.isFullScreen = true;
@@ -41,7 +42,8 @@ export class PlotModalComponent implements OnInit {
   useOnlyRatio = false;
   private _names = new Map<GvpJSON, string>();
 
-  constructor(public modal: SuiModal<IConfirmModalContext, void, void>, private api: GVPAPIService) {
+  constructor(public modal: Modal<IConfirmModalContext, void>, private api: GVPAPIService) {
+    // TODO: fixxxx!!!
     this.config = Object.assign({}, modal.context.config);
   }
 
