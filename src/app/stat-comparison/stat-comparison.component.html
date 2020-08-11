@@ -43,9 +43,9 @@
       <h3>Observable
         <div class="ui tiny active inline loader collapseicon" *ngIf="onlineFilterProgress"></div>
         <ng-container *ngIf="menuObservable.length !== 1 && !onlineFilterProgress">
-          <i class="ui tasks icon collapseicon" *ngIf="observableSel.length !== menuObservable.length"
+          <i class="ui tasks icon collapseicon" *ngIf="!observableErasehButtonShow()"
             (click)="selectAllObservables()"></i>
-          <i class="ui eraser icon collapseicon" *ngIf="observableSel.length === menuObservable.length"
+          <i class="ui eraser icon collapseicon" *ngIf="observableErasehButtonShow()"
             (click)="deselectAllObservables()"></i>
         </ng-container>
       </h3>

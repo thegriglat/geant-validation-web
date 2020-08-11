@@ -208,13 +208,17 @@ export class StatComparisonComponent implements OnInit {
   }
 
   selectAllObservables() {
-    this.observableSel = this.menuObservable.slice();
+    this.observableSel = this.observableOnlineFilter(this.menuObservable.slice());
     this.firesUpdateMenu();
   }
 
   deselectAllObservables() {
     this.observableSel.length = 0;
     this.firesUpdateMenu();
+  }
+
+  observableErasehButtonShow(): boolean {
+    return this.observableSel.length === this.observableOnlineFilter(this.menuObservable).length;
   }
 
   isParamChecked(pgroup: string, pvalue: string): boolean {
