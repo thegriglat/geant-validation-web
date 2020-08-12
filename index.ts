@@ -196,7 +196,7 @@ app.use(
 );
 
 app.use(function(req, res, next) {
-    res.setHeader("Content-Security-Policy", "default-src  * 'self' https: data: 'unsafe-inline' 'unsafe-eval'; script-src * 'self' 'unsafe-eval';");
+    res.setHeader("Content-Security-Policy", "default-src  * 'self' https: data: 'unsafe-inline' 'unsafe-eval'");
     return next();
 });
 
