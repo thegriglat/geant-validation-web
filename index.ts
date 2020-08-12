@@ -195,6 +195,11 @@ app.use(
   })
 );
 
+app.use(function(req, res, next) {
+    res.setHeader("Content-Security-Policy", "default-src  * 'self' https: data: 'unsafe-inline'");
+    return next();
+});
+
 app.use(passport.initialize());
 app.use(passport.session());
 
