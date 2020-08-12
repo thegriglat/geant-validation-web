@@ -20,9 +20,9 @@ RUN  source /opt/rh/devtoolset-4/enable \
   && make -j `grep -c proc /proc/cpuinfo` plotter \
   && cp -v plotter /var/www/
 
-FROM cern/cc7-base as angular7
+FROM cern/cc7-base as angular10
 
-RUN curl --silent --location https://rpm.nodesource.com/setup_8.x | bash - \
+RUN curl --silent --location https://rpm.nodesource.com/setup_12.x | bash - \
   && rpm -qa | grep epel | xargs rpm -e --nodeps \
   && rpm -i https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
 
@@ -40,7 +40,7 @@ FROM cern/cc7-base
 
 RUN curl -q https://root.cern.ch/download/root_v6.10.08.Linux-centos7-x86_64-gcc4.8.tar.gz | tar --strip-components=1 -C /usr/local -xzf -
 
-RUN curl --silent --location https://rpm.nodesource.com/setup_8.x | bash - \
+RUN curl --silent --location https://rpm.nodesource.com/setup_12.x | bash - \
   && rpm -qa | grep epel | xargs rpm -e --nodeps \
   && rpm -i https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
 
@@ -62,10 +62,10 @@ COPY --chown=gvalweb:gvalweb package.json package-lock.json /var/www/
 RUN npm install --only=production && rm -fv package.json package-lock.json
 
 COPY --from=plotter --chown=gvalweb:gvalweb /var/www/plotter /var/www/
-COPY --from=angular7 --chown=gvalweb:gvalweb /var/www/index.js /var/www/
-COPY --from=angular7 --chown=gvalweb:gvalweb /var/www/src/app/classes/ /var/www/src/app/classes/
+COPY --from=angular10 --chown=gvalweb:gvalweb /var/www/index.js /var/www/
+COPY --from=angular10 --chown=gvalweb:gvalweb /var/www/src/app/classes/ /var/www/src/app/classes/
 COPY --chown=gvalweb:gvalweb queries.json /var/www/queries.json
-COPY --from=angular7 --chown=gvalweb:gvalweb /var/www/dist/ /var/www/dist/
+COPY --from=angular10 --chown=gvalweb:gvalweb /var/www/dist/ /var/www/dist/
 
 EXPOSE 8080:8080
 EXPOSE 8443:8443
