@@ -1225,7 +1225,7 @@ function clean(obj) {
 }
 
 app.get('/api/multiget', (req, res) => {
-  const ids: number[] = JSON.parse(req.query.ids_json);
+  const ids: number[] = JSON.parse(req.query.ids_json as string);
   apimultiget(ids).then(
     result => {
       res.status(200).json(result);
@@ -1560,8 +1560,8 @@ function uniqlookup_parameters(test_id: number) {
 
 
 app.get('/api/uniqlookup', (req, res) => {
-  const test_id = req.query.test_id;
-  const JSONAttr = req.query.JSONAttr;
+  const test_id = Number(req.query.test_id as string);
+  const JSONAttr = req.query.JSONAttr as string;
   uniqlookup(test_id, JSONAttr).then(r => {
     res.status(200).json(r);
   })
@@ -1625,7 +1625,7 @@ function getPlotId(body: GvpPlotIdRequest, limit1: boolean = false): Promise<num
 }
 
 app.get('/api/getPlotId', (req, res) => {
-  const body: GvpPlotIdRequest = JSON.parse(req.query.json_encoded);
+  const body: GvpPlotIdRequest = JSON.parse(req.query.json_encoded as string);
   getPlotId(body).then(pids => {
     res.status(200).json(pids);
   })
@@ -1698,7 +1698,7 @@ idea:
 */
 
 app.get('/api/onlineMenuFilter', (req, res) => {
-  const input: api.OnlineMenuFilterReq = JSON.parse(req.query.q)
+  const input: api.OnlineMenuFilterReq = JSON.parse(req.query.q as string)
   const beam_all_p = uniqlookup_beamParticle(input.test_id);
   const observable_all_p = uniqlookup_observableName(input.test_id);
   const version_all_p = uniqlookup_version(input.test_id);
@@ -1926,7 +1926,7 @@ app.get('/api/exception_particle_name_by_test_id', (req, res) => {
 });
 
 app.get('/api/getexperimentsinspirefortest', (req, res) => {
-  let test_id = req.query.test_id;
+  let test_id = Number(req.query.test_id as string);
   const experiment_test_id = EXPERIMENT_TEST_ID;
   if (test_id !== experiment_test_id) {
     const sql =
@@ -1952,7 +1952,7 @@ app.get('/api/getexperimentsinspirefortest', (req, res) => {
 // route to change logging level
 app.get('/api/setLoggingStatus', (req, res) => {
   // Return custom json fileIO
-  const mode = req.query.mode;
+  const mode = req.query.mode as string;
   const valid_modes = {
     trace: logger.TRACE,
     debug: logger.DEBUG,
@@ -1994,8 +1994,9 @@ function api_test(id?: number): Promise<GvpTest[]> {
   });
 }
 app.get('/api/test', (req, res) => {
-  const id = req.query.id;
-  api_test(id).then(result => {
+  const id = Number(req.query.id as string);
+  const call = isNaN(id) ? api_test() : api_test(id);
+  call.then(result => {
     res.status(200).json(result);
   });
 });
@@ -2029,7 +2030,7 @@ app.get('/api/mctool_name', (req, res) => {
   let query = queries.all_mctool_name;
   const sqlparams: number[] = [];
   if (!isUndefined(id)) {
-    sqlparams.push(id);
+    sqlparams.push(Number(id as string));
     query = queries.mctool_name_by_id;
   }
   execSQL(sqlparams, query).then(result => {
@@ -2047,7 +2048,7 @@ app.get('/api/inspire', (req, res) => {
   let query = queries.all_inspire;
   const sqlparams: string[] = [];
   if (!isUndefined(id)) {
-    sqlparams.push(id);
+    sqlparams.push(id as string);
     query = queries.inspire_by_id;
   }
   execSQL(sqlparams, query).then(result => {
@@ -2065,7 +2066,7 @@ app.get('/api/observable', (req, res) => {
   let query = queries.all_observable;
   const sqlparams: string[] = [];
   if (!isUndefined(id)) {
-    sqlparams.push(id);
+    sqlparams.push(id as string);
     query = queries.observable_by_id;
   }
   execSQL(sqlparams, query).then(result => {
