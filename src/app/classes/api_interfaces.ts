@@ -1,22 +1,22 @@
 import * as express from 'express';
 import { GvpTest, GvpJSON, GvpMctoolNameVersion, GvpMctoolName, GvpParameter, GvpInspire, GvpPngRequest } from './gvp-plot';
 
-export interface APILoggedIn extends express.Request {
+export interface APILoggedIn /* extends express.Request */ {
     user: string;
     isAuthenticated(): boolean;
 }
 
-export interface APILogout extends express.Request {
+export interface APILogout /* extends express.Request */ {
     logout(): void;
 }
 
-export interface APIGetRequest extends express.Request {
+export interface APIGetRequest /* extends express.Request */ {
     params: {
         id: string;
     }
 }
 
-export interface APIPermalinkRequest extends express.Request {
+export interface APIPermalinkRequest /* extends express.Request */ {
     params: {
         hash: string;
     }
@@ -26,7 +26,7 @@ export interface APIGetResponse extends express.Response {
     json(body: GvpJSON): this;
 }
 
-export interface APIMultigetRequest extends express.Request {
+export interface APIMultigetRequest /* extends express.Request */ {
     query: {
         ids_json: string;
     }
@@ -39,7 +39,7 @@ export interface APIMultigetResponse extends express.Response {
 export interface APIGetRawResponse extends express.Response {
 }
 
-export interface APIGetPlotsByTestVersionRequest extends express.Request {
+export interface APIGetPlotsByTestVersionRequest /* extends express.Request */ {
     query: {
         test: string;
         version: string;
@@ -50,7 +50,7 @@ export interface APIGetPlotsByTestVersionResponse extends express.Response {
     json(body: GvpJSON[]): this;
 }
 
-export interface APIInspireRequest extends express.Request {
+export interface APIInspireRequest /* extends express.Request */ {
     query: {
         id?: string;
     }
@@ -60,7 +60,7 @@ export interface APIInspireResponse extends express.Response {
     json(body: GvpInspire[]): this;
 }
 
-export interface APIgetExpPlotsByInspireIdRequest extends express.Request {
+export interface APIgetExpPlotsByInspireIdRequest /* extends express.Request */ {
     query: {
         inspire_id: number;
     }
@@ -70,7 +70,7 @@ export interface APIgetExpPlotsByInspireIdResponse extends express.Response {
     json(body: GvpJSON[]): this;
 }
 
-export interface APIcheckMCToolRequest extends express.Request {
+export interface APIcheckMCToolRequest /* extends express.Request */ {
     query: {
         versionid: number;
         name: string;
@@ -82,7 +82,7 @@ export interface APIcheckMCToolResponse extends express.Response {
     json(body: boolean): this;
 }
 
-export interface APIuniqlookupRequest extends express.Request {
+export interface APIuniqlookupRequest /* extends express.Request */ {
     query: {
         test_id: number;
         JSONAttr: string;
@@ -93,7 +93,7 @@ export interface APIuniqlookupResponse extends express.Response {
     json(body: [number | string | GvpParameter][]): this;
 }
 
-export interface APITestRequest extends express.Request {
+export interface APITestRequest /* extends express.Request */ {
     query: {
         id?: number;
         project: string;
@@ -112,7 +112,7 @@ export interface APIMCtoolNameResponse extends express.Response {
     json(body: GvpMctoolName[]): this;
 }
 
-export interface APIgetExpretimentsInspireForTestRequest extends express.Request {
+export interface APIgetExpretimentsInspireForTestRequest /* extends express.Request */ {
     query: {
         test_id: number;
     }
@@ -122,11 +122,11 @@ export interface APIgetExpretimentsInspireForTestResponse extends express.Respon
     json(body: GvpInspire[]): this;
 }
 
-export interface APIgetPNGRequest extends express.Request {
+export interface APIgetPNGRequest /* extends express.Request */ {
     body: GvpPngRequest;
 }
 
-export interface APIgetPlotIdRequest extends express.Request {
+export interface APIgetPlotIdRequest /* extends express.Request */ {
     query: {
         // JSON.stringify GvpPlotIdRequest
         json_encoded: string;

@@ -4,7 +4,7 @@ import { GvpTest, GvpMctoolNameVersion, ParametersList, GvpPlotIdRequest, Nullab
 import { forkJoin, from, Observable } from 'rxjs';
 import { GvpJSONMetadataMatch, getParametersList, GvpJSONExpMetadataMatch, ParametersListEq } from 'src/app/utils';
 import { getEstimator, Estimator, estimatorFullName, estimatorsNames } from './../estimator';
-import { SuiModalService } from 'ng2-semantic-ui';
+import { SuiModalService } from '@richardlt/ng2-semantic-ui';
 import { PlotModal } from 'src/app/plot/plot-modal/plot-modal.component';
 import { map } from 'rxjs/operators';
 import { trigger, transition, style, animate } from '@angular/animations';

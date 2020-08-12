@@ -3,7 +3,7 @@ import { GVPAPIService } from '../services/gvpapi.service';
 import { GvpPngRequest, GvpJSON, GvpParameter, Nullable } from '../classes/gvp-plot';
 import { Observable, from, forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { SuiModalService } from 'ng2-semantic-ui';
+import { SuiModalService } from '@richardlt/ng2-semantic-ui';
 import { PlotModal } from './plot-modal/plot-modal.component';
 import { RatioDiffEstimator } from './ratiofunctions';
 import { isUndefined, isNull } from 'util';
