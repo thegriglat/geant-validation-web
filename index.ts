@@ -194,11 +194,14 @@ app.use(
     }
   })
 );
-
-app.use(function(req, res, next) {
-    res.setHeader("Content-Security-Policy", "default-src  * 'self' https: data: 'unsafe-inline' 'unsafe-eval'");
-    return next();
-});
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      "default-src": ["'self'", "*", "data:", "'unsafe-inline'"],
+      "script-src": ["'self'", "root.cern", "cdn.mathjax.org"]
+    },
+  })
+);
 
 app.use(passport.initialize());
 app.use(passport.session());
