@@ -137,7 +137,16 @@ const pool = new pg.Pool(config);
 //Server - UI
 const app = express();
 //Using Helmet for securing HTTP requests
-app.use(helmet());
+
+app.use(helmet({
+	contentSecurityPolicy: {
+directives: {
+      "default-src": ["'self'", "*", "data:", "'unsafe-inline'"],
+      "script-src": ["'self'", "root.cern", "cdn.mathjax.org"]
+    }
+}
+}));
+
 // Using compression for HTTP requests
 app.use(compression());
 
@@ -194,15 +203,6 @@ app.use(
     }
   })
 );
-app.use(
-  helmet.contentSecurityPolicy({
-    directives: {
-      "default-src": ["'self'", "*", "data:", "'unsafe-inline'"],
-      "script-src": ["'self'", "root.cern", "cdn.mathjax.org"]
-    },
-  })
-);
-
 app.use(passport.initialize());
 app.use(passport.session());
 
