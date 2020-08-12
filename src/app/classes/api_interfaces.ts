@@ -22,7 +22,7 @@ export interface APIPermalinkRequest /* extends express.Request */ {
     }
 }
 
-export interface APIGetResponse extends express.Response {
+export interface APIGetResponse /* extends express.Response */ {
     json(body: GvpJSON): this;
 }
 
@@ -32,11 +32,11 @@ export interface APIMultigetRequest /* extends express.Request */ {
     }
 }
 
-export interface APIMultigetResponse extends express.Response {
+export interface APIMultigetResponse /* extends express.Response */ {
     json(body: GvpJSON[]): this;
 }
 
-export interface APIGetRawResponse extends express.Response {
+export interface APIGetRawResponse /* extends express.Response */ {
 }
 
 export interface APIGetPlotsByTestVersionRequest /* extends express.Request */ {
@@ -46,7 +46,7 @@ export interface APIGetPlotsByTestVersionRequest /* extends express.Request */ {
     }
 }
 
-export interface APIGetPlotsByTestVersionResponse extends express.Response {
+export interface APIGetPlotsByTestVersionResponse /* extends express.Response */ {
     json(body: GvpJSON[]): this;
 }
 
@@ -56,7 +56,7 @@ export interface APIInspireRequest /* extends express.Request */ {
     }
 }
 
-export interface APIInspireResponse extends express.Response {
+export interface APIInspireResponse /* extends express.Response */ {
     json(body: GvpInspire[]): this;
 }
 
@@ -66,7 +66,7 @@ export interface APIgetExpPlotsByInspireIdRequest /* extends express.Request */ 
     }
 }
 
-export interface APIgetExpPlotsByInspireIdResponse extends express.Response {
+export interface APIgetExpPlotsByInspireIdResponse /* extends express.Response */ {
     json(body: GvpJSON[]): this;
 }
 
@@ -78,7 +78,7 @@ export interface APIcheckMCToolRequest /* extends express.Request */ {
     }
 }
 
-export interface APIcheckMCToolResponse extends express.Response {
+export interface APIcheckMCToolResponse /* extends express.Response */ {
     json(body: boolean): this;
 }
 
@@ -89,7 +89,7 @@ export interface APIuniqlookupRequest /* extends express.Request */ {
     }
 }
 
-export interface APIuniqlookupResponse extends express.Response {
+export interface APIuniqlookupResponse /* extends express.Response */ {
     json(body: [number | string | GvpParameter][]): this;
 }
 
@@ -100,15 +100,15 @@ export interface APITestRequest /* extends express.Request */ {
     }
 }
 
-export interface APITestResponse extends express.Response {
+export interface APITestResponse /* extends express.Response */ {
     json(body: GvpTest[]): this;
 }
 
-export interface APIMCtoolNameVersionResponse extends express.Response {
+export interface APIMCtoolNameVersionResponse /* extends express.Response */ {
     json(body: GvpMctoolNameVersion[]): this;
 }
 
-export interface APIMCtoolNameResponse extends express.Response {
+export interface APIMCtoolNameResponse /* extends express.Response */ {
     json(body: GvpMctoolName[]): this;
 }
 
@@ -118,7 +118,7 @@ export interface APIgetExpretimentsInspireForTestRequest /* extends express.Requ
     }
 }
 
-export interface APIgetExpretimentsInspireForTestResponse extends express.Response {
+export interface APIgetExpretimentsInspireForTestResponse /* extends express.Response */ {
     json(body: GvpInspire[]): this;
 }
 
@@ -133,7 +133,7 @@ export interface APIgetPlotIdRequest /* extends express.Request */ {
     };
 }
 
-export interface APIgetPlotIdResponse extends express.Response {
+export interface APIgetPlotIdResponse /* extends express.Response */ {
     json(body: number[]): this;
 }
 
