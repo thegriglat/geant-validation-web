@@ -224,15 +224,16 @@ if (USESSL) {
   );
 }
 
-app.get('/loggedin', (req: api.APILoggedIn, res) => {
+/*
+app.get('/loggedin', (req, res) => {
   res.send(req.isAuthenticated() ? JSON.stringify(req.user) : '0');
 });
 
-app.get('/logout', (req: api.APILogout, res) => {
+app.get('/logout', (req, res) => {
   req.logout();
   res.redirect('/');
 });
-
+*/
 /**
  * Pass web page content to callback function
  * Needed for Inspire metadata parsing
@@ -1026,7 +1027,7 @@ app.post('/upload', (req, res) => {
 });
 
 // Route to retrieve data via command-line
-router.route('/get/:id').get((req: api.APIGetRequest, res: api.APIGetResponse) => {
+router.route('/get/:id').get((req, res) => {
   const id = Number(req.params.id);
   apimultiget([id]).then(
     result => {
@@ -1038,7 +1039,7 @@ router.route('/get/:id').get((req: api.APIGetRequest, res: api.APIGetResponse) =
   );
 });
 
-router.route('/permalink/:hash').get((req: api.APIPermalinkRequest, res) => {
+router.route('/permalink/:hash').get((req, res) => {
   const hash = req.params.hash;
   const j = (new Buffer(hash, 'base64')).toString('ascii');
   const data: GvpPermalinkRequest = JSON.parse(j);
@@ -1059,7 +1060,7 @@ router.route('/permalink/:hash').get((req: api.APIPermalinkRequest, res) => {
 });
 
 // Route for gnuplot text data
-router.route('/getRaw/:id').get((req: api.APIGetRequest, res) => {
+router.route('/getRaw/:id').get((req, res) => {
   const id = Number(req.params.id);
   apigetJSON(id).then(
     (result) => {
@@ -1223,7 +1224,7 @@ function clean(obj) {
   }
 }
 
-app.get('/api/multiget', (req: api.APIMultigetRequest, res: api.APIMultigetResponse) => {
+app.get('/api/multiget', (req, res) => {
   const ids: number[] = JSON.parse(req.query.ids_json);
   apimultiget(ids).then(
     result => {
@@ -1235,7 +1236,7 @@ app.get('/api/multiget', (req: api.APIMultigetRequest, res: api.APIMultigetRespo
   );
 });
 
-app.get('/api/getPlotsByTestVersion', isLoggedIn, (req: api.APIGetPlotsByTestVersionRequest, res: api.APIGetPlotsByTestVersionResponse) => {
+app.get('/api/getPlotsByTestVersion', isLoggedIn, (req, res) => {
   const test = req.query.test;
   const version = req.query.version;
   const sql = queries.plots_by_test_version;
@@ -1251,7 +1252,7 @@ app.get('/api/getPlotsByTestVersion', isLoggedIn, (req: api.APIGetPlotsByTestVer
   });
 });
 
-app.get('/api/getExpPlotsByInspireId', (req: api.APIgetExpPlotsByInspireIdRequest, res: api.APIgetExpPlotsByInspireIdResponse) => {
+app.get('/api/getExpPlotsByInspireId', (req, res) => {
   logger.info('Request /api/getExpPlotsByInspireId');
   const inspire_id = req.query.inspire_id;
   const sql =
@@ -1290,7 +1291,7 @@ app.post('/api/getPDF', (req, res) => {
   for (const pair of ids) {
     const p = apimultiget(pair).then(jsons => {
       const params = new GvpPngRequest(jsons, jsons[0].id);
-      return getPNG(params).then((res: any) => {
+      return getPNG(params).then((res) => {
         console.log('getPNG');
         return res.filename;
       });
@@ -1365,7 +1366,7 @@ app.post('/api/getPDF', (req, res) => {
   });
 });
 */
-app.post('/api/getPNG', (req: api.APIgetPNGRequest, res) => {
+app.post('/api/getPNG', (req, res) => {
   getPNG(req.body).then(data => {
     res.json(data);
   });
@@ -1472,7 +1473,7 @@ async function getPNG(body: GvpPngRequest): Promise<GvpPngResponse> {
   });
 }
 
-app.get('/api/checkMCTool', (req: api.APIcheckMCToolRequest, res: api.APIcheckMCToolResponse) => {
+app.get('/api/checkMCTool', (req, res) => {
   const versionid = req.query.versionid;
   const name = req.query.name;
   const model = req.query.model;
@@ -1558,7 +1559,7 @@ function uniqlookup_parameters(test_id: number) {
 }
 
 
-app.get('/api/uniqlookup', (req: api.APIuniqlookupRequest, res: api.APIuniqlookupResponse) => {
+app.get('/api/uniqlookup', (req, res) => {
   const test_id = req.query.test_id;
   const JSONAttr = req.query.JSONAttr;
   uniqlookup(test_id, JSONAttr).then(r => {
@@ -1623,7 +1624,7 @@ function getPlotId(body: GvpPlotIdRequest, limit1: boolean = false): Promise<num
   });
 }
 
-app.get('/api/getPlotId', (req: api.APIgetPlotIdRequest, res: api.APIgetPlotIdResponse) => {
+app.get('/api/getPlotId', (req, res) => {
   const body: GvpPlotIdRequest = JSON.parse(req.query.json_encoded);
   getPlotId(body).then(pids => {
     res.status(200).json(pids);
@@ -1924,7 +1925,7 @@ app.get('/api/exception_particle_name_by_test_id', (req, res) => {
   });
 });
 
-app.get('/api/getexperimentsinspirefortest', (req: api.APIgetExpretimentsInspireForTestRequest, res: api.APIgetExpretimentsInspireForTestResponse) => {
+app.get('/api/getexperimentsinspirefortest', (req, res) => {
   let test_id = req.query.test_id;
   const experiment_test_id = EXPERIMENT_TEST_ID;
   if (test_id !== experiment_test_id) {
@@ -1992,7 +1993,7 @@ function api_test(id?: number): Promise<GvpTest[]> {
     return result as GvpTest[];
   });
 }
-app.get('/api/test', (req: api.APITestRequest, res: api.APITestResponse) => {
+app.get('/api/test', (req, res) => {
   const id = req.query.id;
   api_test(id).then(result => {
     res.status(200).json(result);
@@ -2004,7 +2005,7 @@ app.get('/api/test', (req: api.APITestRequest, res: api.APITestResponse) => {
  *
  * @param id Optional parameter if we only want to retrieve information of only one specific row
  */
-app.get('/api/mctool_name_version', (req: api.APITestRequest, res: api.APIMCtoolNameVersionResponse) => {
+app.get('/api/mctool_name_version', (req, res) => {
   const id = req.query.id;
   const project = req.query.project;
   let query: string = "select * from mctool_name_version inner join mctool_name on mctool_name_version.mctool_name_id = mctool_name.mctool_name_id where mctool_name.mctool_name_name = $1";
@@ -2023,7 +2024,7 @@ app.get('/api/mctool_name_version', (req: api.APITestRequest, res: api.APIMCtool
  *
  * @param id Optional parameter if we only want to retrieve information of only one specific row
  */
-app.get('/api/mctool_name', (req: api.APITestRequest, res: api.APIMCtoolNameResponse) => {
+app.get('/api/mctool_name', (req, res) => {
   const id = req.query.id;
   let query = queries.all_mctool_name;
   const sqlparams: number[] = [];
@@ -2041,7 +2042,7 @@ app.get('/api/mctool_name', (req: api.APITestRequest, res: api.APIMCtoolNameResp
  *
  * @param id Optional parameter if we only want to retrieve information of only one specific row
  */
-app.get('/api/inspire', (req: api.APIInspireRequest, res: api.APIInspireResponse) => {
+app.get('/api/inspire', (req, res) => {
   const id = req.query.id;
   let query = queries.all_inspire;
   const sqlparams: string[] = [];
