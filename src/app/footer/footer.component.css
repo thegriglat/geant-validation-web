@@ -1,0 +1,10 @@
+.footer {
+    height: 20px;
+    line-height: 20px;
+    background-color: rgba(34,36,38,.15);
+    width: 100%;
+    left: 0;
+    bottom: 0;
+    position: fixed;
+    font-size: smaller;
+}

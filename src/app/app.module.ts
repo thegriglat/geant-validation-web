@@ -21,6 +21,7 @@ import { PermalinkComponent } from './permalink/permalink.component';
 import { TestSummaryComponent } from './test-summary/test-summary.component';
 import { StatTestListComponent } from './stat-test-list/stat-test-list.component';
 import { StatTableComponent } from './stat-comparison/stat-table/stat-table.component';
+import { FooterComponent } from './footer/footer.component';
 
 @NgModule({
   declarations: [
@@ -38,6 +39,7 @@ import { StatTableComponent } from './stat-comparison/stat-table/stat-table.comp
     TestSummaryComponent,
     StatTestListComponent,
     StatTableComponent,
+    FooterComponent,
   ],
   imports: [
     SuiModule,
