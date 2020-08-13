@@ -40,3 +40,8 @@ ng-katex.center {
 	display: flex;
     justify-content: center;
 }
+
+/* to fix black background in inverted modal */
+.ui.inverted.modal > .content, .ui.inverted.modal > .header {
+    background: white !important;
+}

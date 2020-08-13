@@ -15,7 +15,8 @@ interface IConfirmModalContext {
 export class PlotModal extends ComponentModalConfig<IConfirmModalContext, void> {
   constructor(config: GvpPngRequest, size = ModalSize.Small) {
     super(PlotModalComponent, { config });
-    this.isFullScreen = true;
+    this.isFullScreen = false;
+    this.isCentered = true;
     this.isClosable = true;
     this.transitionDuration = 200;
     this.size = size;
