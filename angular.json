@@ -20,12 +20,22 @@
             "tsConfig": "src/tsconfig.app.json",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              {
+                "glob": "*.js",
+                "input": "node_modules/jsroot/scripts",
+                "output": "assets/scripts"
+              },
+              {
+                "glob": "**/*",
+                "input": "node_modules/jsroot/style",
+                "output": "assets/style"
+              }
             ],
             "styles": [
               "src/styles.css"
             ],
-            "scripts": [],
+            "scripts": []
           },
           "configurations": {
             "production": {

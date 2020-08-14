@@ -36,6 +36,7 @@
     "@richardlt/ng2-semantic-ui": "^0.10.0-alpha.6-fork-5",
     "@types/express": "^4.17.7",
     "fomantic-ui": "^2.8.6",
+    "jsroot": "^5.8.1",
     "ng-katex": "^2.0.3",
     "rxjs": "^6.6.2",
     "tslib": "^2.0.1",
