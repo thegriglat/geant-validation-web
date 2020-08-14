@@ -32,35 +32,27 @@
     <div class="text">Download</div>
     <i class="dropdown icon"></i>
     <div class="menu" suiDropdownMenu>
-      <div class="item">
-        <a [href]="url" target="_blank">PNG</a>
-      </div>
-      <div class="item">
-        <a [href]="url.replace('.png', '.root')" target="_blank">ROOT</a>
-      </div>
-      <div class="item">
-        <a [href]="url.replace('.png', '.eps')" target="_blank">EPS</a>
-      </div>
-      <div class="item">
-        <a [href]="url.replace('.png', '.c')" target="_blank">C</a>
-      </div>
+      <a [href]="url" target="_blank" class="item">PNG</a>
+      <a [href]="url.replace('.png', '.root')" target="_blank" class="item">ROOT</a>
+      <a [href]="url.replace('.png', '.eps')" target="_blank" class="item">EPS</a>
+      <a [href]="url.replace('.png', '.c')" target="_blank" class="item">C</a>
       <div class="item" suiDropdown>
         <i class="dropdown icon"></i>
         JSON
         <div class="menu" suiDropdownMenu>
-          <div class="item" *ngFor="let e of config.data">
-            <a [href]="'/api/get/' + e.id" target="_blank">{{e.mctool.version}}, {{e.mctool.model}}</a>
-          </div>
+          <ng-container *ngFor="let e of config.data">
+            <a class="item" [href]="'/api/get/' + e.id" target="_blank">{{e.mctool.version}}, {{e.mctool.model}}</a>
+          </ng-container>
         </div>
       </div>
       <div class="item" suiDropdown>
         <i class="dropdown icon"></i>
         GnuPlot
         <div class="menu" suiDropdownMenu>
-          <div class="item" *ngFor="let e of config.data">
-            <a [href]="'/api/getRaw/' + e.id" target="_blank">{{e.mctool.version}},
+          <ng-container *ngFor="let e of config.data">
+            <a class="item" [href]="'/api/getRaw/' + e.id" target="_blank">{{e.mctool.version}},
               {{e.mctool.model}}</a>
-          </div>
+          </ng-container>
         </div>
       </div>
     </div>
