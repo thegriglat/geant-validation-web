@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { GVPAPIService } from '../services/gvpapi.service';
 import { distinct, versionSorter, unstableVersionFilter } from '../utils';
 import { GvpMctoolNameVersion, GvpTest } from '../classes/gvp-plot';
-import { isNull, isUndefined } from 'util';
 
 @Component({
   selector: 'app-test-summary',
@@ -53,7 +52,7 @@ export class TestSummaryComponent implements OnInit {
 
   versions(): number[] {
     const r = Array.from(this.data.keys()).map(e => e[1]).filter(distinct).filter(e => e > 0);
-    let r0 = r.map(e => this.getVersionC(e)).filter(e => !isUndefined(e)).sort(versionSorter).reverse();
+    let r0 = r.map(e => this.getVersionC(e)).filter(e => e !== undefined).sort(versionSorter).reverse();
     r0 = r0.filter(unstableVersionFilter);
     return r0.map(e => e.mctool_name_version_id);
   }
@@ -65,7 +64,7 @@ export class TestSummaryComponent implements OnInit {
   }
   getVersion(v: number): string {
     const r = this.getVersionC(v);
-    if (!isNull(r)) return r.version;
+    if (r !== null) return r.version;
     return "";
   }
 }

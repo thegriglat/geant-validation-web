@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { Nullable, GvpTest, GvpMctoolNameVersion, GvpMctoolName, GvpObservable, GvpModel, GvpParticle, GvpTarget } from '../classes/gvp-plot';
 import { GVPAPIService } from '../services/gvpapi.service';
 import { Observable } from 'rxjs';
-import { isNull } from 'util';
 import { _versionSorterComparator } from '../utils';
 
 interface Table {
@@ -93,7 +92,7 @@ export class LookupViewComponent implements OnInit {
     table.getter.subscribe(v => this.tableData = v.map(table.mapper))
   }
   isLatex(): boolean {
-    return !isNull(this.currentTable) && this.currentTable.name == "Observable";
+    return this.currentTable !== null && this.currentTable.name == "Observable";
   }
 
   latexize(input: string): string {

@@ -6,7 +6,6 @@ import { map } from 'rxjs/operators';
 import { SuiModalService } from '@richardlt/ng2-semantic-ui';
 import { PlotModal } from './plot-modal/plot-modal.component';
 import { RatioDiffEstimator } from './ratiofunctions';
-import { isUndefined, isNull } from 'util';
 
 interface HintData {
   observable: string,
@@ -134,13 +133,13 @@ export class PlotComponent implements OnInit {
 
   isRatioPlot(): boolean {
     if (!this.config) return false;
-    return !isNull(this.config.refid) && !isUndefined(this.config.refid);
+    return this.config.refid !== null && this.config.refid !== undefined;
   }
 
   ratioDiff(): number {
     // possibility to change estimator further
     const estimator = RatioDiffEstimator;
-    if (!this.config || isUndefined(this.config.refid) || isNull(this.config.refid)) return 0;
+    if (!this.config || this.config.refid === undefined || this.config.refid === undefined) return 0;
     const refid = this.config.refid;
     const baseplot = this.config.data[Math.abs(refid - 1)];
     const refplot = this.config.data[refid];
