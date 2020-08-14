@@ -48,8 +48,8 @@ export class GVPAPIService {
     if (ids.length === 0) {
       return from([[] as GvpJSON[]]);
     }
-    let params = this.getParams().set("ids_json", JSON.stringify(ids));
-    return this._get<GvpJSON[]>("api/multiget", params);
+    const params = { ids: ids }; //this.getParams().set("ids_json", JSON.stringify(ids));}
+    return this._post<GvpJSON[]>("api/multiget", params);
   }
 
   public getPlotsByTestVersion(test: string, version: string) {

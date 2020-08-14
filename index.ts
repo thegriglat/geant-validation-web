@@ -1232,8 +1232,8 @@ function clean(obj) {
   }
 }
 
-app.get('/api/multiget', (req, res) => {
-  const ids: number[] = JSON.parse(req.query.ids_json as string);
+app.post('/api/multiget', (req, res) => {
+  const ids: number[] = req.body.ids as number[];
   apimultiget(ids).then(
     result => {
       res.status(200).json(result);
