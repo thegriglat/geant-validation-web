@@ -2,7 +2,7 @@ import { Component, OnInit, Input, ChangeDetectionStrategy, Output, EventEmitter
 import { GVPAPIService } from '../services/gvpapi.service';
 import { GvpPngRequest, GvpJSON, GvpParameter, Nullable } from '../classes/gvp-plot';
 import { Observable, from, forkJoin } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, filter, tap, flatMap } from 'rxjs/operators';
 import { SuiModalService } from '@richardlt/ng2-semantic-ui';
 import { PlotModal } from './plot-modal/plot-modal.component';
 import { RatioDiffEstimator } from './ratiofunctions';
@@ -53,38 +53,45 @@ export class PlotComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.configObs.subscribe(config => {
-      if (config && config.data.length !== 0) {
+    this.inProgress = true;
+    let dowork = this.configObs.pipe(
+      filter(config => config && config.data.length !== 0),
+      tap(config => {
         this.config = config;
-        this.setHintData(config.data).subscribe(hint => {
-          this.hintData = hint;
-          this.doStuff(config);
-        });
-
-      }
-    });
-
+      }),
+      flatMap(config => {
+        return this.doStuff(config);
+      }),
+      flatMap(config => {
+        return this.setHintData(config.data);
+      }),
+      map(hint => {
+        this.hintData = hint;
+      })
+    );
+    dowork.subscribe();
   }
 
-  doStuff(config: GvpPngRequest): void {
-    this.inProgress = true;
+  doStuff(config: GvpPngRequest) {
     // TODO.
-    this.api.getPNG(config).subscribe(res => {
-      if (res.status) {
-        this.status = res.status;
-        this.url = res.filename;
-        let emit_v: PlotEmitType = {
-          ratiodiff: 0.,
-          plotData: this.hintData
+    return this.api.getPNG(config).pipe(
+      map(res => {
+        if (res.status) {
+          this.status = res.status;
+          this.url = res.filename;
+          let emit_v: PlotEmitType = {
+            ratiodiff: 0.,
+            plotData: this.hintData
+          };
+          if (this.isRatioPlot()) {
+            emit_v.ratiodiff = this.ratioDiff()
+            this.ratiodiff = emit_v.ratiodiff;
+          };
+          this.done.emit(emit_v);
         };
-        if (this.isRatioPlot()) {
-          emit_v.ratiodiff = this.ratioDiff()
-          this.ratiodiff = emit_v.ratiodiff;
-        };
-        this.done.emit(emit_v);
-      };
-      this.inProgress = !res.status;
-    })
+        this.inProgress = !res.status;
+        return config;
+      }));
   }
 
   private setHintData(p: GvpJSON[]) {
