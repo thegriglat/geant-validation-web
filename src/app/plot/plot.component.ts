@@ -43,7 +43,10 @@ export class PlotComponent implements OnInit {
   @Output() done = new EventEmitter<PlotEmitType>();
   url: string = "";
   status = false;
+  // for HTTPS
   inProgress = false;
+  // for images
+  isLoaded = false;
   modalRoot = true;
   ratiodiff: number = 0;
   config: Nullable<GvpPngRequest> = null;
@@ -92,6 +95,10 @@ export class PlotComponent implements OnInit {
         this.inProgress = !res.status;
         return config;
       }));
+  }
+
+  setLoad(load: boolean) {
+    this.isLoaded = load;
   }
 
   private setHintData(p: GvpJSON[]) {
