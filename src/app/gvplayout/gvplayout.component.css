@@ -27,3 +27,16 @@ div.gridmapelement {
     margin-right: 5px !important;
     cursor: pointer;
 }
+
+/* border pulse */ 
+@keyframes border-pulsate {
+    0%   { border-color:orange; }
+    50% { border-color:white; }
+    100%   { border-color: orange; }
+}
+
+.border-pulse {
+    border: 2px solid orange;
+    border-radius: 10px;
+    animation: border-pulsate 2s infinite;
+}

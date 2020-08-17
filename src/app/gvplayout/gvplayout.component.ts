@@ -666,11 +666,26 @@ export class GvplayoutComponent implements OnInit {
     return e.style.color;
   }
 
+  private pulsatePlot(plot: GvpPlot) {
+    const id = "plot_" + this.getIdPlot(plot);
+    const e = document.getElementById(id);
+    if (!e) return;
+    const parent = e.parentElement;
+    console.log(parent);
+    if (parent) {
+      parent.classList.add("border-pulse")
+      setTimeout(() => {
+        parent.classList.remove("border-pulse")
+      }, 3000);
+    }
+  }
+
   scrollto(plot: GvpPlot): void {
     const id = "plot_" + this.getIdPlot(plot);
     const e = document.getElementById(id);
     if (!e) return;
     e.scrollIntoView();
+    this.pulsatePlot(plot);
   }
 
 }
