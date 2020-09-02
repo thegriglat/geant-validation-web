@@ -1,11 +1,11 @@
-<i class="ui massive grey image outline icon" *ngIf="inProgress || !isLoaded">
+<i class="ui massive grey image outline icon" *ngIf="inProgress && !isLoaded">
 </i>
 <ng-container *ngIf="!inProgress">
     <ng-container *ngIf="!popupEnable">
         <img class="ui rounded centered image pointer" [src]="url" (click)="showModal(config)">
     </ng-container>
     <ng-container *ngIf="popupEnable">
-        <img class="ui rounded centered image pointer" [src]="url" [load]="setLoad(true)" (click)="showModal(config)"
+        <img class="ui rounded centered image pointer" [src]="url" (load)="setLoad(true)" (click)="showModal(config)"
             suiPopup [popupTemplate]="popupTemplate" popupPlacement="bottom">
         <ng-template let-popup #popupTemplate>
             <b>Observable</b>: {{getHintData().observable}}<br>
