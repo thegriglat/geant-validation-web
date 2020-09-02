@@ -123,7 +123,7 @@ export class PlotComponent implements OnInit {
     return forkJoin(ejsons.map(ej => ej.article.inspireId).map(e => this.api.inspireById(e))).pipe(
       map(elems => {
         for (const i of elems) {
-          const e = r.items.filter(e => e.inspireId === i.inspire_id);
+          const e = r.items.filter(e => e.inspireId === i.inspire_id && e.version === "experiment");
           for (let q of e) {
             q.expname = i.expname ? i.expname : "exp. data";
             q.isExp = true;
