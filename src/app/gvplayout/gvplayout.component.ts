@@ -627,7 +627,7 @@ export class GvplayoutComponent implements OnInit {
   }
 
   getSUIGridSize(state: boolean) {
-    return (state) ? "sixteen wide column" : "twelve wide column";
+    return (state) ? "sixteen wide column leftpad" : "twelve wide column";
   }
 
   isText(p: GvpPlot): boolean {

@@ -40,3 +40,7 @@ div.gridmapelement {
     border-radius: 10px;
     animation: border-pulsate 2s infinite;
 }
+
+.leftpad {
+    margin-left: 30px;
+}
