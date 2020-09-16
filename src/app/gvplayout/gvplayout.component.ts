@@ -226,7 +226,14 @@ export class GvplayoutComponent implements OnInit {
     this.TESTMAP.set(testname, test);
 
     this.updateExpDescription(test.test_id);
-    this.api.uniqlookup_version(test.test_id).subscribe((response) => {
+    const particles = unroll(this.plots).reduce((list: string[], item: GvpPlot) => list = list.includes(item.beam) ? list : list.concat(item.beam), []).filter(e => e.length !== 0);
+    forkJoin([this.api.uniqlookup_version(test.test_id), this.api.testVersionParticles(test.test_id, particles)]).pipe(
+      map(e => {
+        const unv = e[0];
+        const wdata = e[1];
+        return unv.filter(v => wdata.includes(v));
+      })
+    ).subscribe((response) => {
       this.menuVersions = [];
       const versions = new Map<number, string>();
       for (const i of response) {

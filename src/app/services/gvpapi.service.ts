@@ -165,6 +165,15 @@ export class GVPAPIService {
     );
   }
 
+  public testVersionParticles(test_id: number, particles: string[]) {
+    const obj = {
+      test_id: test_id,
+      particles: particles
+    };
+    let params = this.getParams().set("q", JSON.stringify(obj));
+    return this._get<number[]>("/api/testversionparticles", params);
+  }
+
   public getExperimentsInspireForTest(test_id: number) {
     let params = this.getParams().set("test_id", String(test_id));
     return this._get<GvpInspire[]>("/api/getexperimentsinspirefortest", params);

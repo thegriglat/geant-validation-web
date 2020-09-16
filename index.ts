@@ -139,12 +139,12 @@ const app = express();
 //Using Helmet for securing HTTP requests
 
 app.use(helmet({
-	contentSecurityPolicy: {
-directives: {
+  contentSecurityPolicy: {
+    directives: {
       "default-src": ["'self'", "*", "data:", "'unsafe-inline'"],
       "script-src": ["'self'", "root.cern", "cdn.mathjax.org"]
     }
-}
+  }
 }));
 
 // Using compression for HTTP requests
@@ -2169,6 +2169,23 @@ app.get('/api/target', (req, res) => {
   }
   execSQL(sqlparams, query).then(result => {
     res.status(200).json(result);
+  });
+});
+
+// select mctool_name_version.version from plot inner join particle on particle.pdgid = plot.beam_particle_pdgid inner join mctool_name_version on plot.mctool_name_version_id = mctool_name_version.mctool_name_version_id where plot.test_id = 101 and particle.particle_name = ANY('{"e-"}') group by mctool_name_version.version
+
+
+
+app.get('/api/testversionparticles', (req, res) => {
+  const obj = JSON.parse(req.query.q as string);
+  if (!obj) res.status(400);
+  const testId = obj.test_id;
+  const particles = obj.particles;
+  const sql = "select mctool_name_version.mctool_name_version_id from plot inner join particle on particle.pdgid = plot.beam_particle_pdgid inner join mctool_name_version on plot.mctool_name_version_id = mctool_name_version.mctool_name_version_id where plot.test_id = $1 and particle.particle_name = ANY($2) group by mctool_name_version.mctool_name_version_id;";
+
+  const sqlparams: any[] = [testId, PGJoin(particles)];
+  execSQL(sqlparams, sql).then(result => {
+    res.status(200).json(result.map(e => e.mctool_name_version_id));
   });
 });
 
