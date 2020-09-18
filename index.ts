@@ -142,7 +142,7 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       "default-src": ["'self'", "*", "data:", "'unsafe-inline'"],
-      "script-src": ["'self'", "root.cern", "cdn.mathjax.org"]
+      "script-src": ["'self'", "'unsafe-eval'", "root.cern", "cdn.mathjax.org"]
     }
   }
 }));
