@@ -33,7 +33,7 @@
             </div>
             <sui-select class="selection enlarge" [(ngModel)]="currentLayout" [options]="pTemplates"
                 [isSearchable]="true" [isDisabled]="false" [optionFormatter]="layoutFormatter"
-                (selectedOptionChange)="onSelectLayout($event)" #select>
+                (selectedOptionChange)="onSelectLayout($event)" #select [optionsFilter]="layoutFilter">
                 <ng-container *ngFor="let layout of select.filteredOptions">
                     <sui-select-option *ngIf="isLayoutShown(layout[1].tags)" [value]="layout">
                     </sui-select-option>

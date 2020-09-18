@@ -452,6 +452,12 @@ export class GvplayoutComponent implements OnInit {
   layoutFormatter(item: [string, GvpLayout], query?: string): string {
     return item[1].title;
   }
+
+  layoutFilter(items: [string, GvpLayout][], query: string): [string, GvpLayout][] | false {
+    query = query.trim().toLowerCase();
+    if (query.length === 0) return items;
+    return items.filter(i => i[1].title.toLowerCase().includes(query));
+  }
   /** Event handler: layout selected */
   onSelectLayout(layout: [string, GvpLayout]) {
     this.layoutService.getLayout(layout[0]).subscribe((results) => {
