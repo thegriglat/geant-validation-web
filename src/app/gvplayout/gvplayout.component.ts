@@ -289,6 +289,10 @@ export class GvplayoutComponent implements OnInit {
     return m.filter(e => p_ids.includes(e.mctool_name_id));
   }
 
+  projectFilter(items: GvpMctoolName[]): GvpMctoolName[] {
+    return items.filter(p => this.menuVersions.some(v => v.mctool_name_id === p.mctool_name_id));
+  }
+
   filterVersionSel() {
     if (!this.showUnstableVersions) return;
     this.versionsSel = this.versionsSel.filter(unstableVersionFilter)
