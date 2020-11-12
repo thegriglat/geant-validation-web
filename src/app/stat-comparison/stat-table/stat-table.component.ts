@@ -63,7 +63,7 @@ export class StatTableComponent implements OnInit {
         [this.test.test_id], // testid
         targets, // target
         this.versions.map(v => v.mctool_name_version_id), // versions
-        models, // model
+        models.map(e => e.mctool_model_name), // model
         secs, // secs
         this.beam, // beams
         this.observables, // observ
