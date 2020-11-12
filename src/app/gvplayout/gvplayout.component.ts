@@ -648,7 +648,9 @@ export class GvplayoutComponent implements OnInit {
   }
 
   projectChanged(projs: GvpMctoolName[]) {
-
+    const pp = projs.map(e => e.mctool_name_id);
+    this.versionsSel = this.versionsSel.filter(e => pp.includes(e.mctool_name_id));
+    this.modelsSel = this.modelsSel.filter(e => pp.includes(e.mctool_name_id));
   }
 
   modelChanged(smod: string[]) {
