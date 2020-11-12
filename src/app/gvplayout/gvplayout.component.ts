@@ -111,21 +111,22 @@ export class GvplayoutComponent implements OnInit {
         return 0;
       });
     });
-    // Populate caches
-    this.api.mctool_name_version().subscribe(response => {
-      for (const elem of response) {
-        this.MCToolNameVersionCache.set(elem.mctool_name_version_id, {
-          version: elem.version,
-          mctool_name_id: elem.mctool_name_id,
-          release_date: elem.release_date
-        });
-      }
-    });
-
     this.api.mctool_name().subscribe(projs => {
       this.menuProjects = projs.filter(e => e.mctool_name_name !== "experiment");
       if (this.menuProjects.map(e => e.mctool_name_name.toLowerCase()).includes("geant4")) {
         this.projectsSel = [this.menuProjects.find(e => e.mctool_name_name.toLowerCase() === "geant4") as GvpMctoolName];
+      }
+      // Populate caches
+      for (const p of this.menuProjects) {
+        this.api.mctool_name_version(undefined, p.mctool_name_name).subscribe(response => {
+          for (const elem of response) {
+            this.MCToolNameVersionCache.set(elem.mctool_name_version_id, {
+              version: elem.version,
+              mctool_name_id: elem.mctool_name_id,
+              release_date: elem.release_date
+            });
+          }
+        });
       }
     })
   }
