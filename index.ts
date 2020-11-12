@@ -1524,7 +1524,6 @@ function uniqlookup(test_id: number, JSONAttr: string): Promise<any[]> {
     const r: any[] = [];
     for (const i of result) {
       if (JSONAttr === 'mctool.model') {
-        console.log(result)
         r.push(i)
       }
       else if (JSONAttr === "metadata.parameters") {
