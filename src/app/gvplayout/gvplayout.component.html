@@ -63,7 +63,7 @@
             </ng-container>
         </div>
         <!-- project -->
-        <div class="ui segment" *ngIf="currentLayout">
+        <div class="ui segment" *ngIf="currentLayout && projectFilter(menuProjects).length > 1">
             <h3>Project</h3>
             <div class="ui active inverted dimmer" *ngIf="menuProjects.length === 0">
                 <div class="ui loader"></div>

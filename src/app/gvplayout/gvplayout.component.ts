@@ -116,6 +116,9 @@ export class GvplayoutComponent implements OnInit {
       if (this.menuProjects.map(e => e.mctool_name_name.toLowerCase()).includes("geant4")) {
         this.projectsSel = [this.menuProjects.find(e => e.mctool_name_name.toLowerCase() === "geant4") as GvpMctoolName];
       }
+      if (this.menuProjects.length === 1) {
+        this.projectsSel = this.menuProjects.slice();
+      }
       // Populate caches
       for (const p of this.menuProjects) {
         this.api.mctool_name_version(undefined, p.mctool_name_name).subscribe(response => {
