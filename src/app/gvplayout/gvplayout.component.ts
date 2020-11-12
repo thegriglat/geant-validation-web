@@ -275,10 +275,13 @@ export class GvplayoutComponent implements OnInit {
     });
   }
 
-  unstableFilter(v: GvpMctoolNameVersion[]): GvpMctoolNameVersion[] {
+  versionOptionsFilter(v: GvpMctoolNameVersion[]): GvpMctoolNameVersion[] {
+    let unst_f = unstableVersionFilter;
     if (this.showUnstableVersions)
-      return v;
-    return v.filter(unstableVersionFilter);
+      unst_f = (e: GvpMctoolNameVersion) => true;
+    const p_ids = this.projectsSel.map(e => e.mctool_name_id) || [];
+    const proj_f = (e: GvpMctoolNameVersion) => p_ids.includes(e.mctool_name_id);
+    return v.filter(unst_f).filter(proj_f);
   }
 
   filterVersionSel() {
