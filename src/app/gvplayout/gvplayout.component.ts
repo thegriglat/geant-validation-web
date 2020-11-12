@@ -285,7 +285,6 @@ export class GvplayoutComponent implements OnInit {
   }
 
   modelOptionsFilter(m: GvpModel[]): GvpModel[] {
-    console.log(m);
     const p_ids = this.projectsSel.map(e => e.mctool_name_id) || [];
     return m.filter(e => p_ids.includes(e.mctool_name_id));
   }
