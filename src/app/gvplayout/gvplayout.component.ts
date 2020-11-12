@@ -335,7 +335,7 @@ export class GvplayoutComponent implements OnInit {
           }
         }
       }
-      this.modelChanged(this.modelsSel.map(e => e.mctool_model_name));
+      this.modelChanged(this.modelsSel);
     });
   }
 
@@ -642,9 +642,9 @@ export class GvplayoutComponent implements OnInit {
 
   versionChanged(svers: GvpMctoolNameVersion[]) {
     this._uniqVersionModel = [];
-    for (let m of this.modelsSel)
+    for (let m of this.modelsSel.map(e => e.mctool_model_name))
       for (let v of svers.map(e => e.version))
-        this._uniqVersionModel.push({ version: v, model: m.mctool_model_name });
+        this._uniqVersionModel.push({ version: v, model: m });
   }
 
   projectChanged(projs: GvpMctoolName[]) {
@@ -653,11 +653,11 @@ export class GvplayoutComponent implements OnInit {
     this.modelsSel = this.modelsSel.filter(e => pp.includes(e.mctool_name_id));
   }
 
-  modelChanged(smod: string[]) {
+  modelChanged(smod: GvpModel[]) {
     this._uniqVersionModel = [];
     for (let v of this.versionsSel.map(e => e.version))
       for (let m of smod)
-        this._uniqVersionModel.push({ version: v, model: m });
+        this._uniqVersionModel.push({ version: v, model: m.mctool_model_name });
   }
 
   getSUIGridClass(cols: number): string {
