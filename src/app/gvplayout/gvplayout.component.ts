@@ -71,12 +71,6 @@ export class GvplayoutComponent implements OnInit {
   TESTMAP = new Map<string, GvpTest>();
   /** WIP: Experimental data */
   availableExpDataforTest: GvpInspire[] = [];
-  /**
-   * Cache of MC tool names, populated on page load
-   * key: database ID (used in API requests)
-   * value: tool name (e.g. 'Geant 4')
-   */
-  MCToolNameCache = new Map<number, string>();
   /** Cache of MC tool versions, popuated on page load
    * key: database ID (used in API requests)
    * release_date field not used
@@ -128,11 +122,12 @@ export class GvplayoutComponent implements OnInit {
       }
     });
 
-    this.api.mctool_name().subscribe(response => {
-      for (const elem of response) {
-        this.MCToolNameCache.set(elem.mctool_name_id, elem.mctool_name_name);
+    this.api.mctool_name().subscribe(projs => {
+      this.menuProjects = projs.filter(e => e.mctool_name_name !== "experiment");
+      if (this.menuProjects.map(e => e.mctool_name_name.toLowerCase()).includes("geant4")) {
+        this.projectsSel = [this.menuProjects.find(e => e.mctool_name_name.toLowerCase() === "geant4") as GvpMctoolName];
       }
-    });
+    })
   }
 
   /** Load default values from XML node */
@@ -229,12 +224,6 @@ export class GvplayoutComponent implements OnInit {
 
     this.updateExpDescription(test.test_id);
     const particles = unroll(this.plots).reduce((list: string[], item: GvpPlot) => list = list.includes(item.beam) ? list : list.concat(item.beam), []).filter(e => e.length !== 0);
-    this.api.mctool_name().subscribe(projs => {
-      this.menuProjects = projs.filter(e => e.mctool_name_name !== "experiment");
-      if (this.menuProjects.map(e => e.mctool_name_name.toLowerCase()).includes("geant4")) {
-        this.projectsSel = [this.menuProjects.find(e => e.mctool_name_name.toLowerCase() === "geant4") as GvpMctoolName];
-      }
-    })
     forkJoin([this.api.uniqlookup_version(test.test_id), this.api.testVersionParticles(test.test_id, particles)]).pipe(
       map(e => {
         const unv = e[0];
@@ -253,7 +242,7 @@ export class GvplayoutComponent implements OnInit {
           }
           const version = result.version;
           const mctoolNameId = result.mctool_name_id;
-          const name = this.MCToolNameCache.get(mctoolNameId);
+          const name = this.menuProjects.find(e => e.mctool_name_id === mctoolNameId)?.mctool_name_name;
           versions.set(i, `${name}: ${version}`);
           this.menuVersions.push(
             {
