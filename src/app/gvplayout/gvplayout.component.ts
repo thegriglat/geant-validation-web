@@ -231,6 +231,9 @@ export class GvplayoutComponent implements OnInit {
     const particles = unroll(this.plots).reduce((list: string[], item: GvpPlot) => list = list.includes(item.beam) ? list : list.concat(item.beam), []).filter(e => e.length !== 0);
     this.api.mctool_name().subscribe(projs => {
       this.menuProjects = projs.filter(e => e.mctool_name_name !== "experiment");
+      if (this.menuProjects.map(e => e.mctool_name_name.toLowerCase()).includes("geant4")) {
+        this.projectsSel = [this.menuProjects.find(e => e.mctool_name_name.toLowerCase() === "geant4") as GvpMctoolName];
+      }
     })
     forkJoin([this.api.uniqlookup_version(test.test_id), this.api.testVersionParticles(test.test_id, particles)]).pipe(
       map(e => {
