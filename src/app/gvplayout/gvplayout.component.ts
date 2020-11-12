@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { LayoutService } from '../services/layout.service';
-import { GvpTest, GvpPlot, GvpMctoolNameVersion, GvpLayout, GvpInspire, GvpPngRequest, GvpPlotIdRequest, GvpPlotType, Nullable } from '../classes/gvp-plot';
+import { GvpTest, GvpPlot, GvpMctoolNameVersion, GvpLayout, GvpInspire, GvpPngRequest, GvpPlotIdRequest, GvpPlotType, Nullable, GvpMctoolName } from '../classes/gvp-plot';
 import { GVPAPIService } from '../services/gvpapi.service';
 import { map } from 'rxjs/operators';
 import { forkJoin } from 'rxjs';
@@ -87,6 +87,8 @@ export class GvplayoutComponent implements OnInit {
 
   selectedVersions: GvpMctoolNameVersion[] = [];
   menuVersions: GvpMctoolNameVersion[] = [];
+  menuProjects: GvpMctoolName[] = [];
+  projectsSel: GvpMctoolName[] = [];
   isMenuCollapsed = false;
   // progress of plotting
   progressValue: number = 0;
@@ -227,6 +229,9 @@ export class GvplayoutComponent implements OnInit {
 
     this.updateExpDescription(test.test_id);
     const particles = unroll(this.plots).reduce((list: string[], item: GvpPlot) => list = list.includes(item.beam) ? list : list.concat(item.beam), []).filter(e => e.length !== 0);
+    this.api.mctool_name().subscribe(projs => {
+      this.menuProjects = projs.filter(e => e.mctool_name_name !== "experiment");
+    })
     forkJoin([this.api.uniqlookup_version(test.test_id), this.api.testVersionParticles(test.test_id, particles)]).pipe(
       map(e => {
         const unv = e[0];
@@ -290,6 +295,10 @@ export class GvplayoutComponent implements OnInit {
 
   versionSelectFilter(items: GvpMctoolNameVersion[], query: string): GvpMctoolNameVersion[] {
     return items.filter(e => e.version.indexOf(query) !== -1);
+  }
+
+  projectSelectFilter(items: GvpMctoolName[], query: string): GvpMctoolName[] {
+    return items.filter(e => e.mctool_name_name.includes(query));
   }
 
   /** Populate list of models (phys. lists) used in a given test */
@@ -447,6 +456,10 @@ export class GvplayoutComponent implements OnInit {
 
   versionFormatter(item: GvpMctoolNameVersion, query?: string): string {
     return item.version;
+  }
+
+  projectFormatter(item: GvpMctoolName, q?: string): string {
+    return item.mctool_name_name;
   }
 
   layoutFormatter(item: [string, GvpLayout], query?: string): string {
@@ -626,6 +639,10 @@ export class GvplayoutComponent implements OnInit {
     for (let m of this.modelsSel)
       for (let v of svers.map(e => e.version))
         this._uniqVersionModel.push({ version: v, model: m });
+  }
+
+  projectChanged(projs: GvpMctoolName[]) {
+
   }
 
   modelChanged(smod: string[]) {

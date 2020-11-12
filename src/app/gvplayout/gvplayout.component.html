@@ -62,6 +62,21 @@
                 </sui-select>
             </ng-container>
         </div>
+        <!-- project -->
+        <div class="ui segment" *ngIf="currentLayout">
+            <h3>Project</h3>
+            <div class="ui active inverted dimmer" *ngIf="menuProjects.length === 0">
+                <div class="ui loader"></div>
+            </div>
+            <sui-multi-select class="selection enlarge" [(ngModel)]="projectsSel"
+                [options]="menuProjects" [isSearchable]="true" [isDisabled]="false"
+                [optionFormatter]="projectFormatter" [optionsFilter]="projectSelectFilter"
+                (selectedOptionsChange)="projectChanged($event)" #multiProjectSelect>
+                <sui-select-option *ngFor="let obj of multiProjectSelect.filteredOptions" [value]="obj">
+                </sui-select-option>
+            </sui-multi-select>
+        </div>
+        <!-- end project -->
         <div class="ui segment" *ngIf="currentLayout">
             <h3>Version</h3>
             <div class="ui active inverted dimmer" *ngIf="menuVersions.length === 0">
