@@ -312,7 +312,6 @@ export class GvplayoutComponent implements OnInit {
       this.models = this.models.slice();
       const responceValues = response.slice();
       responceValues.sort();
-      console.log(response)
       for (const v of responceValues) {
         if (this.models.indexOf(v) === -1) {
           this.models.push(v);
