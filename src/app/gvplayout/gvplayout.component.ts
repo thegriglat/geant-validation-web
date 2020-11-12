@@ -642,9 +642,10 @@ export class GvplayoutComponent implements OnInit {
 
   versionChanged(svers: GvpMctoolNameVersion[]) {
     this._uniqVersionModel = [];
-    for (let m of this.modelsSel.map(e => e.mctool_model_name))
-      for (let v of svers.map(e => e.version))
-        this._uniqVersionModel.push({ version: v, model: m });
+    for (let m of this.modelsSel)
+      for (let v of svers)
+        if (m.mctool_name_id === v.mctool_name_id)
+          this._uniqVersionModel.push({ version: v.version, model: m.mctool_model_name });
   }
 
   projectChanged(projs: GvpMctoolName[]) {
@@ -655,9 +656,10 @@ export class GvplayoutComponent implements OnInit {
 
   modelChanged(smod: GvpModel[]) {
     this._uniqVersionModel = [];
-    for (let v of this.versionsSel.map(e => e.version))
+    for (let v of this.versionsSel)
       for (let m of smod)
-        this._uniqVersionModel.push({ version: v, model: m.mctool_model_name });
+        if (m.mctool_name_id === v.mctool_name_id)
+          this._uniqVersionModel.push({ version: v.version, model: m.mctool_model_name });
   }
 
   getSUIGridClass(cols: number): string {
