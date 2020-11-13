@@ -1,0 +1,123 @@
+{
+  "mctool": {
+    "model": "ftfp", 
+    "version": "10.4.p01_fb", 
+    "name": "GEANT4"
+  }, 
+  "testName": "test22-HARP", 
+  "plotType": "TH1", 
+  "article": {
+    "inspireId": -1
+  }, 
+  "histogram": {
+    "binContent": [
+      2.003721, 
+      9.499999999999999e-06, 
+      1.5370165, 
+      0.7419844999999999, 
+      0.055306999999999995, 
+      0.0286375, 
+      0.0323575, 
+      0.0323045, 
+      0.024236, 
+      2.4555045, 
+      1.055634, 
+      0.153394, 
+      1.4810565
+    ], 
+    "nBins": [
+      13
+    ], 
+    "title": "D2(SIG)/DP/DOMEGA, pi+ + Be -> None + X", 
+    "ySysErrorsMinus": [], 
+    "binEdgeLow": [
+      0.5, 
+      1.5, 
+      2.5, 
+      3.5, 
+      4.5, 
+      5.5, 
+      6.5, 
+      7.5, 
+      8.5, 
+      9.5, 
+      10.5, 
+      11.5, 
+      12.5
+    ], 
+    "yStatErrorsPlus": [
+      0.001, 
+      0.0, 
+      0.001, 
+      0.001, 
+      0.0, 
+      0.0, 
+      0.0, 
+      0.0, 
+      0.0, 
+      0.001, 
+      0.001, 
+      0.0, 
+      0.001
+    ], 
+    "ySysErrorsPlus": [], 
+    "binEdgeHigh": [
+      1.5, 
+      2.5, 
+      3.5, 
+      4.5, 
+      5.5, 
+      6.5, 
+      7.5, 
+      8.5, 
+      9.5, 
+      10.5, 
+      11.5, 
+      12.5, 
+      13.5
+    ], 
+    "binLabel": [
+      "proton", 
+      "anti_proton", 
+      "pi+", 
+      "pi-", 
+      "kaon+", 
+      "kaon-", 
+      "kaon0S", 
+      "kaon0L", 
+      "lambda", 
+      "neutron", 
+      "pi0", 
+      "gamma", 
+      "other"
+    ], 
+    "yStatErrorsMinus": [
+      0.001, 
+      0.0, 
+      0.001, 
+      0.001, 
+      0.0, 
+      0.0, 
+      0.0, 
+      0.0, 
+      0.0, 
+      0.001, 
+      0.001, 
+      0.0, 
+      0.001
+    ], 
+    "xAxisName": "particle type", 
+    "yAxisName": "multiplicity"
+  }, 
+  "metadata": {
+    "reaction": "reaction name", 
+    "parameters": [], 
+    "observableName": "multiplicities per inelastic event", 
+    "secondaryParticle": "None", 
+    "beamParticle": "pi+", 
+    "targetName": "Be", 
+    "beamEnergies": [
+      5.0
+    ]
+  }
+}

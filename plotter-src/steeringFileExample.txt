@@ -1,0 +1,49 @@
+# BEGIN PLOT
+outputFileName=outputFileName
+LogY=1
+LogX=0
+Title=Charged multiplicity at $\sqrt{s} = 630~\text{GeV}$, $|\eta| < 1$, $p_T > 0.4~\text{GeV}$
+XLabel=$N_\text{ch}$
+YLabel=d#sigma/dn_{ch}
+#XAxisMax=60
+#XAxisMin=-20
+#YAxisMax=10
+#YAxisMin=0.00001
+upperLeftLabel=upperLeftLabel
+upperRightLabel=upperRightLabel
+textField1=textField1
+textField2=textField2
+drawGrid=0
+drawErrorBarX=0
+# END PLOT
+
+# BEGIN HISTOGRAM 1
+filename=/home/dkonst/PLOTS/WORK/CDF-2002-4796047-nch-cut0-inel-630.dat
+markerStyle=29
+markerSize=2
+lineStyle=1
+lineWidth=1
+color=923
+legend=CDF-2002-4796047-nch-cut0-inel-630
+# END HISTOGRAM 1
+
+# BEGIN HISTOGRAM 2
+filename=/home/dkonst/PLOTS/WORK/pythia6-421-MC09c-nch-cut0-inel-630.dat
+markerStyle=21
+markerSize=1
+lineStyle=1
+lineWidth=1
+color=413
+legend=pythia6-421-MC09c-nch-cut0-inel-630
+# END HISTOGRAM 2
+
+# BEGIN HISTOGRAM 3
+filename=/home/dkonst/PLOTS/WORK/pythia6-421-Perugia0-nch-cut0-inel-630.dat
+markerStyle=22
+markerSize=1
+lineStyle=1
+lineWidth=1
+color=629
+legend=pythia6-421-Perugia0-nch-cut0-inel-630
+# END HISTOGRAM 3
+
