@@ -1551,7 +1551,7 @@ function uniqlookup_beamEnergies(test_id: number) {
   return uniqlookup(test_id, "metadata.beamEnergies").then(r => r as string[]);
 }
 function uniqlookup_model(test_id: number) {
-  return uniqlookup(test_id, "mctool.model").then(r => r as string[]);
+  return uniqlookup(test_id, "mctool.model").then(r => r.map(e => e.mctool_model_name));
 }
 function uniqlookup_targetName(test_id: number) {
   return uniqlookup(test_id, "metadata.targetName").then(r => r as string[]);
