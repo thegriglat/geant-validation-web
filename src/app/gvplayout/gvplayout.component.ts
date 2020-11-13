@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { LayoutService } from '../services/layout.service';
-import { GvpTest, GvpPlot, GvpMctoolNameVersion, GvpLayout, GvpInspire, GvpPngRequest, GvpPlotIdRequest, GvpPlotType, Nullable } from '../classes/gvp-plot';
+import { GvpTest, GvpPlot, GvpMctoolNameVersion, GvpLayout, GvpInspire, GvpPngRequest, GvpPlotIdRequest, GvpPlotType, Nullable, GvpMctoolName, GvpModel } from '../classes/gvp-plot';
 import { GVPAPIService } from '../services/gvpapi.service';
 import { map } from 'rxjs/operators';
 import { forkJoin } from 'rxjs';
@@ -43,9 +43,9 @@ export class GvplayoutComponent implements OnInit {
   versionsSel: GvpMctoolNameVersion[] = [];
 
   /** List of available models/physics lists */
-  models: string[] = [];
+  models: GvpModel[] = [];
   /** List of selected models */
-  modelsSel: string[] = [];
+  modelsSel: GvpModel[] = [];
   /** Binding: 2D array representing the layout */
   plots: GvpPlot[][] = [];
   /** Binding: contents of Layout dropdown; also used for creating tag filter */
@@ -71,12 +71,6 @@ export class GvplayoutComponent implements OnInit {
   TESTMAP = new Map<string, GvpTest>();
   /** WIP: Experimental data */
   availableExpDataforTest: GvpInspire[] = [];
-  /**
-   * Cache of MC tool names, populated on page load
-   * key: database ID (used in API requests)
-   * value: tool name (e.g. 'Geant 4')
-   */
-  MCToolNameCache = new Map<number, string>();
   /** Cache of MC tool versions, popuated on page load
    * key: database ID (used in API requests)
    * release_date field not used
@@ -87,6 +81,8 @@ export class GvplayoutComponent implements OnInit {
 
   selectedVersions: GvpMctoolNameVersion[] = [];
   menuVersions: GvpMctoolNameVersion[] = [];
+  menuProjects: GvpMctoolName[] = [];
+  projectsSel: GvpMctoolName[] = [];
   isMenuCollapsed = false;
   // progress of plotting
   progressValue: number = 0;
@@ -115,22 +111,27 @@ export class GvplayoutComponent implements OnInit {
         return 0;
       });
     });
-    // Populate caches
-    this.api.mctool_name_version().subscribe(response => {
-      for (const elem of response) {
-        this.MCToolNameVersionCache.set(elem.mctool_name_version_id, {
-          version: elem.version,
-          mctool_name_id: elem.mctool_name_id,
-          release_date: elem.release_date
+    this.api.mctool_name().subscribe(projs => {
+      this.menuProjects = projs.filter(e => e.mctool_name_name !== "experiment");
+      if (this.menuProjects.map(e => e.mctool_name_name.toLowerCase()).includes("geant4")) {
+        this.projectsSel = [this.menuProjects.find(e => e.mctool_name_name.toLowerCase() === "geant4") as GvpMctoolName];
+      }
+      if (this.menuProjects.length === 1) {
+        this.projectsSel = this.menuProjects.slice();
+      }
+      // Populate caches
+      for (const p of this.menuProjects) {
+        this.api.mctool_name_version(undefined, p.mctool_name_name).subscribe(response => {
+          for (const elem of response) {
+            this.MCToolNameVersionCache.set(elem.mctool_name_version_id, {
+              version: elem.version,
+              mctool_name_id: elem.mctool_name_id,
+              release_date: elem.release_date
+            });
+          }
         });
       }
-    });
-
-    this.api.mctool_name().subscribe(response => {
-      for (const elem of response) {
-        this.MCToolNameCache.set(elem.mctool_name_id, elem.mctool_name_name);
-      }
-    });
+    })
   }
 
   /** Load default values from XML node */
@@ -245,7 +246,7 @@ export class GvplayoutComponent implements OnInit {
           }
           const version = result.version;
           const mctoolNameId = result.mctool_name_id;
-          const name = this.MCToolNameCache.get(mctoolNameId);
+          const name = this.menuProjects.find(e => e.mctool_name_id === mctoolNameId)?.mctool_name_name;
           versions.set(i, `${name}: ${version}`);
           this.menuVersions.push(
             {
@@ -277,10 +278,22 @@ export class GvplayoutComponent implements OnInit {
     });
   }
 
-  unstableFilter(v: GvpMctoolNameVersion[]): GvpMctoolNameVersion[] {
+  versionOptionsFilter(v: GvpMctoolNameVersion[]): GvpMctoolNameVersion[] {
+    let unst_f = unstableVersionFilter;
     if (this.showUnstableVersions)
-      return v;
-    return v.filter(unstableVersionFilter);
+      unst_f = (e: GvpMctoolNameVersion) => true;
+    const p_ids = this.projectsSel.map(e => e.mctool_name_id) || [];
+    const proj_f = (e: GvpMctoolNameVersion) => p_ids.includes(e.mctool_name_id);
+    return v.filter(unst_f).filter(proj_f);
+  }
+
+  modelOptionsFilter(m: GvpModel[]): GvpModel[] {
+    const p_ids = this.projectsSel.map(e => e.mctool_name_id) || [];
+    return m.filter(e => p_ids.includes(e.mctool_name_id));
+  }
+
+  projectFilter(items: GvpMctoolName[]): GvpMctoolName[] {
+    return items.filter(p => this.menuVersions.some(v => v.mctool_name_id === p.mctool_name_id));
   }
 
   filterVersionSel() {
@@ -290,6 +303,10 @@ export class GvplayoutComponent implements OnInit {
 
   versionSelectFilter(items: GvpMctoolNameVersion[], query: string): GvpMctoolNameVersion[] {
     return items.filter(e => e.version.indexOf(query) !== -1);
+  }
+
+  projectSelectFilter(items: GvpMctoolName[], query: string): GvpMctoolName[] {
+    return items.filter(e => e.mctool_name_name.includes(query));
   }
 
   /** Populate list of models (phys. lists) used in a given test */
@@ -317,10 +334,10 @@ export class GvplayoutComponent implements OnInit {
         this.modelsSel = this.modelsSel.slice();
         for (const i of getDefault(this.DefaultBlock, 'model', "").split('|')) {
           if (
-            this.models.indexOf(i) !== -1 &&
-            this.modelsSel.indexOf(i) === -1
+            this.models.map(e => e.mctool_model_name).includes(i) &&
+            !this.modelsSel.map(e => e.mctool_model_name).includes(i)
           ) {
-            this.modelsSel.push(i);
+            this.modelsSel.push(this.models.find(e => e.mctool_model_name === i) as GvpModel);
           }
         }
       }
@@ -449,6 +466,14 @@ export class GvplayoutComponent implements OnInit {
     return item.version;
   }
 
+  modelFormatter(item: GvpModel, q?: string): string {
+    return item.mctool_model_name;
+  }
+
+  projectFormatter(item: GvpMctoolName, q?: string): string {
+    return item.mctool_name_name;
+  }
+
   layoutFormatter(item: [string, GvpLayout], query?: string): string {
     return item[1].title;
   }
@@ -530,7 +555,7 @@ export class GvplayoutComponent implements OnInit {
       test_ids,
       [p.target],
       this.versionsSel.map(e => e.mctool_name_version_id),
-      this.modelsSel,
+      this.modelsSel.map(e => e.mctool_model_name),
       [p.secondary],
       [p.beam],
       [p.observable],
@@ -547,7 +572,7 @@ export class GvplayoutComponent implements OnInit {
         test_ids,
         [p.reference.target],
         this.versionsSel.map(e => e.mctool_name_version_id),
-        this.modelsSel,
+        this.modelsSel.map(e => e.mctool_model_name),
         [p.reference.secondary],
         [p.reference.beam],
         [p.reference.observable],
@@ -624,15 +649,23 @@ export class GvplayoutComponent implements OnInit {
   versionChanged(svers: GvpMctoolNameVersion[]) {
     this._uniqVersionModel = [];
     for (let m of this.modelsSel)
-      for (let v of svers.map(e => e.version))
-        this._uniqVersionModel.push({ version: v, model: m });
+      for (let v of svers)
+        if (m.mctool_name_id === v.mctool_name_id)
+          this._uniqVersionModel.push({ version: v.version, model: m.mctool_model_name });
   }
 
-  modelChanged(smod: string[]) {
+  projectChanged(projs: GvpMctoolName[]) {
+    const pp = projs.map(e => e.mctool_name_id);
+    this.versionsSel = this.versionsSel.filter(e => pp.includes(e.mctool_name_id));
+    this.modelsSel = this.modelsSel.filter(e => pp.includes(e.mctool_name_id));
+  }
+
+  modelChanged(smod: GvpModel[]) {
     this._uniqVersionModel = [];
-    for (let v of this.versionsSel.map(e => e.version))
+    for (let v of this.versionsSel)
       for (let m of smod)
-        this._uniqVersionModel.push({ version: v, model: m });
+        if (m.mctool_name_id === v.mctool_name_id)
+          this._uniqVersionModel.push({ version: v.version, model: m.mctool_model_name });
   }
 
   getSUIGridClass(cols: number): string {

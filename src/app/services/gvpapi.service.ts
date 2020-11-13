@@ -144,7 +144,7 @@ export class GVPAPIService {
     return this.uniqlookup<string[]>(test_id, "metadata.beamEnergies");
   }
   public uniqlookup_model(test_id: number) {
-    return this.uniqlookup<string[]>(test_id, "mctool.model");
+    return this.uniqlookup<GvpModel[]>(test_id, "mctool.model");
   }
   public uniqlookup_targetName(test_id: number) {
     return this.uniqlookup<string[]>(test_id, "metadata.targetName");

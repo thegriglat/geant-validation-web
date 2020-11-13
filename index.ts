@@ -1509,7 +1509,7 @@ function uniqlookup(test_id: number, JSONAttr: string): Promise<any[]> {
     'metadata.beamEnergies':
       'select plot.beam_energy_str as out from plot where plot.test_id = $1 group by plot.beam_energy_str',
     'mctool.model':
-      'select mctool_model.mctool_model_name as out from mctool_model inner join plot on plot.mctool_model_id = mctool_model.mctool_model_id where plot.test_id = $1 group by mctool_model.mctool_model_name',
+      'select mctool_model.mctool_model_name, mctool_model.mctool_name_id, mctool_model.mctool_model_id from mctool_model inner join plot on plot.mctool_model_id = mctool_model.mctool_model_id where plot.test_id = $1 group by mctool_model.mctool_model_name, mctool_model.mctool_name_id, mctool_model.mctool_model_id',
     'metadata.targetName':
       'select target.target_name as out from target inner join plot on plot.target = target.target_id where plot.test_id = $1 group by target.target_name',
     'metadata.secondaryParticle':
@@ -1523,8 +1523,10 @@ function uniqlookup(test_id: number, JSONAttr: string): Promise<any[]> {
   return execSQL([test_id], sql).then((result) => {
     const r: any[] = [];
     for (const i of result) {
-      if (JSONAttr !== 'metadata.parameters') r.push(i.out);
-      else {
+      if (JSONAttr === 'mctool.model') {
+        r.push(i)
+      }
+      else if (JSONAttr === "metadata.parameters") {
         for (let pname of i['parnames']) {
           const pidx: number = i['parnames'].indexOf(pname);
           const pvalue: string = i['parvalues'][pidx];
@@ -1533,6 +1535,7 @@ function uniqlookup(test_id: number, JSONAttr: string): Promise<any[]> {
           }
         }
       }
+      else r.push(i.out);
     }
     return r;
   });
@@ -1548,7 +1551,7 @@ function uniqlookup_beamEnergies(test_id: number) {
   return uniqlookup(test_id, "metadata.beamEnergies").then(r => r as string[]);
 }
 function uniqlookup_model(test_id: number) {
-  return uniqlookup(test_id, "mctool.model").then(r => r as string[]);
+  return uniqlookup(test_id, "mctool.model").then(r => r.map(e => e.mctool_model_name));
 }
 function uniqlookup_targetName(test_id: number) {
   return uniqlookup(test_id, "metadata.targetName").then(r => r as string[]);

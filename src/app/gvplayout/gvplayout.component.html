@@ -62,16 +62,31 @@
                 </sui-select>
             </ng-container>
         </div>
+        <!-- project -->
+        <div class="ui segment" *ngIf="currentLayout && projectFilter(menuProjects).length > 1">
+            <h3>Project</h3>
+            <div class="ui active inverted dimmer" *ngIf="menuProjects.length === 0">
+                <div class="ui loader"></div>
+            </div>
+            <sui-multi-select class="selection enlarge" [(ngModel)]="projectsSel"
+                [options]="projectFilter(menuProjects)" [isSearchable]="true" [isDisabled]="false"
+                [optionFormatter]="projectFormatter" [optionsFilter]="projectSelectFilter"
+                (selectedOptionsChange)="projectChanged($event)" #multiProjectSelect>
+                <sui-select-option *ngFor="let obj of multiProjectSelect.filteredOptions" [value]="obj">
+                </sui-select-option>
+            </sui-multi-select>
+        </div>
+        <!-- end project -->
         <div class="ui segment" *ngIf="currentLayout">
             <h3>Version</h3>
             <div class="ui active inverted dimmer" *ngIf="menuVersions.length === 0">
                 <div class="ui loader"></div>
             </div>
             <sui-multi-select class="selection enlarge" [(ngModel)]="versionsSel"
-                [options]="unstableFilter(menuVersions)" [isSearchable]="true" [isDisabled]="false"
+                [options]="versionOptionsFilter(menuVersions)" [isSearchable]="true" [isDisabled]="false"
                 [optionFormatter]="versionFormatter" [optionsFilter]="versionSelectFilter"
-                (selectedOptionsChange)="versionChanged($event)" #multiSelect>
-                <sui-select-option *ngFor="let obj of multiSelect.filteredOptions" [value]="obj">
+                (selectedOptionsChange)="versionChanged($event)" #multiVersionSelect>
+                <sui-select-option *ngFor="let obj of multiVersionSelect.filteredOptions" [value]="obj">
                 </sui-select-option>
             </sui-multi-select>
             <div class="ui divider"></div>
@@ -83,9 +98,10 @@
             <div class="ui active inverted dimmer" *ngIf="models.length === 0">
                 <div class="ui loader"></div>
             </div>
-            <sui-multi-select class="selection enlarge" [(ngModel)]="modelsSel" [options]="models" [isSearchable]="true"
-                [isDisabled]="false" (selectedOptionsChange)="modelChanged($event)" #multiSelect>
-                <sui-select-option *ngFor="let obj of multiSelect.filteredOptions" [value]="obj">
+            <sui-multi-select class="selection enlarge" [(ngModel)]="modelsSel" [options]="modelOptionsFilter(models)"
+                [isSearchable]="true" [isDisabled]="false" (selectedOptionsChange)="modelChanged($event)"
+                [optionFormatter]="modelFormatter" #multiModelSelect>
+                <sui-select-option *ngFor="let obj of multiModelSelect.filteredOptions" [value]="obj">
                 </sui-select-option>
             </sui-multi-select>
         </div>
