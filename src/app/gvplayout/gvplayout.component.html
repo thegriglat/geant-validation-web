@@ -116,6 +116,7 @@
             Submit
         </button>
     </div>
+
     <div [ngClass]="getSUIGridSize(isMenuCollapsed)">
         <ng-template let-popup #rmapPopupTemplate>
             <!-- map box  -->
@@ -137,7 +138,17 @@
             popupTrigger="outsideClick" *ngIf="magicPressed && currentVersionModelRatio">
             Difference map
         </button>
-
+        <ng-container *ngIf="!magicPressed">
+            <div class="ui fluid card" *ngFor="let desc of testDescriptions">
+                <div class="content">
+                    <div class="header">{{desc.header}}</div>
+                    <div class="meta">{{desc.authors.join(", ")}}</div>
+                    <div class="description">
+                        <p>{{desc.content}}</p>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
         <div class="ui stackable" [ngClass]="getSUIGridClass(getMaxColumns(plots))" *ngIf="magicPressed">
             <div class="ui row" *ngFor="let row of plots" [ngClass]="{'centered': isCenteredRow(row)}">
                 <div class="ui aligned wide column nopadding"

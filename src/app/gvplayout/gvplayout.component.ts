@@ -2,14 +2,20 @@ import { Component, OnInit } from '@angular/core';
 import { LayoutService } from '../services/layout.service';
 import { GvpTest, GvpPlot, GvpMctoolNameVersion, GvpLayout, GvpInspire, GvpPngRequest, GvpPlotIdRequest, GvpPlotType, Nullable, GvpMctoolName, GvpModel } from '../classes/gvp-plot';
 import { GVPAPIService } from '../services/gvpapi.service';
-import { map } from 'rxjs/operators';
-import { forkJoin } from 'rxjs';
-import { unroll, versionSorter, unstableVersionFilter, getColumnWide, distinct, getDefault, filterData, distinctJSON, getIdPlot } from './../utils';
+import { map, tap } from 'rxjs/operators';
+import { forkJoin, Observable } from 'rxjs';
+import { unroll, versionSorter, unstableVersionFilter, getColumnWide, distinct, getDefault, filterData, distinctJSON, getIdPlot, capitalize } from './../utils';
 import { PlotEmitType } from '../plot/plot.component';
 import { RatioDiffEstimator } from '../plot/ratiofunctions';
 import { trigger, transition, style, animate } from '@angular/animations';
 
 type VersionModel = { version: string, model: string };
+
+type TestDescription = {
+  header: string,
+  authors: string[],
+  content: string
+};
 
 /**
  * Shows [plots]{@link PlotComponent} for a given version(s) and model(s) using a predefined or custom template
@@ -92,6 +98,7 @@ export class GvplayoutComponent implements OnInit {
   _minRatio = 0;
   _uniqVersionModel: VersionModel[] = [];
   currentVersionModelRatio: Nullable<VersionModel> = null;
+  testDescriptions: TestDescription[] = [];
 
   ngOnInit() {
     this.layoutService.getAllLayouts().subscribe((data) => {
@@ -190,14 +197,11 @@ export class GvplayoutComponent implements OnInit {
   }
 
   /** Populate list of available tests */
-  private waitForTest(): Promise<any> {
+  private waitForTest(): Observable<GvpTest[]> {
     this.ALLTESTS.length = 0;
-    return new Promise((resolve) => {
-      this.api.test().subscribe(data => {
-        this.ALLTESTS = data.filter(elem => elem.test_name !== 'experiment');
-        resolve();
-      });
-    });
+    return this.api.test().pipe(
+      tap(e => this.ALLTESTS = e.filter(elem => elem.test_name !== 'experiment'))
+    )
   }
 
   /** Set human-readable experimental data names */
@@ -401,7 +405,14 @@ export class GvplayoutComponent implements OnInit {
 
     this.tests = this.tests.filter(distinct);
 
-    this.waitForTest().then(() => {
+    this.waitForTest().subscribe(data => {
+      this.testDescriptions = data.filter(e => this.tests.includes(e.test_name) && e.test_name !== "experiment").map(e => {
+        return {
+          header: capitalize(e.test_name),
+          content: e.description,
+          authors: e.responsible
+        } as TestDescription;
+      });
       for (const testname of this.tests) {
         this.getVersionsByTest(testname);
         this.getModelsByTest(testname);
