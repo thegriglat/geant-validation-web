@@ -1588,7 +1588,7 @@ function getPlotId(body: GvpPlotIdRequest, limit1: boolean = false): Promise<num
   const parameters: [string, string[]][] = body.parameters;
   const beam_energy = body.beam_energy;
   const test_id = PGJoin(body.test_id);
-  const target = PGJoin(body.targets);
+  const target = body.targets.map(e => `${e}[0-9]*`).join("|")
   const version_id = PGJoin(body.version_id);
   const model = PGJoin(body.model);
   const secondary = PGJoin(body.secondary);
