@@ -293,7 +293,9 @@ export class GvplayoutComponent implements OnInit {
 
   modelOptionsFilter(m: GvpModel[]): GvpModel[] {
     const p_ids = this.projectsSel.map(e => e.mctool_name_id) || [];
-    return m.filter(e => p_ids.includes(e.mctool_name_id));
+    return m
+      .filter(e => p_ids.includes(e.mctool_name_id))
+      .sort((a, b) => a.mctool_model_name.localeCompare(b.mctool_model_name));
   }
 
   projectFilter(items: GvpMctoolName[]): GvpMctoolName[] {
