@@ -1133,8 +1133,7 @@ router.route('/getRaw/:id').get((req, res) => {
           value: `"${result.id}.png"`
         }
       ];
-      let gPlot = `set title "Beam: ${result.metadata.beamParticle},Energy: ${
-        result.metadata.beamEnergies.length !== 1 ? 'Multiple' : result.metadata.beamEnergies[0]
+      let gPlot = `set title "Beam: ${result.metadata.beamParticle},Energy: ${result.metadata.beamEnergies.length !== 1 ? 'Multiple' : result.metadata.beamEnergies[0]
         },Target: ${result.metadata.targetName}"\n`;
 
       const metadataFormatted = columnify(metadata, { showHeaders: false });
@@ -1171,8 +1170,7 @@ router.route('/getRaw/:id').get((req, res) => {
 
         table = columnify(rows);
 
-        gPlot += `set term png\n${`set xlabel "${result.chart.xAxisName}"\n`}${`set ylabel "${
-          result.chart.yAxisName
+        gPlot += `set term png\n${`set xlabel "${result.chart.xAxisName}"\n`}${`set ylabel "${result.chart.yAxisName
           }"\n`}${`set bars small\n`}${`set grid\n`}plot '-' using 1:2:($1-sqrt($3**2+$7**2)):($1+sqrt($4**2+$8**2)):($2-sqrt($5**2+$9**2)):($2+sqrt($6**2+$10**2)) notitle with xyerrorlines linecolor rgb "blue"`;
       } else if (!isUndefined(result.histogram)) {
         rows = [];
@@ -1205,8 +1203,7 @@ router.route('/getRaw/:id').get((req, res) => {
 
         table = columnify(rows);
 
-        gPlot += `set term png\n${`set xlabel "${result.histogram.xAxisName}"\n`}${`set ylabel "${
-          result.histogram.yAxisName
+        gPlot += `set term png\n${`set xlabel "${result.histogram.xAxisName}"\n`}${`set ylabel "${result.histogram.yAxisName
           }"\n`}${`set bars small\n`}${`set grid\n`}plot '-' using (($1+$2)/2):3:($3-sqrt($4**2+$6**2)):($3+sqrt($5**2+$7**2)):($2-$1) notitle with boxerrorbars linecolor rgb "blue"`;
       }
 
