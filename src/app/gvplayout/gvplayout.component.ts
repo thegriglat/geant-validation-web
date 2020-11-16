@@ -326,7 +326,7 @@ export class GvplayoutComponent implements OnInit {
       const responceValues = response.slice();
       responceValues.sort();
       for (const v of responceValues) {
-        if (this.models.indexOf(v) === -1) {
+        if (!this.models.map(e => e.mctool_model_id).includes(v.mctool_model_id)) {
           this.models.push(v);
         }
       }
