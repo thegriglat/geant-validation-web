@@ -472,7 +472,6 @@ function apigetJSON(id: number): Promise<Nullable<GvpJSON>> {
 function apimultiget(ids: number[]): Promise<GvpJSON[]> {
   const promises = ids.map(e => apigetJSON(e));
   return Promise.all(promises).then(list => {
-    console.log("amget");
     return list.filter(e => !isNull(e)) as GvpJSON[];
   });
 }
