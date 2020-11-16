@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Nullable, GvpTest, GvpMctoolNameVersion, GvpMctoolName, GvpObservable, GvpModel, GvpParticle, GvpTarget } from '../classes/gvp-plot';
+import { Nullable, GvpTest, GvpMctoolNameVersion, GvpMctoolName, GvpObservable, GvpModel, GvpParticle, GvpTarget, GvpInspire } from '../classes/gvp-plot';
 import { GVPAPIService } from '../services/gvpapi.service';
 import { Observable } from 'rxjs';
 import { _versionSorterComparator } from '../utils';
@@ -8,7 +8,7 @@ interface Table {
   name: string;
   getter: Observable<any[]>,
   mapper: { (e: any): string },
-  sorter: { (a: string, b: string): number }
+  sorter: { (a: any, b: any): number }
 };
 
 const defaultStrSortFn = (a: string, b: string) => {
@@ -66,6 +66,12 @@ export class LookupViewComponent implements OnInit {
       getter: this.api.particle(),
       mapper: function (e: GvpParticle) { return e.particle_name; },
       sorter: defaultStrSortFn
+    },
+    {
+      name: "Articles",
+      getter: this.api.inspire(),
+      mapper: function (e: GvpInspire) { return `#${e.inspire_id}: ${e.title}`; },
+      sorter: (a: GvpInspire, b: GvpInspire) => a.inspire_id - b.inspire_id
     }
     // parameters
     // beam energy
