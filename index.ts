@@ -113,12 +113,11 @@ if (USESSL) {
 // route middleware to make sure a user is logged in
 function isLoggedIn(req, res, next) {
   // if user is authenticated in the session, carry on
-  if (req.isAuthenticated() || !USESSL) {
-    return next();
-  }
-
-  // if they aren"t redirect them to the home page
-  return res.status(401).send('Not authorized');
+  if (!process.env.TOKENS) return res.status(401).send('Not authorized');
+  const allowed_tokens = process.env.TOKENS.split(/s/).filter(e => e.length !== 0);
+  if (!req.header('token')) return res.status(401).send('Not authorized');
+  if (!allowed_tokens.includes(req.header('token'))) return res.status(401).send('Not authorized');
+  return next();
 }
 
 passport.serializeUser((user, cb) => {
@@ -624,7 +623,7 @@ app.post('/uploadException', isLoggedIn, (req, res) => {
 });
 */
 // Function to receive file content in the request body
-app.post('/upload', (req, res) => {
+app.post('/upload', isLoggedIn, (req, res) => {
   logger.info('upload requested');
   const json = req.body;
   // get inspire info
