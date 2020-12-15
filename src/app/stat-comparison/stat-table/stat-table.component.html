@@ -25,6 +25,7 @@ Estimator:
       <th class="center aligned">Beam</th>
       <th class="center aligned">Model</th>
       <th class="center aligned">Target</th>
+      <th class="center aligned">Secondary</th>
       <th class="center aligned">Beam energy</th>
       <th class="center aligned">Parameters</th>
       <th class="center aligned sorted " (click)="tableSort()"
@@ -41,6 +42,7 @@ Estimator:
         <td class="center aligned" [ngClass]="{expanded: isRowShown(j)}">{{beam[0]}}</td>
         <td class="center aligned" [ngClass]="{expanded: isRowShown(j)}">{{jsonMetadata(j[0]).model}}</td>
         <td class="center aligned" [ngClass]="{expanded: isRowShown(j)}">{{jsonMetadata(j[0]).target}}</td>
+        <td class="center aligned" [ngClass]="{expanded: isRowShown(j)}">{{jsonMetadata(j[0]).secondary}}</td>
         <td class="center aligned" [ngClass]="{expanded: isRowShown(j)}">{{jsonMetadata(j[0]).benergy}}</td>
         <td class="center aligned" [ngClass]="{expanded: isRowShown(j)}">
           {{ParamC2str(jsonMetadata(j[0]).parameters)}}</td>

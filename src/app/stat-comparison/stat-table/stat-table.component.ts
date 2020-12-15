@@ -108,6 +108,7 @@ export class StatTableComponent implements OnInit {
       model: j.mctool.model,
       target: j.metadata.targetName,
       benergy: j.metadata.beam_energy_str,
+      secondary: j.metadata.secondaryParticle,
       parameters: getParametersList(j.metadata.parameters)
     }
   }
