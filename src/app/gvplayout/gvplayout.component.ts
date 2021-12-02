@@ -311,9 +311,6 @@ export class GvplayoutComponent implements OnInit {
     }
 
     return (items: GvpMctoolNameVersion[], query: string) => {
-      if (query.length == 0) return items;
-      console.log(query)
-      console.log(items.filter(e => e.version.indexOf(query) !== -1))
       return versionOptionsFilter(items.filter(e => e.version.indexOf(query) !== -1));
     }
   }
