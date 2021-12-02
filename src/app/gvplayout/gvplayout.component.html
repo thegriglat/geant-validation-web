@@ -84,9 +84,9 @@
             </div>
             <sui-multi-select class="selection enlarge" [(ngModel)]="versionsSel"
                 [options]="menuVersions" [isSearchable]="true" [isDisabled]="false"
-                [optionFormatter]="versionFormatter" [optionsFilter]="getVersionSelectFilter(showUnstableVersions, projectsSel)"
+                [optionFormatter]="versionFormatter" [optionsFilter]="versionLetterFilter"
                 (selectedOptionsChange)="versionChanged($event)" #multiVersionSelect>
-                <sui-select-option *ngFor="let obj of multiVersionSelect.filteredOptions" [value]="obj">
+                <sui-select-option *ngFor="let obj of versionMenuFilter(multiVersionSelect.filteredOptions)" [value]="obj">
                 </sui-select-option>
             </sui-multi-select>
             <div class="ui divider"></div>

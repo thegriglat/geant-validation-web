@@ -298,23 +298,19 @@ export class GvplayoutComponent implements OnInit {
     this.versionsSel = this.versionsSel.filter(unstableVersionFilter)
   }
 
-  getVersionSelectFilter(showUnstable: boolean, projects: GvpMctoolName[])
-  {
-    // we have to carry filter function as it hasn't access to "this"
-    const versionOptionsFilter = (v: GvpMctoolNameVersion[]): GvpMctoolNameVersion[] => {
-      let unst_f = unstableVersionFilter;
-      if (showUnstable)
-        unst_f = (e: GvpMctoolNameVersion) => true;
-      const p_ids = projects.map(e => e.mctool_name_id) || [];
-      const proj_f = (e: GvpMctoolNameVersion) => p_ids.includes(e.mctool_name_id);
-      return v.filter(unst_f).filter(proj_f);
-    }
-
-    return (items: GvpMctoolNameVersion[], query: string) => {
-      return versionOptionsFilter(items.filter(e => e.version.indexOf(query) !== -1));
-    }
+  versionLetterFilter(items: GvpMctoolNameVersion[], query: string): GvpMctoolNameVersion[]{
+    return items.filter(e => e.version.indexOf(query) !== -1);
   }
-
+  
+  versionMenuFilter(items: GvpMctoolNameVersion[]): GvpMctoolNameVersion[] {
+    let unst_f = unstableVersionFilter;
+    if (this.showUnstableVersions)
+      unst_f = (e: GvpMctoolNameVersion) => true;
+    const p_ids = this.projectsSel.map(e => e.mctool_name_id) || [];
+    const proj_f = (e: GvpMctoolNameVersion) => p_ids.includes(e.mctool_name_id);
+    return items.filter(unst_f).filter(proj_f);
+  }
+ 
   projectSelectFilter(items: GvpMctoolName[], query: string): GvpMctoolName[] {
     return items.filter(e => e.mctool_name_name.includes(query));
   }
