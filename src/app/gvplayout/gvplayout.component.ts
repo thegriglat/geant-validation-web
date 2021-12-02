@@ -282,15 +282,6 @@ export class GvplayoutComponent implements OnInit {
     });
   }
 
-  versionOptionsFilter(v: GvpMctoolNameVersion[]): GvpMctoolNameVersion[] {
-    let unst_f = unstableVersionFilter;
-    if (this.showUnstableVersions)
-      unst_f = (e: GvpMctoolNameVersion) => true;
-    const p_ids = this.projectsSel.map(e => e.mctool_name_id) || [];
-    const proj_f = (e: GvpMctoolNameVersion) => p_ids.includes(e.mctool_name_id);
-    return v.filter(unst_f).filter(proj_f);
-  }
-
   modelOptionsFilter(m: GvpModel[]): GvpModel[] {
     const p_ids = this.projectsSel.map(e => e.mctool_name_id) || [];
     return m
@@ -307,8 +298,24 @@ export class GvplayoutComponent implements OnInit {
     this.versionsSel = this.versionsSel.filter(unstableVersionFilter)
   }
 
-  versionSelectFilter(items: GvpMctoolNameVersion[], query: string): GvpMctoolNameVersion[] {
-    return items.filter(e => e.version.indexOf(query) !== -1);
+  getVersionSelectFilter(showUnstable: boolean, projects: GvpMctoolName[])
+  {
+    // we have to carry filter function as it hasn't access to "this"
+    const versionOptionsFilter = (v: GvpMctoolNameVersion[]): GvpMctoolNameVersion[] => {
+      let unst_f = unstableVersionFilter;
+      if (showUnstable)
+        unst_f = (e: GvpMctoolNameVersion) => true;
+      const p_ids = projects.map(e => e.mctool_name_id) || [];
+      const proj_f = (e: GvpMctoolNameVersion) => p_ids.includes(e.mctool_name_id);
+      return v.filter(unst_f).filter(proj_f);
+    }
+
+    return (items: GvpMctoolNameVersion[], query: string) => {
+      if (query.length == 0) return items;
+      console.log(query)
+      console.log(items.filter(e => e.version.indexOf(query) !== -1))
+      return versionOptionsFilter(items.filter(e => e.version.indexOf(query) !== -1));
+    }
   }
 
   projectSelectFilter(items: GvpMctoolName[], query: string): GvpMctoolName[] {

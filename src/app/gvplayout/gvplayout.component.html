@@ -83,8 +83,8 @@
                 <div class="ui loader"></div>
             </div>
             <sui-multi-select class="selection enlarge" [(ngModel)]="versionsSel"
-                [options]="versionOptionsFilter(menuVersions)" [isSearchable]="true" [isDisabled]="false"
-                [optionFormatter]="versionFormatter" [optionsFilter]="versionSelectFilter"
+                [options]="menuVersions" [isSearchable]="true" [isDisabled]="false"
+                [optionFormatter]="versionFormatter" [optionsFilter]="getVersionSelectFilter(showUnstableVersions, projectsSel)"
                 (selectedOptionsChange)="versionChanged($event)" #multiVersionSelect>
                 <sui-select-option *ngFor="let obj of multiVersionSelect.filteredOptions" [value]="obj">
                 </sui-select-option>
