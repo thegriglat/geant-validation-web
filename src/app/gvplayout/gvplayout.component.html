@@ -98,10 +98,10 @@
             <div class="ui active inverted dimmer" *ngIf="models.length === 0">
                 <div class="ui loader"></div>
             </div>
-            <sui-multi-select class="selection enlarge" [(ngModel)]="modelsSel" [options]="modelOptionsFilter(models)"
+            <sui-multi-select class="selection enlarge" [(ngModel)]="modelsSel" [options]="models"
                 [isSearchable]="true" [isDisabled]="false" (selectedOptionsChange)="modelChanged($event)"
-                [optionFormatter]="modelFormatter" #multiModelSelect>
-                <sui-select-option *ngFor="let obj of multiModelSelect.filteredOptions" [value]="obj">
+                [optionFormatter]="modelFormatter" [optionsFilter]="modelLetterFilter" #multiModelSelect>
+                <sui-select-option *ngFor="let obj of modelOptionsFilter(multiModelSelect.filteredOptions)" [value]="obj">
                 </sui-select-option>
             </sui-multi-select>
         </div>

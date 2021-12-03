@@ -298,6 +298,10 @@ export class GvplayoutComponent implements OnInit {
     this.versionsSel = this.versionsSel.filter(unstableVersionFilter)
   }
 
+  modelLetterFilter(items: GvpModel[], query: string): GvpModel[] {
+    return items.filter(e => e.mctool_model_name.indexOf(query) !== -1);
+  }
+
   versionLetterFilter(items: GvpMctoolNameVersion[], query: string): GvpMctoolNameVersion[]{
     return items.filter(e => e.version.indexOf(query) !== -1);
   }
