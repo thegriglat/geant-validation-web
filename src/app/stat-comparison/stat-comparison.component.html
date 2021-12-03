@@ -12,11 +12,11 @@
         <div class="ui loader"></div>
       </div>
       <sui-multi-select class="selection enlarge" (selectedOptionsChange)="firesUpdateMenu()" [(ngModel)]="versionsSel"
-        [options]="versionOnlineFilter(unstableFilter(menuVersions))" [isSearchable]="true"
+        [options]="menuVersions" [isSearchable]="true"
         [isDisabled]="onlineFilterProgress" [optionFormatter]="versionFormatter" [optionsFilter]="versionSelectFilter"
         #versionSelect>
         <ng-container *ngIf="!isVersionExpCorrect()">
-          <sui-select-option *ngFor="let obj of versionSelect.filteredOptions" [value]="obj">
+          <sui-select-option *ngFor="let obj of versionOnlineFilter(unstableFilter(versionSelect.filteredOptions))" [value]="obj">
           </sui-select-option>
         </ng-container>
       </sui-multi-select>
